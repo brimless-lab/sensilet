@@ -4,6 +4,10 @@
 
     Download Sensilet from Chrome Extensions Store
 
+## Development package
+
+[Sensilet.zip](https://test.sensilet.com/sensilet.zip)
+
 ## Usage
 
 ```js
