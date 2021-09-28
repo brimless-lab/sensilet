@@ -34,6 +34,7 @@ function action(actionName, params) {
             if (result.result === 'success') {
                 resolve(result.data)
             } else {
+                // console.log(result)
                 reject(new Error(result.msg || result.result))
             }
         })
@@ -51,7 +52,7 @@ window.sensilet.getAccount = window.sensilet.requestAccount
 window.sensilet.getBsvBalance = (params) => {
     return action('getBsvBalance', params)
 };
-window.sensilet.getTokenBalance = (params) => {
+window.sensilet.getSensibleFtBalance = (params) => {
     return action('getTokenBalance', params)
 };
 /**

@@ -28,7 +28,16 @@ browser.runtime.onInstalled.addListener(details => {
     }
 });
 
-function launchPopup(message, sender, sendResponse) {
+async function launchPopup(message, sender, sendResponse,checkConnected = true) {
+    if(checkConnected && ! await checkConnect(sender)){
+        sendResponse({
+            result: "denied",
+            id: message.data.id,
+            msg: "Permission denied, connect first"
+        });
+    }
+
+
     const searchParams = new URLSearchParams();
     searchParams.set('origin', sender.origin);
     searchParams.set('network', message.data.params.network);
@@ -50,19 +59,28 @@ function launchPopup(message, sender, sendResponse) {
     responseHandlers.set(message.data.id, sendResponse);
 }
 
+function checkConnect(sender) {
+    return new Promise((resolve => {
+        chrome.storage.local.get('connectedWallets', (result) => {
+            const connectedWallet = (result.connectedWallets || {})[sender.origin];
+            resolve(connectedWallet !== undefined && connectedWallet != null)
+        });
+    }))
+}
+
 function handleConnect(message, sender, sendResponse) {
     // launchPopup(message, sender, sendResponse);
     chrome.storage.local.get('connectedWallets', (result) => {
         const connectedWallet = (result.connectedWallets || {})[sender.origin];
         if (!connectedWallet) {
-            launchPopup(message, sender, sendResponse);
+            launchPopup(message, sender, sendResponse,false);
         } else {
             // 对于已经连接过的， 直接返回
             console.log(message.data);
             sendResponse({
-                result:"success",
+                result: "success",
                 id: message.data.id,
-                data:walletManager.getMainAddress()
+                data: walletManager.getMainAddress()
             });
         }
     });
@@ -72,57 +90,88 @@ function handleDisconnect(message, sender, sendResponse) {
     chrome.storage.local.get('connectedWallets', (result) => {
         delete result.connectedWallets[sender.origin];
         chrome.storage.local.set(
-            { connectedWallets: result.connectedWallets },
-            () => sendResponse({ method: 'disconnected', id: message.data.id }),
+            {connectedWallets: result.connectedWallets},
+            () => sendResponse({ result: "success", id: message.data.id}),
         );
     });
 }
 
 async function handleListGenesis(message, sender, sendResponse) {
-    let address =  message.data.params.address;
+    if(!await checkConnect(sender)){
+        sendResponse({
+            result: "denied",
+            id: message.data.id,
+            msg: "Permission denied, connect first"
+        });
+    }
+
+    let address = message.data.params.address;
     let data = await SensibleNFTObj.getSummary(address);
     sendResponse({
-        id:message.data.id,
+        id: message.data.id,
         data,
-        result:"success"
+        result: "success"
     })
 }
+
 async function handleListNft(message, sender, sendResponse) {
-    let {address,genesis,codehash} =  message.data.params;
-    let data = await SensibleNFTObj.getSummaryDetail(codehash,genesis,address);
+    if(!await checkConnect(sender)){
+        sendResponse({
+            result: "denied",
+            id: message.data.id,
+            msg: "Permission denied, connect first"
+        });
+    }
+    let {address, genesis, codehash} = message.data.params;
+    let data = await SensibleNFTObj.getSummaryDetail(codehash, genesis, address);
     sendResponse({
-        id:message.data.id,
+        id: message.data.id,
         data,
-        result:"success"
+        result: "success"
     })
 }
 
 async function handleGetBsvBalance(message, sender, sendResponse) {
-    let {} =  message.data.params;
+    if(!await checkConnect(sender)){
+        sendResponse({
+            result: "denied",
+            id: message.data.id,
+            msg: "Permission denied, connect first"
+        });
+    }
+
+    let {} = message.data.params;
     let address = walletManager.getMainAddress();
-    let balance =await walletManager.getBsvBalance(address)
+    let balance = await walletManager.getBsvBalance(address)
     sendResponse({
-        id:message.data.id,
-        data:{
+        id: message.data.id,
+        data: {
             address,
             balance
         },
-        result:"success"
+        result: "success"
     })
 }
 
 async function handleGetTokenBalance(message, sender, sendResponse) {
-    let {} =  message.data.params;
-    let tokenList =await tokenManager.listUserTokens();
+    if(!await checkConnect(sender)){
+        sendResponse({
+            result: "denied",
+            id: message.data.id,
+            msg: "Permission denied, connect first"
+        });
+    }
+    let {} = message.data.params;
+    let tokenList = await tokenManager.listUserTokens();
     sendResponse({
-        id:message.data.id,
-        data:tokenList,
-        result:"success"
+        id: message.data.id,
+        data: tokenList,
+        result: "success"
     })
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message,"onMessage");
+    console.log(message, "onMessage");
 
     if (message.channel === 'sato_contentscript_background_channel') {
         if (message.data.method === 'connect') {
@@ -146,11 +195,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         const responseHandler = responseHandlers.get(message.data.id);
         responseHandlers.delete(message.data.id);
         responseHandler(message.data);
-    } else if (message.channel === 'sato_extension_mnemonic_channel') {
-        if (message.method === 'set') {
-            unlockedMnemonic = message.data;
-        } else if (message.method === 'get') {
-            sendResponse(unlockedMnemonic);
-        }
     }
 });

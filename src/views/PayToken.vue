@@ -50,14 +50,17 @@ export default {
     if (routerData) {
       data.receivers = [{amount: routerData.amount, address: routerData.address}]
       data.broadcast = routerData.broadcast;
+      data.genesis = routerData.genesis;
     } else {
       data.receivers = request.params.receivers;
       data.broadcast = request.params.broadcast;
+      data.genesis = request.params.genesis;
     }
 
     return data;
   },
   async mounted() {
+    console.log(this.genesis)
     this.tokenInfo = await tokenManager.getTokenInfo(this.genesis);
     if (!this.tokenInfo) {
       antMessage.error('未知的Token信息');

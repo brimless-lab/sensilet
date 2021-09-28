@@ -12,23 +12,22 @@
     </div>
     <div class="desc">您的私钥仅加密保存在当前设备上。</div>
     <div class="desc">如果您清除浏览器储存、设备损坏或丢失，则需要这些文字来恢复钱包。</div>
-    <div class="check-container">
-                  <a-checkbox v-model:checked="isMnemonicSaved">
-                      <span>我已经把助记词保存在了安全的地方。</span>
-                  </a-checkbox>
-      <!--      <label>-->
-      <!--        <input type="checkbox" v-model="isMnemonicSaved">-->
-      <!--        <span>我已经把助记词保存在了安全的地方</span>-->
-      <!--      </label>-->
-<!--      <img id="mnemonicCheckBox" src="../assets/check-box.svg" alt="" @click="toggleCheckBox">-->
+    <div class="check-container" v-if="showCheckContainer">
+      <a-checkbox v-model:checked="isMnemonicSaved">
+        <span>我已经把助记词保存在了安全的地方。</span>
+      </a-checkbox>
+    </div>
+    <div class="check-container" v-else style="height: 20px">
 
     </div>
+
     <div class="button-container">
       <div class="import-btn" @click="gotoImport()">
         从助记词恢复
       </div>
 
-      <a-button type="primary" @click="next" :disabled="!isMnemonicSaved">下一步</a-button>
+      <a-button v-if="showCheckContainer" type="primary" @click="next" :disabled="!isMnemonicSaved">下一步</a-button>
+      <a-button v-else type="primary">下一步</a-button>
     </div>
   </div>
   <div class="panel" v-if="step===1">
@@ -56,10 +55,10 @@
 </template>
 
 <script>
+let _this = null;
 export default {
   name: "CreateWallet",
   data: () => {
-
     return {
       step: 0,
       isMnemonicSaved: false,
@@ -68,6 +67,7 @@ export default {
       mnemonic: null,
       isGoingToNext: false,
       inputMnemonic: "",
+      showCheckContainer:true,
     }
   },
   beforeCreate() {
@@ -82,11 +82,17 @@ export default {
   },
   watch: {
     isMnemonicSaved: (newVal) => {
-      console.log(newVal)
+      //在弹出窗口中，点击checkbox 后 组件未刷新(原因未知)。这里通过v-if 触发强制刷新
+      _this.showCheckContainer = false;
+      setTimeout(() => {
+        _this.showCheckContainer = true;
+      }, 1)
     }
   },
 
   created() {
+    _this = this;
+
     let mnemonic = sessionStorage.getItem('mnemonic');
     if (!mnemonic)
       mnemonic = walletManager.createMnemonic();
