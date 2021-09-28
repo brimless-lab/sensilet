@@ -1,0 +1,37 @@
+{
+  "name": "Sensilet",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service build --mode development --watch",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@ant-design/icons-vue": "^6.0.1",
+    "ant-design-vue": "^2.1.6",
+    "axios": "^0.20.0",
+    "bsv": "^2.0.10",
+    "core-js": "^3.6.5",
+    "crypto-js": "^4.0.0",
+    "qrcode.vue": "^3.2.2",
+    "sensible-sdk": "7.2.3-beta.2",
+    "vue": "^3.0.11",
+    "vue-router": "^4.0.8",
+    "vuex": "^4.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "4.5.13",
+    "@vue/cli-plugin-router": "4.5.13",
+    "@vue/cli-plugin-vuex": "4.5.13",
+    "@vue/cli-service": "4.5.13",
+    "@vue/compiler-sfc": "^3.0.0",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "vue-cli-plugin-browser-extension": "latest",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "main": "index.js",
+  "author": "",
+  "license": "MIT"
+}
