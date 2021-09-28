@@ -38,6 +38,9 @@ const transferAll = await bsv.transferAll([{
 }])
 ```
 
+## Demo
+ [Demo](https://test.sensilet.com/test.html)
+
 ## api
 
 ### bsv.requestAccount(): Promise<void>
