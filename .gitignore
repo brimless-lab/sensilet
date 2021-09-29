@@ -27,3 +27,5 @@ pnpm-debug.log*
 *.pub
 *.zip
 /artifacts
+.browserslistrc
+.eslintrc.js
