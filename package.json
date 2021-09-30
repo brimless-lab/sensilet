@@ -15,7 +15,7 @@
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
     "qrcode.vue": "^3.2.2",
-    "sensible-sdk": "7.2.3-beta.2",
+    "sensible-sdk": "7.2.9-beta.2",
     "vue": "^3.0.11",
     "vue-router": "^4.0.8",
     "vuex": "^4.0.1"

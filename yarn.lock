@@ -7239,14 +7239,13 @@ send@0.17.1:
     range-parser "~1.2.1"
     statuses "~1.5.0"
 
-sensible-sdk@7.2.3-beta.2:
-  version "7.2.3-beta.2"
-  resolved "https://registry.nlark.com/sensible-sdk/download/sensible-sdk-7.2.3-beta.2.tgz?cache=0&sync_timestamp=1627723968940&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fsensible-sdk%2Fdownload%2Fsensible-sdk-7.2.3-beta.2.tgz#ec284b3bbed2c0426a1d83b8c6b40600d4e9ed75"
-  integrity sha1-7ChLO77SwEJqHYO4xrQGANTp7XU=
+sensible-sdk@7.2.9-beta.2:
+  version "7.2.9-beta.2"
+  resolved "https://registry.npmjs.org/sensible-sdk/-/sensible-sdk-7.2.9-beta.2.tgz#eb60e21911d223f9821e7ae29c14b9cd2d036efa"
+  integrity sha512-dVDUq8cw/gULAmhToPE6xUCVW8micdVGXrIR9+yyJT+s5LY+shRJLLbR02SWZWG5NrlKTOzaBWAb4BdpsqUj/w==
   dependencies:
     request "^2.88.2"
     scryptlib "^0.4.2-beta1"
-    zlib "^1.0.5"
 
 serialize-javascript@^4.0.0:
   version "4.0.0"
@@ -8712,8 +8711,3 @@ zip-webpack-plugin@^3.0.0:
   dependencies:
     webpack-sources "^1.1.0"
     yazl "^2.4.3"
-
-zlib@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.npm.taobao.org/zlib/download/zlib-1.0.5.tgz#6e7c972fc371c645a6afb03ab14769def114fcc0"
-  integrity sha1-bnyXL8NxxkWmr7A6sUdp3vEU/MA=

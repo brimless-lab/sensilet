@@ -153,6 +153,10 @@ walletManager.getMainWif = function () {
     return walletManager.getWif("m/44'/0'/0'/0/0")
 };
 
+walletManager.getMainPubKey = function () {
+    return walletManager.getWifAndPubKey("m/44'/0'/0'/0/0").pubKey
+};
+
 walletManager.getWif = function (path) {
     console.log(path)
     return getRootKey().derive(path).privKey.toWif();

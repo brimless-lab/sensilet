@@ -1,8 +1,8 @@
 let utils = {};
 
+//sensibleFtUtils 是加载在bg中
 const SensibleFT =require('sensible-sdk').SensibleFT;
 
-const API_TARGET = 'sensible';
 const config = require('../config/base');
 
 const ft = new SensibleFT({

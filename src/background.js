@@ -3,6 +3,7 @@ window.count = count ? parseInt(count) : 0;
 
 const responseHandlers = new Map();
 const sensibleSdk = require("sensible-sdk");
+
 const walletManager = require("./manager/WalletManager");
 const tokenManager = require("./manager/tokenManager");
 

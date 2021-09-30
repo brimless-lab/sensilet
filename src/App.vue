@@ -101,7 +101,7 @@ export default {
       routerManager.goto('/transferNft')
     }
     if (request && request.method === 'signTx') {
-      console.log('转移NFT');
+      console.log('签名交易');
       routerManager.goto('/signTx')
     }
   },
