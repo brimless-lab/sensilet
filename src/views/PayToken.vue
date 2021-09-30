@@ -9,18 +9,24 @@
       <div class="notice">{{ tokenInfo.name }}</div>
       <div class="notice">Genesis: {{ tokenInfo.genesis }}</div>
 
-      <div class="notice">收款地址： {{ address }}</div>
-      <div class="notice">支付金额：
-        <CoinShow :value="amount" :big-unit="tokenInfo.unit" :decimal="tokenInfo.decimal" show-big-unit/>
+      <div class="receive-item" v-for="item in receivers">
+        <div class="notice">收款地址： {{ item.address }}</div>
+        <div class="notice">支付金额：
+          <CoinShow :value="item.amount" :big-unit="tokenInfo.unit" :decimal="tokenInfo.decimal" show-big-unit/>
+        </div>
       </div>
+
       <div class="notice">手续费约：
         <CoinShow :value="fee" big-unit="BSV" :decimal=8 :fixed=8 show-big-unit/>
       </div>
-    </div>
-    <div class="notice">是否广播： {{ broadcast ? "是" : "否" }}</div>
-    <div class="action-container" v-if="!isPaying">
-      <a-button @click="cancel">取消</a-button>
-      <a-button type="primary" @click="commit">确定</a-button>
+
+
+      <div class="notice">是否广播： {{ broadcast ? "是" : "否" }}</div>
+      <div class="action-container" v-if="!isPaying">
+        <a-button @click="cancel">取消</a-button>
+        <a-button type="primary" @click="commit">确定</a-button>
+      </div>
+      <a-spin v-else/>
     </div>
     <a-spin v-else/>
   </div>
@@ -44,6 +50,9 @@ export default {
       origin,
       fee: null,
       tokenInfo: null,
+      receivers: [],
+      genesis: "",
+      broadcast: false,
     };
 
     let routerData = routerManager.data;
@@ -55,12 +64,17 @@ export default {
       data.receivers = request.params.receivers;
       data.broadcast = request.params.broadcast;
       data.genesis = request.params.genesis;
+
+      console.log(request.params)
+      console.log(data.receivers)
     }
+
 
     return data;
   },
   async mounted() {
     console.log(this.genesis)
+
     this.tokenInfo = await tokenManager.getTokenInfo(this.genesis);
     if (!this.tokenInfo) {
       antMessage.error('未知的Token信息');
@@ -96,9 +110,9 @@ export default {
 
       try {
         this.isPaying = true;
-        let result = await tokenManager.transfer(this.receivers, this.tokenInfo);
-        console.log(result);
-        antMessage.success("支付成功")
+        let {txid, rawHex} = await tokenManager.transfer(this.receivers, this.broadcast, this.tokenInfo);
+        // console.log(result);
+        // antMessage.success("支付成功")
 
         if (origin) {
           //外部请求
@@ -107,7 +121,7 @@ export default {
             data: {
               id: request.id,
               result: "success",
-              data: this.txid,
+              data: this.broadcast ? txid : rawHex,
             },
           });
           window.close();

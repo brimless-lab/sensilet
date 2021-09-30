@@ -8,12 +8,12 @@
     <div class="receive-item" v-for="item in receivers">
     <div class="notice">收款地址： {{ item.address }}</div>
     <div class="notice">支付金额：
-      <CoinShow :value="item.amount" :big-unit="BSV" :decimal="8" fixed="8" show-big-unit/>
+      <CoinShow :value="item.amount" big-unit="BSV" :decimal="8" fixed="8" show-big-unit/>
     </div>
     </div>
 
     <div class="notice">手续费约：
-      <CoinShow :value="fee" :big-unit="BSV" :decimal="8" fixed="8" show-big-unit/>
+      <CoinShow :value="fee" big-unit="BSV" :decimal="8" fixed="8" show-big-unit/>
     </div>
     <div class="notice">是否广播： {{ broadcast ? "是" : "否" }}</div>
     <div class="action-container" v-if="!isCreating">

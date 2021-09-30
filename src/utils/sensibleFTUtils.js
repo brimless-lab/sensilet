@@ -32,7 +32,7 @@ utils.getUtxoCount =async (genesis,codehash,address)=>{
 };
 
 
-utils.transfer = async function (genesis, codehash,senderWif, purseWif, receivers,utxoCount) {
+utils.transfer = async function (genesis, codehash,senderWif, purseWif, receivers,utxoCount,broadcast=true) {
 
      let ft = new SensibleFT({
         network: config.network,
@@ -60,6 +60,7 @@ utils.transfer = async function (genesis, codehash,senderWif, purseWif, receiver
          receivers,
          codehash,
          genesis,
+         noBroadcast:!broadcast,
      })
 };
 

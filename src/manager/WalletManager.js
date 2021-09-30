@@ -193,7 +193,7 @@ walletManager.pay = async function (to, amount, broadcast) {
     return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId()};
 };
 
-walletManager.payArray = async function (receivers, wif = null) {
+walletManager.payArray = async function (receivers, broadcast,wif = null) {
     if (!wif)
         wif = walletManager.getMainWif();
 
@@ -203,7 +203,9 @@ walletManager.payArray = async function (receivers, wif = null) {
         API_NET.MAIN,
         0.5,
         API_TARGET.SENSIBLE
-    ).sendArray(receivers);
+    ).sendArray(receivers,{
+        noBroadcast:!broadcast,
+    });
 
     return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId()};
 };

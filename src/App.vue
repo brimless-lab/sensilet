@@ -24,6 +24,7 @@
     <ImportWallet v-else-if="currentPage==='/import'"/>
     <Merge v-else-if="currentPage==='/merge'"/>
     <Setting v-else-if="currentPage==='/setting'"/>
+    <SignTx v-else-if="currentPage==='/signTx'"/>
   </div>
 </template>
 <script>
@@ -42,8 +43,12 @@ import PayToken from "./views/PayToken";
 import ImportWallet from "./views/ImportWallet";
 import Merge from "./views/Merge";
 import Setting from "./views/Setting";
+import SignTx from "./views/SignTx";
 
 import AccountChoose from "./components/AccountChoose";
+
+const urlParams = new URLSearchParams(window.location.hash.slice(1));
+const request = JSON.parse(urlParams.get('request'));
 
 export default {
   components: {
@@ -60,14 +65,14 @@ export default {
     ImportWallet,
     Merge,
     Setting,
+    SignTx,
   },
   beforeCreate() {
     routerManager.addListener((url) => {
       this.currentPage = url;
     });
 
-    const urlParams = new URLSearchParams(window.location.hash.slice(1));
-    const request = JSON.parse(urlParams.get('request'));
+
 
     if (request && request.method === 'connect') {
       console.log('链接钱包');
@@ -95,17 +100,40 @@ export default {
       console.log('转移NFT');
       routerManager.goto('/transferNft')
     }
+    if (request && request.method === 'signTx') {
+      console.log('转移NFT');
+      routerManager.goto('/signTx')
+    }
   },
   data() {
     return {
-      width:document.body.clientWidth,
+      width: document.body.clientWidth,
       walletName: config.walletName,
       currentPage: routerManager.getCurrentPage(),
       count: global.bg.count
     }
   },
+  beforeMount() {
+    //注册关闭事件
+
+      if( urlParams.get('origin')){
+        //注册关闭时事件，通知调用者
+        window.onbeforeunload = function() {
+          chrome.runtime.sendMessage({
+            channel: 'sato_extension_background_channel',
+            data: {
+              id: request.id,
+              result: "cancel"
+            },
+          });
+        }
+      }
+
+  },
   mounted() {
     //    版本检查 ， 热门检查
+
+
   },
   methods: {
     openWeb(url) {
@@ -114,7 +142,7 @@ export default {
     gotoHome() {
       routerManager.gotoHome();
     },
-    gotoSetting(){
+    gotoSetting() {
       routerManager.goto('/setting')
     }
   }
@@ -134,7 +162,7 @@ body {
 
   //background-color: whitesmoke;
 
-  @media(min-width: 376px){
+  @media(min-width: 376px) {
     min-height: 100vh;
   }
   /*@media(max-width: 374px) {*/
@@ -143,7 +171,7 @@ body {
   /*}*/
 }
 
-.icon{
+.icon {
   width: 32px;
   height: 32px;
 }

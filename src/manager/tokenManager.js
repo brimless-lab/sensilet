@@ -143,13 +143,13 @@ tokenManager.getTokenInfo = async function (genesis) {
 
 };
 
-tokenManager.transfer = async function (receivers, {genesis, codehash}) {
+tokenManager.transfer = async function (receivers,broadcast, {genesis, codehash}) {
     let wif = walletManager.getMainWif();
     //转账时，bsv Utxo 需小于等于3，转账前检查
 
 
     //转账时，token Utxo 数需小于等于20，转账报错时检查
-    return await sensibleFtUtils.transfer(genesis, codehash, wif, wif, receivers, 10);
+    return await sensibleFtUtils.transfer(genesis, codehash, wif, wif, receivers, 10,broadcast);
 };
 
 

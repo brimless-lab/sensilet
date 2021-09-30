@@ -21,29 +21,44 @@ const accountInfo = await bsv.getAccount();
 const bsvBalance = await bsv.getBsvBalance();
 // 发送bsv
 const transferBsvRes = await bsv.transferBsv({
-  receivers: [{ address: "xxx", amount: 333 }],
+    receivers: [{address: "xxx", amount: 333}],
+    broadcast: true,
 });
 // 发送 sensible ft
 const transferFtTres = await bsv.transferSensibleFt({
-  receivers: [{ address: "xxx", amount: 344 }],
-  codehash: "codehash",
-  genesis: "genesis",
-  rabinApis: [
-    "https://s1.satoplay.com"
-]
+    receivers: [{address: "xxx", amount: 344}],
+    codehash: "codehash",
+    genesis: "genesis",
+    broadcast: true,
+    rabinApis: [
+        "https://s1.satoplay.com"
+    ]
 });
+//签名交易
+const sigList = await bsv.signTx({
+    list:[{
+        txHex: "",
+        scriptHex:"",
+        address:"",
+        inputIndex:0,
+        satoshis:32,
+        sigtype:0
+    }]
+})
 const transferAll = await bsv.transferAll([{
-    receivers: [{ address: "xxx", amount: 344 }],
-  codehash: "codehash",
-  genesis: "genesis",
-  rabinApis: [
-    "https://s1.satoplay.com"
-]
+    receivers: [{address: "xxx", amount: 344}],
+    codehash: "codehash",
+    genesis: "genesis",
+    broadcast: true,
+    rabinApis: [
+        "https://s1.satoplay.com"
+    ]
 }])
 ```
 
 ## Demo
- [Demo](https://test.sensilet.com/test.html)
+
+[Demo](https://test.sensilet.com/test.html)
 
 ## api
 
@@ -73,12 +88,12 @@ const transferAll = await bsv.transferAll([{
 
 ```ts
 interface SensibleFt {
-  genesis: string;
-  codehash: string;
-  tokenName: string;
-  tokenSymbol: string;
-  tokenDecimal: number;
-  balance: number;
+    genesis: string;
+    codehash: string;
+    tokenName: string;
+    tokenSymbol: string;
+    tokenDecimal: number;
+    balance: number;
 }
 ```
 
@@ -88,8 +103,8 @@ bsv 转账
 
 ```ts
 interface Receiver {
-  address: string;
-  amount: number;
+    address: string;
+    amount: number;
 }
 ```
 
@@ -99,11 +114,10 @@ sensible ft 转账
 
 ```ts
 interface Receiver {
-  address: string;
-  amount: number;
+    address: string;
+    amount: number;
 }
 ```
-
 
 ### bsv.transferAll([{receivers: Array<Receiver>, codehash: string, genesis: string, rabinApis: Array<String>}): Promise<{txid: string}]>
 
@@ -111,7 +125,7 @@ bsv 和 sensible ft 混合转账
 
 ```ts
 interface Receiver {
-  address: string;
-  amount: number;
+    address: string;
+    amount: number;
 }
 ```

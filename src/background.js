@@ -28,9 +28,9 @@ browser.runtime.onInstalled.addListener(details => {
     }
 });
 
-async function launchPopup(message, sender, sendResponse,checkConnected = true) {
-    if(checkConnected && ! await checkConnect(sender)){
-        sendResponse({
+async function launchPopup(message, sender, sendResponse, checkConnected = true) {
+    if (checkConnected && !await checkConnect(sender)) {
+        return sendResponse({
             result: "denied",
             id: message.data.id,
             msg: "Permission denied, connect first"
@@ -73,7 +73,7 @@ function handleConnect(message, sender, sendResponse) {
     chrome.storage.local.get('connectedWallets', (result) => {
         const connectedWallet = (result.connectedWallets || {})[sender.origin];
         if (!connectedWallet) {
-            launchPopup(message, sender, sendResponse,false);
+            launchPopup(message, sender, sendResponse, false);
         } else {
             // 对于已经连接过的， 直接返回
             console.log(message.data);
@@ -91,13 +91,13 @@ function handleDisconnect(message, sender, sendResponse) {
         delete result.connectedWallets[sender.origin];
         chrome.storage.local.set(
             {connectedWallets: result.connectedWallets},
-            () => sendResponse({ result: "success", id: message.data.id}),
+            () => sendResponse({result: "success", id: message.data.id}),
         );
     });
 }
 
 async function handleListGenesis(message, sender, sendResponse) {
-    if(!await checkConnect(sender)){
+    if (!await checkConnect(sender)) {
         sendResponse({
             result: "denied",
             id: message.data.id,
@@ -115,7 +115,7 @@ async function handleListGenesis(message, sender, sendResponse) {
 }
 
 async function handleListNft(message, sender, sendResponse) {
-    if(!await checkConnect(sender)){
+    if (!await checkConnect(sender)) {
         sendResponse({
             result: "denied",
             id: message.data.id,
@@ -132,7 +132,7 @@ async function handleListNft(message, sender, sendResponse) {
 }
 
 async function handleGetBsvBalance(message, sender, sendResponse) {
-    if(!await checkConnect(sender)){
+    if (!await checkConnect(sender)) {
         sendResponse({
             result: "denied",
             id: message.data.id,
@@ -154,7 +154,7 @@ async function handleGetBsvBalance(message, sender, sendResponse) {
 }
 
 async function handleGetTokenBalance(message, sender, sendResponse) {
-    if(!await checkConnect(sender)){
+    if (!await checkConnect(sender)) {
         sendResponse({
             result: "denied",
             id: message.data.id,

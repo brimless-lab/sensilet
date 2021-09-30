@@ -60,13 +60,21 @@ window.sensilet.getSensibleFtBalance = (params) => {
  * @param receivers Array<{address : string,amount : number}>
  * @param broadcast boolean 是否广播
  */
-window.sensilet.transferBsv = ({receivers}) => {
-    return action('pay', {broadcast: true, receivers})
+window.sensilet.transferBsv = ({receivers,broadcast}) => {
+    if(broadcast===undefined || broadcast==null)
+        broadcast = true
+    return action('pay', {broadcast, receivers})
 };
 
 
-window.sensilet.transferSensibleFt = ({genesis, rabinApis, receivers}) => {
-    return action('payToken', {broadcast: true, genesis, rabinApis, receivers})
+window.sensilet.transferSensibleFt = ({genesis, rabinApis,broadcast, receivers}) => {
+    if(broadcast===undefined || broadcast==null)
+        broadcast = true
+    return action('payToken', {broadcast, genesis, rabinApis, receivers})
+};
+
+window.sensilet.signTx = ({list}) => {
+    return action('signTx', {list})
 };
 /*
 const transferAll = await bsv.transferAll()

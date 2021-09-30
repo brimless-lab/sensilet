@@ -44,6 +44,10 @@ const pageConfigs = {
         needCreate: true,
         needUnlock: true,
     },
+    '/signTx': {
+        needCreate: true,
+        needUnlock: true,
+    },
 
 };
 
