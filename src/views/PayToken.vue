@@ -145,6 +145,7 @@ export default {
                     });
                     window.close();
                 } else {
+                    await sleep(2000)
                     routerManager.gotoHome();
                 }
             } catch (e) {

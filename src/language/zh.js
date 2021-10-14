@@ -54,6 +54,7 @@ export default {
     setting: {
         expand_view: "展開視圖",
         import_mnemonic: "導入助記詞",
+        export_mnemonic: "導出助記詞",
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

@@ -64,7 +64,24 @@ walletManager.isNeedUnlock = function () {
 //    从bg的对象中查询
     return !bg.passwordAes && !mPassword;
 };
+walletManager.isDefaultPassword = function (){
+    let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
+    if (!lockInfo) {
+        throw new Error('请先创建钱包')
+    }
+    return lockInfo.passwordHash === 'b9eb1134beb66506cbdfa320686147d297ba2f3597d772ee92e7dc83e025ac44'
+}
+walletManager.checkPassword = function(password){
+    let lockInfo = localManager.getCurrentAccount();
+    if (!lockInfo) {
+        throw new Error('请先创建钱包')
+    }
+    password += 'SatoWallet';
+    password = bsv.Hash.sha256(Buffer.from(password)).toString('hex');
+    let passwordHash = bsv.Hash.sha256(Buffer.from(password + 'SatoWallet')).toString('hex');
 
+    return passwordHash === lockInfo.passwordHash
+}
 walletManager.unlock = function (password, keep) {
 
     let lockInfo = localManager.getCurrentAccount();

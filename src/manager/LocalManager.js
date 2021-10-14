@@ -1,24 +1,19 @@
 let localManager = {};
 let bg = chrome.extension.getBackgroundPage();
 
-let _lockInfo = localStorage.getItem('lockInfo');
-_lockInfo = _lockInfo ? JSON.parse(_lockInfo) : null;
-let _lockInfoList = null;
 
-
-localManager.refreshLockInfoList = function (){
+localManager.refreshLockInfoList = function () {
     _lockInfoList = localStorage.getItem('lockInfoList');
     _lockInfoList = _lockInfoList ? JSON.parse(_lockInfoList) : null;
 }
 localManager.refreshLockInfoList();
 
-let _index = -1;
 
 function getIndex() {
-    if (_index > 0)
-        return _index;
+    let localInfo = localManager.getCurrentAccount();
+
     for (let i = 0; i < _lockInfoList.length; i++) {
-        if (_lockInfo.address === _lockInfoList[i].address)
+        if (localInfo.address === _lockInfoList[i].address)
             return i;
     }
     return -1;
@@ -37,17 +32,18 @@ localManager.push = function (key, item) {
 
 
 localManager.getCurrentAccount = function () {
-    if (!_lockInfo) {
-        _lockInfo = localStorage.getItem('lockInfo');
-        _lockInfo = _lockInfo ? JSON.parse(_lockInfo) : null;
-    }
-    return _lockInfo;
+
+    let lockInfo = localStorage.getItem('lockInfo');
+    lockInfo = lockInfo ? JSON.parse(lockInfo) : null;
+
+    return lockInfo;
 };
 
 localManager.listAccount = function () {
     if (!_lockInfoList) {
-        if (_lockInfo) {
-            _lockInfoList = [_lockInfo];
+        let lockInfo = localManager.getCurrentAccount();
+        if (lockInfo) {
+            _lockInfoList = [lockInfo];
             localStorage.setItem('lockInfoList', JSON.stringify(_lockInfoList));
             return _lockInfoList;
         }
@@ -57,14 +53,13 @@ localManager.listAccount = function () {
 };
 
 localManager.addAccount = function () {
-    _lockInfo = null;
     localStorage.removeItem("lockInfo");
     bg.passwordAes = "";
 
 };
 localManager.chooseAccount = function (accountInfo) {
-    _lockInfo = accountInfo;
-    localStorage.setItem('lockInfo', JSON.stringify(_lockInfo));
+
+    localStorage.setItem('lockInfo', JSON.stringify(accountInfo));
     bg.passwordAes = "";
 };
 
@@ -78,22 +73,28 @@ localManager.saveAlias = function (accountInfo) {
     }
     localStorage.setItem('lockInfoList', JSON.stringify(_lockInfoList));
 
-    if (accountInfo.address === _lockInfo.address) {
-        _lockInfo.alias = accountInfo.alias;
-        localStorage.setItem('lockInfo', JSON.stringify(_lockInfo));
+    let lockInfo = localManager.getCurrentAccount();
+
+    if (accountInfo.address === lockInfo.address) {
+        lockInfo.alias = accountInfo.alias;
+        localStorage.setItem('lockInfo', JSON.stringify(lockInfo));
     }
 };
 
 
 localManager.listGenesis = function () {
-    return _lockInfo.genesisList || [];
+    let lockInfo = localManager.getCurrentAccount();
+
+    return lockInfo.genesisList || [];
 };
 
 
 localManager.saveGenesis = function (info) {
-    _lockInfo.genesisList ? _lockInfo.genesisList.push(info) : _lockInfo.genesisList = [info];
-    setItem('lockInfo', _lockInfo);
-    _lockInfoList[getIndex()] = _lockInfo;
+    let lockInfo = localManager.getCurrentAccount();
+
+    lockInfo.genesisList ? lockInfo.genesisList.push(info) : lockInfo.genesisList = [info];
+    setItem('lockInfo', lockInfo);
+    _lockInfoList[getIndex()] = lockInfo;
     setItem('lockInfoList', _lockInfoList);
 };
 

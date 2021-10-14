@@ -22,9 +22,9 @@
     {
       "matches": [
         "https://*.tswap.io/*",
-        "https://test.sensilet.com/test.html",
+        "https://*.sensilet.com/*",
         "https://*.enfty.io/*",
-        "https://*.playonchain.net/*"
+        "https://*.defrontier.net/*"
       ],
       "js": [
         "js/content-script.js"

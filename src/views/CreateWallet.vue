@@ -1,5 +1,7 @@
 <template>
+
     <div class="panel" v-if="step===0">
+
         <div class="title">{{ $t('wallet.create_wallet') }}</div>
         <div class="desc">{{ $t('wallet.create_wallet_notice') }}</div>
         <div class="desc">{{ $t('wallet.create_wallet_notice_2') }}</div>
@@ -12,24 +14,23 @@
         </div>
         <div class="desc">{{ $t('wallet.create_wallet_notice_3') }}</div>
         <div class="desc">{{ $t('wallet.create_wallet_notice_4') }}</div>
-        <div class="check-container" v-if="showCheckContainer">
-            <a-checkbox v-model:checked="isMnemonicSaved">
-                <span>{{ $t('wallet.mnemonic_saved') }}</span>
-            </a-checkbox>
+<!--        <div class="check-container" v-if="showCheckContainer">-->
+<!--            <a-checkbox v-model:checked="isMnemonicSaved">-->
+<!--                <span>{{ $t('wallet.mnemonic_saved') }}</span>-->
+<!--            </a-checkbox>-->
 
-        </div>
-        <div class="check-container" v-else style="height: 20px">
+<!--        </div>-->
+<!--        <div class="check-container" v-else style="height: 20px">-->
 
-        </div>
-
+<!--        </div>-->
+        <!--<span>{{isMnemonicSaved}}</span>-->
         <div class="button-container">
             <div class="import-btn" @click="gotoImport()">
                 {{ $t('wallet.import_mnemonic') }}
             </div>
-            <span>{{ tempWord }}</span>
 
-            <a-button v-if="showCheckContainer" type="primary" @click="next" :disabled="!isMnemonicSaved">{{ $t('wallet.next') }}</a-button>
-            <a-button v-else type="primary">{{ $t('wallet.next') }}</a-button>
+            <a-button type="primary" @click="next" >{{ $t('wallet.next') }}</a-button>
+<!--            <a-button v-else type="primary">{{ $t('wallet.next') }}</a-button>-->
         </div>
     </div>
     <div class="panel" v-if="step===1">
@@ -64,14 +65,15 @@ export default {
     data: () => {
         return {
             step: 0,
-            isMnemonicSaved: false,
+            // isMnemonicSaved: false,
+            // btnCanClick: false,
             password: "",
             rePassword: "",
             mnemonic: null,
             isGoingToNext: false,
             inputMnemonic: "",
-            showCheckContainer: true,
-            tempWord: null,
+            // showCheckContainer: true,
+            clickCount:0,
         }
     },
     beforeCreate() {
@@ -84,34 +86,55 @@ export default {
             }
         }
     },
-    watch: {
-        isMnemonicSaved: (newVal) => {
+    // watch: {
+    //     isMnemonicSaved: (newVal) => {
 
-            //在弹出窗口中，点击checkbox 后 组件未刷新(原因未知)。这里通过v-if 触发强制刷新
-            _this.showCheckContainer = false;
-            setTimeout(() => {
-              _this.showCheckContainer = true;
-              document.getElementById("mnemonic").click()
-            }, 1)
-        }
-    },
+            // _this.btnCanClick = newVal
+            // _this.clickCount ++;
+            // //在弹出窗口中，点击checkbox 后 组件未刷新(原因未知)。这里通过v-if 触发强制刷新 (chrome更新后无效了，尔平那又可以...)
+            // _this.showCheckContainer = false;
+            // setTimeout(() => {
+            //     _this.showCheckContainer = true;
+            // }, 10)
+            //
+            //
+            // if(_this.clickCount>3){
+            //     antModal.confirm({
+            //         content:"在网页中打开",
+            //         onOk(){
+            //             window.open("/popup.html")
+            //
+            //         }
+            //     })
+            // }
+        // }
+    // },
 
     created() {
         _this = this;
-
         let mnemonic = sessionStorage.getItem('mnemonic');
         if (!mnemonic)
             mnemonic = walletManager.createMnemonic();
         sessionStorage.setItem('mnemonic', mnemonic);
         this.mnemonic = mnemonic;
+
+    },
+    mounted() {
+        // document.getElementById('mnemonicCheckbox').onclick = this.toggleSaveCheckbox
+
     },
     methods: {
+        toggleSaveCheckbox() {
+            this.isMnemonicSaved = !this.isMnemonicSaved
+        },
         next() {
             if (this.step === 0) {
-                if (this.isMnemonicSaved)
-                    this.step++;
-                else
-                    antMessage.warning(this.$t('wallet.mnemonic_notice_2'));
+                antModal.confirm({
+                    content:_this.$t("wallet.mnemonic_saved"),
+                    onOk(){
+                        _this.step++;
+                    }
+                })
             } else if (this.step === 1) {
                 this.step++;
             } else if (this.step === 2) {
@@ -216,6 +239,12 @@ function goNextPage() {
 .check-container {
     display: flex;
     align-items: center;
+
+    .check-box {
+        img {
+            //width: 24px;
+        }
+    }
 
     span {
         margin-left: 4px;

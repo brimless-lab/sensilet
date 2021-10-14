@@ -10,6 +10,8 @@
         <div v-if="showSetting" class="right" @click="gotoSetting()">
             <img class="icon" src="./assets/icon-setting.svg" alt="">
         </div>
+        <AccountChoose v-else-if="showAccountChoose"/>
+
     </div>
     <!--        <router-view/>-->
     <!--        因为插件的特殊性，这里需要自己维护路由-->
@@ -28,6 +30,7 @@
         <Setting v-else-if="currentPage==='/setting'"/>
         <SignTx v-else-if="currentPage==='/signTx'"/>
         <SignMsg v-else-if="currentPage==='/signMsg'"/>
+        <ExportWallet v-else-if="currentPage==='/export'"/>
     </div>
 
 </template>
@@ -49,6 +52,9 @@ import Merge from "./views/Merge";
 import Setting from "./views/Setting";
 import SignTx from "./views/SignTx";
 import SignMsg from "./views/SignMsg";
+import ExportWallet from "./views/ExportWallet";
+
+import AccountChoose from "./components/AccountChoose";
 
 
 const urlParams = new URLSearchParams(window.location.hash.slice(1));
@@ -70,6 +76,8 @@ export default {
         Setting,
         SignTx,
         SignMsg,
+        ExportWallet,
+        AccountChoose
     },
     data() {
         return {
@@ -77,12 +85,16 @@ export default {
             walletName: config.walletName,
             currentPage: routerManager.getCurrentPage(),
             count: global.bg.count,
+            showAccountChoose:false,
             // showSetting: true
         }
     },
     computed:{
         showSetting(){
             return this.currentPage  === '/account'
+        },
+        showAccountChoose(){
+            return this.currentPage  === '/'
         }
     },
     beforeCreate() {
@@ -263,6 +275,12 @@ body {
     a {
         margin: 0 16px;
         color: #57606a;
+        display: flex;
+        align-items: center;
+        img{
+            border-radius: 50%;
+            width: 24px;
+        }
     }
 }
 
@@ -272,7 +290,7 @@ body {
     margin: 0 auto;
     padding: 20px;
     border-radius: 4px;
-    line-height: 1.43;
+    //line-height: 1.43;
     letter-spacing: 0.01071em;
 
     @media (min-width: 450px) {

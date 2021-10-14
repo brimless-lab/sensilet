@@ -19,9 +19,10 @@
                 <div class="list" v-else>
                     <div class="bsv-item">
                         <div class="info">
-                            <img src="../assets/bsv-icon.svg" alt="">
+
 
                             <div class="balance">
+                                <img src="../assets/bsv-icon.svg" alt="">
                                 <a-spin v-if="bsvAsset.isRefreshingAmount"/>
                                 <span v-else>{{ bsvAsset.balance.total / Math.pow(10, bsvAsset.decimal) }} {{ bsvAsset.name }}</span>
                             </div>
@@ -34,9 +35,9 @@
 
                         </div>
                         <div class="action-container">
-                            <a-button @click="receive(bsvAsset)">{{$t('account.receive')}}</a-button>
-                            <a-button @click="sendBsv(bsvAsset)">{{$t('account.send')}}</a-button>
-                            <a-button @click="openHistory(bsvAsset.address)">{{$t('account.history')}}</a-button>
+                            <a-button @click="receive(bsvAsset)">{{ $t('account.receive') }}</a-button>
+                            <a-button @click="sendBsv(bsvAsset)">{{ $t('account.send') }}</a-button>
+                            <a-button @click="openHistory(bsvAsset.address)">{{ $t('account.history') }}</a-button>
 
                             <a-modal v-model:visible="bsvAsset.showQr" :footer="null" :closable=false>
                                 <div style="display: flex;flex-direction: column;align-items: center">
@@ -68,7 +69,7 @@
                         <div class="info" @click="item.open=!item.open">
                             <div class="left">
 
-                                <img style="width: 32px;height: 32px;border-radius: 50%" :src="item.logo || '/img/empty-token.png'" alt="">
+                                <img style="width: 42px;height: 42px;border-radius: 50%" :src="item.logo || '/img/empty-token.png'" alt="">
                             </div>
                             <div class="mid">
                                 <div class="balance">
@@ -82,12 +83,12 @@
                             </div>
                         </div>
                         <div class="action-container">
-                            <a-button @click="receive(item)">{{$t('account.receive')}}</a-button>
-                            <a-button @click="sendToken(item)">{{$t('account.send')}}</a-button>
+                            <a-button @click="receive(item)">{{ $t('account.receive') }}</a-button>
+                            <a-button @click="sendToken(item)">{{ $t('account.send') }}</a-button>
                             <a-modal v-model:visible="item.showQr" :footer="null" :closable=false>
                                 <div style="display: flex;flex-direction: column;align-items: center">
                                     <qrcode-vue :value="mainAddress" :size="200" level="H"/>
-                                    <p style="margin-top: 20px" >
+                                    <p style="margin-top: 20px">
                                         {{ mainAddress }}
                                     </p>
                                 </div>
@@ -113,32 +114,47 @@
                     </div>
                 </div>
             </div>
+            <div class="panel">
+                <div class="account-top">
+                    <div class="title"> 热门应用</div>
+                </div>
+                <div class="app-list" v-if="appList!=null">
+                    <div class="item" v-for="item in appList">
+                        <a :href="item.url" target="_blank">
+                            <img :src="item.logo" alt="">
+<!--                            <span> {{ item.name }}  </span>-->
+                        </a>
+                    </div>
+                    <div class="item">
+                        and more ...
+                    </div>
+                </div>
+                <a-spin v-else></a-spin>
+            </div>
         </div>
-        <!--  <div class="panel">-->
-        <!--    <div class="account-top">-->
-        <!--      <div class="title"> 热门应用</div>-->
-        <!--    </div>-->
-        <!--    <div class="app-list">-->
-        <!--      <div class="item">-->
-        <!--        <a href="https://main.satoplay.cn">-->
-        <!--          <img src="https://main.satoplay.cn/logo180.png" alt="">-->
-        <!--          <span>-->
-        <!--            小聪游戏-->
-        <!--          </span>-->
-        <!--        </a>-->
-        <!--      </div>-->
-        <!--    </div>-->
-        <!--  </div>-->
+
 
         <div class="footer">
-            <a href="https://sensilet.com" target="_blank">Sensilet</a>
-            <a href="https://t.me/sensilet" target="_blank">Telegram</a>
-            <a href="https://github.com/sensilet/sensilet" target="_blank">GitHub</a>
+            <a href="https://sensilet.com" target="_blank">
+                <img src="../assets/logo.png" alt="">
+                Sensilet
+            </a>
+            <a href="https://t.me/sensilet" target="_blank">
+                <img src="/img/telegram.png" alt="">
+
+                Telegram
+            </a>
+            <a href="https://github.com/sensilet/sensilet" target="_blank">
+                <svg height="24" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="32" data-view-component="true" class="octicon octicon-mark-github v-align-middle">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+                GitHub
+            </a>
         </div>
     </div>
     <a-modal v-model:visible="showAddTokenPanel" :footer="null" :closable=false>
         <div class="base-token-list" v-if="baseTokenList">
-            <div class="title">{{$t('account.hot')}}</div>
+            <div class="title">{{ $t('account.hot') }}</div>
             <div class="item " v-for="item in baseTokenList.hot" @click="addToken(item)">
                 <img :src="item.logo||'/img/empty-token.png'" alt="">
                 <div class="info">
@@ -152,7 +168,7 @@
                         p-id="1815" fill="#1afa29"></path>
                 </svg>
             </div>
-            <div class="title">{{$t('account.token_list')}}</div>
+            <div class="title">{{ $t('account.token_list') }}</div>
             <div class="item" v-for="item in baseTokenList.list" @click="addToken(item)">
                 <img :src="item.logo||'/img/empty-token.png'" alt="">
                 <div class="info">
@@ -187,7 +203,8 @@ import DownOutlined from '@ant-design/icons-vue/lib/icons/DownOutlined'
 import QrcodeVue from 'qrcode.vue'
 
 import AccountChoose from "../components/AccountChoose";
-import Clipboard from "clipboard"
+import Clipboard from "clipboard";
+import httpUtils from '../utils/httpUtils';
 
 let clip = null;
 
@@ -201,9 +218,10 @@ export default {
     },
     data() {
         return {
-            extName:chrome.i18n.getMessage("extName"),
+            extName: chrome.i18n.getMessage("extName"),
             asset: [],
             bsvAsset: null,
+            appList: null,
             nftGenesisList: null,
             tokenList: null,
             showAddTokenPanel: false,
@@ -214,6 +232,7 @@ export default {
             transAmount: null,
             transInfo: {},
             transType: "BSV",
+
         }
     },
     beforeCreate() {
@@ -229,7 +248,7 @@ export default {
             open: false,
         };
 
-        assetData.addressShow = showLongString(assetData.address, 12)
+        assetData.addressShow = showLongString(assetData.address, 10)
 
         let balance = await walletManager.getBsvBalance();
 
@@ -240,20 +259,20 @@ export default {
         };
         assetData.isRefreshingAmount = false;
 
-        // this.asset.push(
-        //     assetData
-        // );
+
         this.bsvAsset = assetData
         this.nftGenesisList = await nftManager.listAllNft().catch(e => []);
 
+        this.appList = (await httpUtils.get('https://sensilet.com/api/application_list')).data
+
         await this.refreshToken();
+
 
     },
     mounted() {
-        console.log('aaaaaaaa')
         clip = new Clipboard('#icon-copy');
         clip.on('success', e => {
-            antMessage.success(this.$t('account.clip',[e.text ]));
+            antMessage.success(this.$t('account.clip', [e.text]));
         });
     },
     unmounted() {
@@ -300,20 +319,20 @@ export default {
         transfer() {
             //检查信息
             if (!walletManager.checkBsvAddress(this.transAddress)) {
-                return antMessage.error(this.$t('account.address_error') )
+                return antMessage.error(this.$t('account.address_error'))
             }
 
             let amount = this.transAmount;
             if (isNaN(amount))
-                return antMessage.error(this.$t('account.amount_error') )
+                return antMessage.error(this.$t('account.amount_error'))
 
             switch (this.transType) {
                 case "BSV":
                     amount = Math.round(parseFloat(amount) * Math.pow(10, 8));
                     if (amount <= 0)
-                        return antMessage.error(this.$t('account.amount_error_2') )
+                        return antMessage.error(this.$t('account.amount_error_2'))
                     if (amount > this.transInfo.balance.total)
-                        return antMessage.error(this.$t('account.balance_not_enough') )
+                        return antMessage.error(this.$t('account.balance_not_enough'))
 
                     routerManager.goto('/pay', {
                         broadcast: true,
@@ -325,9 +344,9 @@ export default {
 
                     amount = Math.round(parseFloat(amount) * Math.pow(10, this.transInfo.decimal));
                     if (amount <= 0)
-                        return antMessage.error(this.$t('account.amount_error_2') )
+                        return antMessage.error(this.$t('account.amount_error_2'))
                     if (amount > this.transInfo.balance)
-                        return antMessage.error(this.$t('account.balance_not_enough') )
+                        return antMessage.error(this.$t('account.balance_not_enough'))
 
                     routerManager.goto('/payToken', {
                         genesis: this.transInfo.genesis,
@@ -400,17 +419,31 @@ export default {
 
 .app-list {
     display: flex;
-
+    align-items: center;
+    flex-wrap: wrap;
     .item {
-        padding: 8px;
+        box-sizing: border-box;
+        width: calc(50% - 16px );
+        height: 48px;
+        padding: 4px;
+        margin: 8px;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        //box-shadow: 3px 3px 9px 0 rgba(0, 0, 0, 0.1);
 
         a {
             display: flex;
             flex-direction: column;
+            align-items: center;
 
             img {
-                width: 64px;
-                height: 64px;
+                //width: 48px;
+                height: 42px;
             }
 
             span {
@@ -427,7 +460,7 @@ export default {
         .info {
             display: flex;
             justify-content: space-between;
-            padding: 8px 16px;
+            padding: 8px;
             align-items: center;
 
             &:active {
@@ -519,8 +552,16 @@ export default {
             }
 
             .balance {
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 font-size: 32px;
                 color: #333;
+
+                img {
+                    margin-right: 20px;
+                }
+
                 //font-weight: bold;
             }
 

@@ -54,6 +54,8 @@ export default {
     setting: {
         expand_view: "Expand View",
         import_mnemonic: "Import Mnemonic",
+        export_mnemonic: "Export Mnemonic",
+
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

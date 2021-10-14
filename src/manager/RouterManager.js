@@ -56,6 +56,10 @@ const pageConfigs = {
         needCreate: true,
         needUnlock: true,
     },
+    '/export': {
+        needCreate: true,
+        needUnlock: true,
+    },
 
 };
 
