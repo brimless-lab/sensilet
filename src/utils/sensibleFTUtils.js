@@ -1,7 +1,7 @@
 let utils = {};
 
 //sensibleFtUtils 是加载在bg中
-const SensibleFT =require('sensible-sdk').SensibleFT;
+const SensibleFT = require('sensible-sdk').SensibleFT;
 
 const config = require('../config/base');
 
@@ -13,7 +13,7 @@ const ft = new SensibleFT({
 });
 
 
-utils.getBalance = function (genesis,codehash, address) {
+utils.getBalance = function (genesis, codehash, address) {
 
     return ft.getBalance({
         codehash,
@@ -22,8 +22,8 @@ utils.getBalance = function (genesis,codehash, address) {
     });
 };
 
-utils.getUtxoCount =async (genesis,codehash,address)=>{
-    let {utxoCount} =await ft.getBalanceDetail({
+utils.getUtxoCount = async (genesis, codehash, address) => {
+    let {utxoCount} = await ft.getBalanceDetail({
         codehash,
         genesis,
         address
@@ -31,23 +31,45 @@ utils.getUtxoCount =async (genesis,codehash,address)=>{
     return utxoCount
 };
 
+utils.merge = async function (senderWif, purseWif, genesis,codehash,utxoCount){
+    let ft = new SensibleFT({
+        network: config.network,
+        feeb: 0.5,
+        purse: purseWif,
+    });
 
-utils.transfer = async function (genesis, codehash,senderWif, purseWif, receivers,utxoCount,broadcast=true) {
+    for (let i = 0; i < 10 && utxoCount > 20; i++) {
+        await ft.merge(
+            {
+                ownerWif: senderWif,
+                codehash,
+                genesis,
+            }
+        );
+        await sleep(2000);
+        utxoCount -= 19;
+    }
+}
 
-     let ft = new SensibleFT({
+utils.transfer = async function (genesis, codehash, senderWif, purseWif, receivers, utxoCount, broadcast = true, utxo = null) {
+
+    let ft = new SensibleFT({
         network: config.network,
         feeb: 0.5,
         purse: purseWif,
         // signers,
         // signerSelecteds: item.signerSelecteds,
     });
-
+    if (utxo) {
+        utxo.address = walletManager.getMainAddress();
+        utxo.wif = walletManager.getMainWif();
+    }
 
     for (let i = 0; i < 10 && utxoCount > 20; i++) {
         await ft.merge(
             {
                 ownerWif: senderWif,
-                codehash ,
+                codehash,
                 genesis,
             }
         );
@@ -55,30 +77,36 @@ utils.transfer = async function (genesis, codehash,senderWif, purseWif, receiver
         utxoCount -= 19;
     }
 
-     return ft.transfer({
-         senderWif,
-         receivers,
-         codehash,
-         genesis,
-         noBroadcast:!broadcast,
-     })
+
+    let transferParams = {
+        senderWif,
+        receivers,
+        codehash,
+        genesis,
+        noBroadcast: !broadcast,
+    }
+    if(utxo){
+        transferParams.utxos = [utxo]
+    }
+
+
+    return ft.transfer(transferParams)
 };
 
-utils.getTransferEsitimate = (codehash, genesis, receivers,senderWif)=>{
-    // getTransferEstimateFee({
-    // codehash, genesis, receivers, senderWif,
-    // senderPrivateKey, senderPublicKey, ftUtxos,
-    // ftChangeAddress, isMerge, opreturnData, utxoMaxCount,
-    // }: {
-    // return SensibleNFTObj.getTransferEstimateFee({genesis, codehash, tokenIndex, senderWif, senderPrivateKey, senderPublicKey, opreturnData})
-
-
-
-    return  ft.getTransferEstimateFee({
-         codehash, genesis, receivers,
+utils.getTransferEsitimate = (codehash, genesis, receivers, senderWif) => {
+    return ft.getTransferEstimateFee({
+        codehash, genesis, receivers,
         senderWif,
 
-     })
+    })
+}
+
+utils.getMergeEstimateFee = (codehash, genesis, senderWif) => {
+    return ft.getMergeEstimateFee({
+        codehash, genesis,
+        ownerWif: senderWif,
+        utxoMaxCount: 20
+    })
 }
 
 module.exports = utils;

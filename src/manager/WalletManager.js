@@ -158,7 +158,6 @@ walletManager.getMainPubKey = function () {
 };
 
 walletManager.getWif = function (path) {
-    console.log(path)
     return getRootKey().derive(path).privKey.toWif();
 };
 walletManager.getWifAndPubKey = function (path) {
@@ -198,8 +197,11 @@ walletManager.pay = async function (to, amount, broadcast) {
 };
 
 walletManager.payArray = async function (receivers, broadcast,wif = null) {
+    // console.log('pay array')
     if (!wif)
         wif = walletManager.getMainWif();
+
+    // console.log(receivers)
 
     //发送多人
     let txComposer = await new Wallet(
@@ -211,7 +213,7 @@ walletManager.payArray = async function (receivers, broadcast,wif = null) {
         noBroadcast:!broadcast,
     });
 
-    return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId()};
+    return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId(),tx:txComposer.tx};
 };
 
 walletManager.sendOpReturn = function (op, wif) {

@@ -48,6 +48,14 @@ const pageConfigs = {
         needCreate: true,
         needUnlock: true,
     },
+    '/merge': {
+        needCreate: true,
+        needUnlock: true,
+    },
+    '/signMsg': {
+        needCreate: true,
+        needUnlock: true,
+    },
 
 };
 

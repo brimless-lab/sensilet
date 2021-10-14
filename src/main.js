@@ -66,9 +66,13 @@ global.routerManager = routerManager;
 global.antMessage = antMessage;
 global.antModal = antModal;
 
+import i18n from './language/i18n'
+
+console.log('init i18n')
+
 // global.antMessage = {};
 // global.antModal = {};
-createApp(App).use(store)
+createApp(App).use(i18n).use(store)
     .use(Spin).use(Collapse).use(Card).use(CheckBox).use(Button).use(Input).use(Select).use(antModal).use(Dropdown).use(Menu)
     .mount('#app');
 

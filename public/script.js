@@ -60,15 +60,15 @@ window.sensilet.getSensibleFtBalance = (params) => {
  * @param receivers Array<{address : string,amount : number}>
  * @param broadcast boolean 是否广播
  */
-window.sensilet.transferBsv = ({receivers,broadcast}) => {
-    if(broadcast===undefined || broadcast==null)
+window.sensilet.transferBsv = ({receivers, broadcast}) => {
+    if (broadcast === undefined || broadcast == null)
         broadcast = true
     return action('pay', {broadcast, receivers})
 };
 
 
-window.sensilet.transferSensibleFt = ({genesis, rabinApis,broadcast, receivers}) => {
-    if(broadcast===undefined || broadcast==null)
+window.sensilet.transferSensibleFt = ({genesis, rabinApis, broadcast, receivers}) => {
+    if (broadcast === undefined || broadcast == null)
         broadcast = true
     return action('payToken', {broadcast, genesis, rabinApis, receivers})
 };
@@ -76,20 +76,29 @@ window.sensilet.transferSensibleFt = ({genesis, rabinApis,broadcast, receivers})
 window.sensilet.signTx = ({list}) => {
     return action('signTx', {list})
 };
+window.sensilet.signMsg = ({msg}) => {
+    return action('signMsg', {msg})
+};
+window.sensilet.checkUtxoCount = ({genesis,codehash}) => {
+    return action('checkTokenUtxoCount', {genesis,codehash})
+};
 /*
 const transferAll = await bsv.transferAll()
 */
-window.sensilet.transferAll =async (params) => {
+window.sensilet.transferAll = async (params) => {
     let result = [];
-    for (let i = 0;params && i < params.length; i++) {
-            result[i] = await  action( params[i].genesis?'payToken':'pay', params[i])
+    for (let i = 0; params && i < params.length; i++) {
+        if(i>0 &&result[i-1].utxo ){
+            params[i].utxo = result[i-1].utxo;
+        }
+        result[i] = await action(params[i].genesis ? 'payToken' : 'pay', params[i])
     }
     return result;
 }
 
 
 window.sensilet.payWithoutBroadcast = ({receivers}, callback) => {
-   return  action('pay', {
+    return action('pay', {
         receivers,
         broadcast: false,
     }, callback)

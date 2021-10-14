@@ -1,9 +1,9 @@
 <template>
     <div class="coin-type" style="display: inline-block">
-        <span v-if="showValue && !isNaN(showValue)" :class="priceColorClass">
+        <span v-if="showValue " :class="priceColorClass">
             {{showValue}}
         </span>
-        <span v-if="!hideUnit"  class="bsv-color" :style="'margin-left:4px;'+'color:'+ color">
+        <span v-if="!hideUnit && !isNaN(showValue) "  class="bsv-color" :style="'margin-left:4px;'+'color:'+ color">
             {{unitWord}}
         </span>
     </div>
@@ -26,6 +26,8 @@
 
         computed: {
             showValue() {
+                if(isNaN(this.value))
+                    return this.value
                 return this.bigUnit ? (this.value / Math.pow(10, this.decimal)).toFixed(this.fixed) : this.value;
             },
             unitWord(){

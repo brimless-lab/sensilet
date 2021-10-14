@@ -1,9 +1,7 @@
-let count = localStorage.getItem("count");
-window.count = count ? parseInt(count) : 0;
-
 const responseHandlers = new Map();
 const sensibleSdk = require("sensible-sdk");
 
+require('./config/errorCode')
 const walletManager = require("./manager/WalletManager");
 const tokenManager = require("./manager/tokenManager");
 
@@ -17,7 +15,6 @@ const SensibleNFTObj = new sensibleSdk.SensibleNFT({
     feeb: 0.5,
     // signers
 });
-
 
 browser.runtime.onInstalled.addListener(details => {
     if (details.reason === 'install') {
@@ -37,6 +34,7 @@ async function launchPopup(message, sender, sendResponse, checkConnected = true)
             msg: "Permission denied, connect first"
         });
     }
+    console.log(sender)
 
 
     const searchParams = new URLSearchParams();
@@ -171,6 +169,31 @@ async function handleGetTokenBalance(message, sender, sendResponse) {
     })
 }
 
+async function handleCheckTokenUtxo(message, sender, sendResponse) {
+    if (!await checkConnect(sender)) {
+        sendResponse({
+            result: "denied",
+            id: message.data.id,
+            msg: "Permission denied, connect first"
+        });
+    }
+
+    let {genesis,codehash} = message.data.params;
+    let utxoCount = await tokenManager.sensibleFt.getUtxoCount(genesis,codehash,walletManager.getMainAddress());
+    console.log(utxoCount)
+    return         launchPopup(message, sender, sendResponse)
+
+    if(utxoCount<20) {
+        sendResponse({
+            id: message.data.id,
+            result: "success",
+            data:true,
+        })
+    }else{
+        launchPopup(message, sender, sendResponse)
+    }
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(message, "onMessage");
 
@@ -187,6 +210,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             handleGetBsvBalance(message, sender, sendResponse);
         } else if (message.data.method === 'getTokenBalance') {
             handleGetTokenBalance(message, sender, sendResponse);
+        } else if (message.data.method === 'checkTokenUtxoCount') {
+            handleCheckTokenUtxo(message, sender, sendResponse);
         } else {
             launchPopup(message, sender, sendResponse);
         }
@@ -194,7 +219,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     } else if (message.channel === 'sato_extension_background_channel') {
         const responseHandler = responseHandlers.get(message.data.id);
-        responseHandlers.delete(message.data.id);
-        responseHandler(message.data);
+        if(responseHandler) {
+            responseHandlers.delete(message.data.id);
+            responseHandler(message.data);
+        }
     }
 });

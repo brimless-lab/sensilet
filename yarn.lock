@@ -1006,6 +1006,44 @@
     cssnano-preset-default "^4.0.0"
     postcss "^7.0.0"
 
+"@intlify/core-base@9.2.0-beta.11":
+  version "9.2.0-beta.11"
+  resolved "https://registry.npmjs.org/@intlify/core-base/-/core-base-9.2.0-beta.11.tgz#1b579a8532ec2f7dc2ddcf799b25c3afe6ecabc4"
+  integrity sha512-ECq24EGCOldaDQuBJSGkuhbLIxzaA1O8S5JEucaWj3enjZJFolk9F0HUceQ8U2Fi+B+GlTv9hrXSK9nT6CGu8w==
+  dependencies:
+    "@intlify/devtools-if" "9.2.0-beta.11"
+    "@intlify/message-compiler" "9.2.0-beta.11"
+    "@intlify/shared" "9.2.0-beta.11"
+    "@intlify/vue-devtools" "9.2.0-beta.11"
+
+"@intlify/devtools-if@9.2.0-beta.11":
+  version "9.2.0-beta.11"
+  resolved "https://registry.npmjs.org/@intlify/devtools-if/-/devtools-if-9.2.0-beta.11.tgz#b9c950ee3a646dca1b9e8fb87f7a90b2d874a4fb"
+  integrity sha512-2MxFmHIBvHPBcahdTFAcPAdrs0qSYGNQseso78p8eUJ0WO4TWZp+yXkVOhBhFA6xiWfxw47dfeFI7U7zJ7vpdA==
+  dependencies:
+    "@intlify/shared" "9.2.0-beta.11"
+
+"@intlify/message-compiler@9.2.0-beta.11":
+  version "9.2.0-beta.11"
+  resolved "https://registry.npmjs.org/@intlify/message-compiler/-/message-compiler-9.2.0-beta.11.tgz#2a41fd58bf947191405537406ea10d37a6acb04d"
+  integrity sha512-ehNX6TGVivnivWmAlfarlE9i/iMOMsDI01MxCylXRLoBpHfdNeA3E7rsPCOM0YdSuFrvECuxCTdA3ECiOruEoQ==
+  dependencies:
+    "@intlify/shared" "9.2.0-beta.11"
+    source-map "0.6.1"
+
+"@intlify/shared@9.2.0-beta.11":
+  version "9.2.0-beta.11"
+  resolved "https://registry.npmjs.org/@intlify/shared/-/shared-9.2.0-beta.11.tgz#9beb40de0c884fd7d62311445a0666399396de97"
+  integrity sha512-b6lmE5nH/Vn5bwKu8T3AM57a2cWO+ZMQ5ydEbyNs92VYayIEHYe2Rza8wRwQBhklta9xJG0gP5Ywv8t/xiCT8A==
+
+"@intlify/vue-devtools@9.2.0-beta.11":
+  version "9.2.0-beta.11"
+  resolved "https://registry.npmjs.org/@intlify/vue-devtools/-/vue-devtools-9.2.0-beta.11.tgz#3022580dd7984025380fc720c8bc9a54f5097212"
+  integrity sha512-odubEzztg5MqMxlLaYQtFWrV3CXrSmehr3jfRzMqgzRF08EAJ+X4vms4erJgYUJ+vHihuV7FetoVTIMYYmCNzQ==
+  dependencies:
+    "@intlify/core-base" "9.2.0-beta.11"
+    "@intlify/shared" "9.2.0-beta.11"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
   resolved "https://registry.npm.taobao.org/@mrmlnc/readdir-enhanced/download/@mrmlnc/readdir-enhanced-2.2.1.tgz#524af240d1a360527b730475ecfa1344aa540dde"
@@ -1535,6 +1573,11 @@
   version "6.0.0-beta.14"
   resolved "https://registry.nlark.com/@vue/devtools-api/download/@vue/devtools-api-6.0.0-beta.14.tgz#6ed2d6f8d66a9256c9ad04bfff08309ba87b9723"
   integrity sha1-btLW+NZqklbJrQS//wgwm6h7lyM=
+
+"@vue/devtools-api@^6.0.0-beta.13":
+  version "6.0.0-beta.19"
+  resolved "https://registry.npmjs.org/@vue/devtools-api/-/devtools-api-6.0.0-beta.19.tgz#f8e88059daa424515992426a0c7ea5cde07e99bf"
+  integrity sha512-ObzQhgkoVeoyKv+e8+tB/jQBL2smtk/NmC9OmFK8UqdDpoOdv/Kf9pyDWL+IFyM7qLD2C75rszJujvGSPSpGlw==
 
 "@vue/preload-webpack-plugin@^1.1.0":
   version "1.1.2"
@@ -2700,6 +2743,15 @@ cli-spinners@^2.0.0:
   resolved "https://registry.npm.taobao.org/cli-spinners/download/cli-spinners-2.6.0.tgz?cache=0&sync_timestamp=1616091572272&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fcli-spinners%2Fdownload%2Fcli-spinners-2.6.0.tgz#36c7dc98fb6a9a76bd6238ec3f77e2425627e939"
   integrity sha1-NsfcmPtqmna9YjjsP3fiQlYn6Tk=
 
+clipboard@^2.0.8:
+  version "2.0.8"
+  resolved "https://registry.npmjs.org/clipboard/-/clipboard-2.0.8.tgz#ffc6c103dd2967a83005f3f61976aa4655a4cdba"
+  integrity sha512-Y6WO0unAIQp5bLmk1zdThRhgJt/x3ks6f30s3oE3H1mgIEU33XyQjEf8gsf6DxC7NPX8Y1SsNWjUjL/ywLnnbQ==
+  dependencies:
+    good-listener "^1.2.2"
+    select "^1.1.2"
+    tiny-emitter "^2.0.0"
+
 clipboardy@^2.3.0:
   version "2.3.0"
   resolved "https://registry.npm.taobao.org/clipboardy/download/clipboardy-2.3.0.tgz#3c2903650c68e46a91b388985bc2774287dba290"
@@ -3391,6 +3443,11 @@ delayed-stream@~1.0.0:
   version "1.0.0"
   resolved "https://registry.npm.taobao.org/delayed-stream/download/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
   integrity sha1-3zrhmayt+31ECqrgsp4icrJOxhk=
+
+delegate@^3.1.2:
+  version "3.2.0"
+  resolved "https://registry.npmjs.org/delegate/-/delegate-3.2.0.tgz#b66b71c3158522e8ab5744f720d8ca0c2af59166"
+  integrity sha512-IofjkYBZaZivn0V8nnsMJGBr4jVLxHDheKSW88PyxS5QC4Vo9ZbZVvhzlSxY87fVq3STR6r+4cGepyHkcWOQSw==
 
 depd@~1.1.2:
   version "1.1.2"
@@ -4238,6 +4295,13 @@ globby@^9.2.0:
     ignore "^4.0.3"
     pify "^4.0.1"
     slash "^2.0.0"
+
+good-listener@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.npmjs.org/good-listener/-/good-listener-1.2.2.tgz#d53b30cdf9313dffb7dc9a0d477096aa6d145c50"
+  integrity sha1-1TswzfkxPf+33JoNR3CWqm0UXFA=
+  dependencies:
+    delegate "^3.1.2"
 
 graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6:
   version "4.2.6"
@@ -7198,6 +7262,11 @@ select-hose@^2.0.0:
   resolved "https://registry.nlark.com/select-hose/download/select-hose-2.0.0.tgz#625d8658f865af43ec962bfc376a37359a4994ca"
   integrity sha1-Yl2GWPhlr0Psliv8N2o3NZpJlMo=
 
+select@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.npmjs.org/select/-/select-1.1.2.tgz#0e7350acdec80b1108528786ec1d4418d11b396d"
+  integrity sha1-DnNQrN7ICxEIUoeG7B1EGNEbOW0=
+
 selfsigned@^1.10.8:
   version "1.10.11"
   resolved "https://registry.nlark.com/selfsigned/download/selfsigned-1.10.11.tgz#24929cd906fe0f44b6d01fb23999a739537acbe9"
@@ -7470,15 +7539,15 @@ source-map-url@^0.4.0:
   resolved "https://registry.nlark.com/source-map-url/download/source-map-url-0.4.1.tgz#0af66605a745a5a2f91cf1bbf8a7afbc283dec56"
   integrity sha1-CvZmBadFpaL5HPG7+KevvCg97FY=
 
+source-map@0.6.1, source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.0, source-map@~0.6.1:
+  version "0.6.1"
+  resolved "https://registry.nlark.com/source-map/download/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
+  integrity sha1-dHIq8y6WFOnCh6jQu95IteLxomM=
+
 source-map@^0.5.0, source-map@^0.5.6:
   version "0.5.7"
   resolved "https://registry.nlark.com/source-map/download/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
   integrity sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
-
-source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.0, source-map@~0.6.1:
-  version "0.6.1"
-  resolved "https://registry.nlark.com/source-map/download/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
-  integrity sha1-dHIq8y6WFOnCh6jQu95IteLxomM=
 
 source-map@^0.7.3:
   version "0.7.3"
@@ -7884,6 +7953,11 @@ timsort@^0.3.0:
   resolved "https://registry.nlark.com/timsort/download/timsort-0.3.0.tgz#405411a8e7e6339fe64db9a234de11dc31e02bd4"
   integrity sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q=
 
+tiny-emitter@^2.0.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/tiny-emitter/-/tiny-emitter-2.1.0.tgz#1d1a56edfc51c43e863cbb5382a72330e3555423"
+  integrity sha512-NB6Dk1A9xgQPMoGqC5CVXn123gWyte215ONT5Pp5a0yt4nlEoO1ZWeCwpncaekPHXO60i47ihFnZPiRPjRMq4Q==
+
 tmp@0.0.x:
   version "0.0.33"
   resolved "https://registry.npm.taobao.org/tmp/download/tmp-0.0.33.tgz#6d34335889768d21b2bcda0aa277ced3b1bfadf9"
@@ -8265,6 +8339,16 @@ vue-hot-reload-api@^2.3.0:
   version "2.3.4"
   resolved "https://registry.npm.taobao.org/vue-hot-reload-api/download/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
   integrity sha1-UylVzB6yCKPZkLOp+acFdGV+CPI=
+
+vue-i18n@^9.2.0-beta.11:
+  version "9.2.0-beta.11"
+  resolved "https://registry.npmjs.org/vue-i18n/-/vue-i18n-9.2.0-beta.11.tgz#1992fed8a6a0a741b15ce7c733e4158126ee7b3a"
+  integrity sha512-qJ4ZRSGFGqYiC3gABD1cLhw7s7G1dw0Di3k+XHy6XhJt3+FUHOQiLiQMA41ZkfmgZ0Gb34SF5ij3YF88DXmbyA==
+  dependencies:
+    "@intlify/core-base" "9.2.0-beta.11"
+    "@intlify/shared" "9.2.0-beta.11"
+    "@intlify/vue-devtools" "9.2.0-beta.11"
+    "@vue/devtools-api" "^6.0.0-beta.13"
 
 "vue-loader-v16@npm:vue-loader@^16.1.0":
   version "16.2.0"

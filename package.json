@@ -1,6 +1,6 @@
 {
   "name": "sensilet",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service build --mode development --watch",
@@ -12,11 +12,13 @@
     "ant-design-vue": "^2.1.6",
     "axios": "^0.20.0",
     "bsv": "^2.0.10",
+    "clipboard": "^2.0.8",
     "core-js": "^3.6.5",
     "crypto-js": "^4.0.0",
     "qrcode.vue": "^3.2.2",
     "sensible-sdk": "7.2.9-beta.2",
     "vue": "^3.0.11",
+    "vue-i18n": "^9.2.0-beta.11",
     "vue-router": "^4.0.8",
     "vuex": "^4.0.1"
   },

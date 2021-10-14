@@ -1,28 +1,28 @@
 <template>
     <div class="panel">
-        <div class="title" v-if="origin">此网站申请签名此交易</div>
+        <div class="title" v-if="origin">{{$t('popup.sign_tx_request')}}</div>
         <div class="pay-info" v-if="origin">
             <div class="origin">{{ origin }}</div>
         </div>
         <div class="tx-list" v-for="txDetail in txDetailList">
             <div class="item" v-for="item in txDetail">
                 <div class="info">
-                    <span>交易类型:</span>
+                    <span>{{$t('popup.tx_type')}}</span>
                     <span>{{ item.type }}</span>
                 </div>
                 <div class="info">
-                    <span>收款地址:</span>
+                    <span>{{$t('popup.receive_address')}}</span>
                     <span>{{ item.address }}</span>
                 </div>
                 <div class="info">
-                    <span>金额:</span>
+                    <span>{{$t('popup.amount')}}</span>
                     <CoinShow :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
                 </div>
             </div>
         </div>
         <div class="action-container" v-if="!isCreating">
-            <a-button @click="cancel">取消</a-button>
-            <a-button type="primary" @click="commit">确定</a-button>
+            <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
+            <a-button type="primary" @click="commit">{{$t('popup.commit')}}</a-button>
         </div>
         <a-spin v-else/>
     </div>
@@ -33,7 +33,6 @@
 const urlParams = new URLSearchParams(window.location.hash.slice(1));
 const origin = urlParams.get('origin');
 const request = JSON.parse(urlParams.get('request'));
-const list = request.params.list;
 import CoinShow from "../components/CoinShow";
 import txUtils from "../utils/txUtils"
 
@@ -55,6 +54,7 @@ export default {
     },
     async mounted() {
         // console.log(list)
+        let list = this.list;
         if (!list || list.length <= 0)
             return this.cancel('list is empty')
 
@@ -90,7 +90,7 @@ export default {
                     temp.decimal = data.decimalNum
                 } else {
                     if(txDetail[j].address === this.userAddress){
-                        temp.type += "(找零)"
+                        temp.type += `(${$t('popup.change')})`
                     }
                     temp.amount = txDetail[j].satoshis;
                     temp.address = showLongString(txDetail[j].address, 20);
@@ -128,6 +128,7 @@ export default {
             window.close();
         },
         async commit() {
+            let list = this.list;
             try {
                 this.isCreating = true;
 

@@ -1,24 +1,24 @@
 <template>
 
   <div class="panel" v-if="step===0">
-    <div class="title">恢复钱包</div>
-    <div class="desc">请在下方填入您的助记词。</div>
-    <a-textarea v-model:value="inputMnemonic" placeholder="请输入助记词..." :rows="3"/>
+    <div class="title">{{$t('wallet.import_mnemonic_2')}}</div>
+    <div class="desc">{{$t('wallet.mnemonic_notice_3')}}</div>
+    <a-textarea v-model:value="inputMnemonic" :placeholder="$t('wallet.confirm_mnemonic_placeholder_2')" :rows="3"/>
     <div class="button-container">
-      <a-button type="default" @click="back()">返回</a-button>
+      <a-button type="default" @click="back()"> {{$t("wallet.back")}}</a-button>
 
-      <a-button type="primary" @click="next" :disabled="inputMnemonic.length<23">下一步</a-button>
+      <a-button type="primary" @click="next" :disabled="inputMnemonic.length<23">{{$t("wallet.next")}}</a-button>
     </div>
   </div>
   <div class="panel" v-if="step===1">
-    <div class="title">设置密码(可选)</div>
-    <div class="desc">设置一个密码来保护您的钱包安全</div>
-    <a-input v-model:value="password" placeholder="请输入密码...(可选)" type="password"/>
-    <a-input style="margin-top: 10px" v-model:value="rePassword" placeholder="请再次输入密码...(可选)" type="password"/>
-    <div class="desc">如果您忘记了你的密码，您需要使用助记词重新恢复钱包</div>
+    <div class="title">{{$t("wallet.set_password")}}</div>
+    <div class="desc">{{$t("wallet.set_password_notice")}}</div>
+    <a-input v-model:value="password" :placeholder="$t('wallet.input_password')" type="password"/>
+    <a-input style="margin-top: 10px" v-model:value="rePassword" :placeholder="$t('wallet.input_password_again')" type="password"/>
+    <div class="desc">{{$t("wallet.set_password_notice_2")}}</div>
     <div class="button-container">
-      <a-button v-if="!isGoingToNext" type="default" @click="pre">上一步</a-button>
-      <a-button v-if="!isGoingToNext" type="primary" @click="next">完成</a-button>
+      <a-button v-if="!isGoingToNext" type="default" @click="pre">{{$t("wallet.pre")}}</a-button>
+      <a-button v-if="!isGoingToNext" type="primary" @click="next">{{$t("wallet.commit")}}</a-button>
       <a-spin v-if="isGoingToNext"/>
     </div>
   </div>
@@ -49,7 +49,7 @@ export default {
         //去掉两边空格后 以空格分割
         let temp = this.inputMnemonic.replace(/(^\s*)|(\s*$)/g, "").split(' ');
         if (temp.length !== 12)
-          return antMessage.warning('助记词应有12个单词');
+          return antMessage.warning(this.$t('wallet.mnemonic_error'));
 
         try {
           //确认助记词是否可用
@@ -64,7 +64,7 @@ export default {
         //如果输入了密码则检查
         if (this.password && this.password.length > 0) {
           if (this.password !== this.rePassword)
-            return antMessage.warning('两次输入的密码不一致');
+            return antMessage.warning(this.$t('wallet.password_error'));
         }
         if (!this.password) {
           //  没设置则使用 默认密码
@@ -80,7 +80,7 @@ export default {
           walletManager.unlock(this.password, false);
           goNextPage();
         } else {
-          antMessage.error('已经存在的助记词，请勿重复添加')
+          antMessage.error(this.$t('wallet.mnemonic_exist'))
         }
         this.isGoingToNext = false;
 

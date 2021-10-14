@@ -30,6 +30,8 @@ txUtils.getTxInfo = function (rawHex) {
 };
 
 txUtils.sign = (wif, {txHex, scriptHex, address, inputIndex, satoshis, sigtype,}) => {
+    if(!sigtype)
+        sigtype = bsv156.crypto.Signature.SIGHASH_ALL | bsv156.crypto.Signature.SIGHASH_FORKID;
 
     let sighash = bsv156.Transaction.Sighash.sighash(
         new bsv156.Transaction(txHex),
@@ -38,7 +40,7 @@ txUtils.sign = (wif, {txHex, scriptHex, address, inputIndex, satoshis, sigtype,}
         new bsv156.Script(scriptHex),
         new BN(satoshis)
     ).toString("hex");
-    // console.log("#2")
+
     let privateKey = new bsv156.PrivateKey(wif);
     let publicKey = privateKey.toPublicKey().toString();
 
@@ -47,11 +49,12 @@ txUtils.sign = (wif, {txHex, scriptHex, address, inputIndex, satoshis, sigtype,}
         privateKey,
         "little"
     );
-    // console.log(publicKey, sig.r.toString("hex"), sig.s.toString("hex"));
+
     return {
         publicKey,
         r: sig.r.toString("hex"),
-        s: sig.s.toString("hex")
+        s: sig.s.toString("hex"),
+        sig:sig.set({nhashtype: sigtype}).toTxFormat().toString("hex"),
     }
 }
 
