@@ -3,7 +3,7 @@ export default {
         // this.$t('wallet.') {{$t('wallet.')}} :placeholder="$t('wallet.')"
         create_wallet: "Create New Wallet",
         create_wallet_notice: "Create a new wallet to hold BSV and Token",
-        create_wallet_notice_2: "Please write down the following twelve words and keep them in a safe place:",
+        create_wallet_notice_2: "Please write down the following 12 words and keep them in a safe place:",
         mnemonic: "Mnemonic",
         create_wallet_notice_3: "Your private keys are only stored on your current computer or device.",
         create_wallet_notice_4: "You will need these words to restore your wallet if your browser's storage is cleared or your device is damaged or lost.",
@@ -23,7 +23,7 @@ export default {
         mnemonic_exist: 'The mnemonic already exists.',
         set_password: "Choose a Password (Optional)",
         set_password_notice: "Optionally pick a password to protect your wallet.",
-        set_password_notice_2: "If you forget your password you will need to restore your wallet using your seed words.",
+        set_password_notice_2: "If you forget your password you will need to restore your wallet using your mnemonic words.",
         input_password: "input password...(optional)",
         input_password_2: "input password...",
         input_password_again: "input password again...(optional)",
@@ -36,7 +36,7 @@ export default {
         unlock: "Unlock",
         password_error_2: "password error",
 
-        mnemonic_notice_4:"If you ever change browsers or move computers, you will need this Mnemonic to access this account. Save them somewhere safe and secret.",
+        mnemonic_notice_4:"If you ever change browsers or move computers, you will need the Mnemonic Words to access this account. Save them somewhere safe and secret.",
 
         private_key:"Private Key",
         import_private: "Restore From Private Key(Wif)",
@@ -46,15 +46,15 @@ export default {
 
         adv_options:"Advanced Options",
         options_notice:"If you don't know what the following options are, please don't modify them.",
-        passphrase:"Passphrase:(Optional)",
-        passphrase_notice_1:"this can protect your mnemonic. Even if others got your mnemonic,they can't transfer your assets.",
-        passphrase_notice_2:"if you set it ,you should input this when import from mnemonic.",
-        passphrase_notice_3:"if you set it but not input when import mnemonic, you also can get an account, but it won't meet your expectations.",
-        passphrase_notice_4:"We won't save this, If you forget it, no one can help to find back your asset.",
+        passphrase:"Passphrase: (Optional)",
+        passphrase_notice_1:"The passphrase can provide additional protection to your assets. Even if your mnemonic is stolen, your assets are safe if the passphrase is not revealed.",
+        passphrase_notice_2:"If the passphrase is set, you need to input this when importing your mnemonic words.",
+        passphrase_notice_3:"If the passphrase is set, but the 12 mnemonic words are imported without inputing the passphrase, the wallet with the passphrase will NOT be restored and a new wallet without the passphrase will be created.",
+        passphrase_notice_4:"The passphrase is not saved. So please be careful that, if you forget it, you will never be able to restore your assets.",
         der_path :"Derivation Path:",
 
-        passphrase_import_notice_1:"You should input this if you have set if before.",
-        passphrase_import_notice_2:"Even you input a wrong passphrase, you also can get an account, but it won't meet your expectations.",
+        passphrase_import_notice_1:"You should input this if you have set it before.",
+        passphrase_import_notice_2:"If you input a wrong passphrase, the restored wallet won't be the same wallet with the original passphrase.",
     },
     account: {
         // this.$t('account.') {{$t('account.')}} :placeholder="$t('account.')"
