@@ -3,7 +3,7 @@ export default {
         // this.$t('wallet.') {{$t('wallet.')}} :placeholder="$t('wallet.')"
         create_wallet: "Create New Wallet",
         create_wallet_notice: "Create a new wallet to hold BSV and Token",
-        create_wallet_notice_2: "Please write down the following twenty four words and keep them in a safe place:",
+        create_wallet_notice_2: "Please write down the following twelve words and keep them in a safe place:",
         mnemonic: "Mnemonic",
         create_wallet_notice_3: "Your private keys are only stored on your current computer or device.",
         create_wallet_notice_4: "You will need these words to restore your wallet if your browser's storage is cleared or your device is damaged or lost.",
@@ -44,16 +44,26 @@ export default {
         confirm_private_placeholder: "please enter your Private Key...",
         private_notice_4:"If you ever change browsers or move computers, you will need this Private Key to access this account. Save them somewhere safe and secret.",
 
+        adv_options:"Advanced Options",
+        options_notice:"If you don't know what the following options are, please don't modify them.",
+        passphrase:"Passphrase:(Optional)",
+        passphrase_notice_1:"this can protect your mnemonic. Even if others got your mnemonic,they can't transfer your assets.",
+        passphrase_notice_2:"if you set it ,you should input this when import from mnemonic.",
+        passphrase_notice_3:"if you set it but not input when import mnemonic, you also can get an account, but it won't meet your expectations.",
+        passphrase_notice_4:"We won't save this, If you forget it, no one can help to find back your asset.",
+        der_path :"Derivation Path:",
 
+        passphrase_import_notice_1:"You should input this if you have set if before.",
+        passphrase_import_notice_2:"Even you input a wrong passphrase, you also can get an account, but it won't meet your expectations.",
     },
     account: {
         // this.$t('account.') {{$t('account.')}} :placeholder="$t('account.')"
         receive: "Receive",
         send: "Send",
-        history: "Record",
+        history: "History",
         hot: "Hot Token",
         token_list: "Token List",
-        hot_app:"Applications",
+        hot_app:"Apps",
         input_address: "input address",
         input_amount: "input amount(unit:{0})",
         clip: "{0} copied！",
@@ -62,6 +72,10 @@ export default {
         amount_error_2: "the value need be bigger than 0",
         balance_not_enough: "Insufficient balance",
         add_custom_token:"Add custom token",
+
+        choose:"Choose",
+        add:"Add New(create new Mnemonic)",
+        alias_input:"input an alias",
 
     },
     setting: {

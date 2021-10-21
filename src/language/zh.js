@@ -42,7 +42,7 @@ export default {
         send: "發送",
         history: "歷史",
         hot: "熱門推薦",
-        hot_app:"Hot Application",
+        hot_app:"Hot Apps",
         token_list: "Token列表",
         input_address: "請輸入接收地址",
         input_amount: "請輸入金額(單位:{0})",
