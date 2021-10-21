@@ -35,6 +35,16 @@ export default {
         keep_unlock: "Keep Unlock",
         unlock: "Unlock",
         password_error_2: "password error",
+
+        mnemonic_notice_4:"If you ever change browsers or move computers, you will need this Mnemonic to access this account. Save them somewhere safe and secret.",
+
+        private_key:"Private Key",
+        import_private: "Restore From Private Key(Wif)",
+        private_notice_3: "Please enter your Private Key(Wif) to confirm",
+        confirm_private_placeholder: "please enter your Private Key...",
+        private_notice_4:"If you ever change browsers or move computers, you will need this Private Key to access this account. Save them somewhere safe and secret.",
+
+
     },
     account: {
         // this.$t('account.') {{$t('account.')}} :placeholder="$t('account.')"
@@ -43,6 +53,7 @@ export default {
         history: "Record",
         hot: "Hot Token",
         token_list: "Token List",
+        hot_app:"Applications",
         input_address: "input address",
         input_amount: "input amount(unit:{0})",
         clip: "{0} copied！",
@@ -50,12 +61,17 @@ export default {
         amount_error: "invalid value",
         amount_error_2: "the value need be bigger than 0",
         balance_not_enough: "Insufficient balance",
+        add_custom_token:"Add custom token",
+
     },
     setting: {
         expand_view: "Expand View",
         import_mnemonic: "Import Mnemonic",
         export_mnemonic: "Export Mnemonic",
-
+        import_private_key: "Import Private Key",
+        export_private_key: "Export Private Key",
+        notice_1:"DO NOT share this phrase with anyone!",
+        notice_2:"These words can be used to steal this account.",
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

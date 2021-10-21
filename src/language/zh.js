@@ -42,6 +42,7 @@ export default {
         send: "發送",
         history: "歷史",
         hot: "熱門推薦",
+        hot_app:"Hot Application",
         token_list: "Token列表",
         input_address: "請輸入接收地址",
         input_amount: "請輸入金額(單位:{0})",
@@ -50,11 +51,14 @@ export default {
         amount_error: "無效的金額",
         amount_error_2: "轉出金額需大於0",
         balance_not_enough: "賬戶余額不足",
+        add_custom_token:"添加自定義Token",
     },
     setting: {
         expand_view: "展開視圖",
         import_mnemonic: "導入助記詞",
         export_mnemonic: "導出助記詞",
+        notice_1:"DO NOT share this phrase with anyone!",
+        notice_2:"These words can be used to steal this account.",
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

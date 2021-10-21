@@ -31,6 +31,8 @@
         <SignTx v-else-if="currentPage==='/signTx'"/>
         <SignMsg v-else-if="currentPage==='/signMsg'"/>
         <ExportWallet v-else-if="currentPage==='/export'"/>
+        <ImportPrivate v-else-if="currentPage==='/importPrivateKey'"/>
+        <ExportPrivate v-else-if="currentPage==='/exportPrivateKey'"/>
     </div>
 
 </template>
@@ -53,6 +55,8 @@ import Setting from "./views/Setting";
 import SignTx from "./views/SignTx";
 import SignMsg from "./views/SignMsg";
 import ExportWallet from "./views/ExportWallet";
+import ImportPrivate from "./views/ImportPrivate";
+import ExportPrivate from "./views/ExportPrivate";
 
 import AccountChoose from "./components/AccountChoose";
 
@@ -77,7 +81,9 @@ export default {
         SignTx,
         SignMsg,
         ExportWallet,
-        AccountChoose
+        AccountChoose,
+        ImportPrivate,
+        ExportPrivate,
     },
     data() {
         return {
@@ -271,6 +277,7 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    background-color: #f5f5f5;
 
     a {
         margin: 0 16px;
@@ -318,6 +325,16 @@ body {
     &::-webkit-scrollbar {
         width: 0;
     }
+    .title-container{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .action{
+            color: #666;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
 
     .title {
         font-size: 16px;
@@ -354,7 +371,7 @@ body {
 
         img {
             border-radius: 50%;
-            width: 48px;
+            width: 36px;
         }
 
         .info {
@@ -385,6 +402,12 @@ body {
     z-index: 990;
 }
 
-
+.custom-token-form{
+    .input{
+        &:not(:first-child){
+            margin-top: 10px;
+        }
+    }
+}
 
 </style>

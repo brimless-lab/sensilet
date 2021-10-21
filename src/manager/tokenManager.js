@@ -349,15 +349,57 @@ function getLocalTokenList() {
     return tokenList ? JSON.parse(tokenList) : [];
 }
 
+function getLocalTokenTable() {
+
+    let tokenList = getLocalTokenList();
+    let tokenTable = {};
+    tokenList.forEach((item) => {
+        tokenTable[item.genesis] = item;
+    })
+    return tokenTable;
+}
+
+async function getAllTokenTable() {
+    let tokenTable = localStorage.getItem('allTokenTable');
+    if (!tokenTable) {
+        //    通过网络获取全部token信息
+        tokenTable = {};
+        let data = (await httpUtils.get('https://sensilet.com/api/token_list')).data
+
+        if (data) {
+            if (data.hot)
+                data.hot.forEach(item => {
+                    tokenTable[item.genesis] = item
+
+                })
+
+            if (data.list)
+                data.list.forEach(item => {
+                    tokenTable[item.genesis] = item
+                })
+
+
+            localStorage.setItem('allTokenTable', JSON.stringify(tokenTable));
+        }
+    } else
+        tokenTable = JSON.parse(tokenTable)
+
+    return tokenTable
+}
+
 tokenManager.getTokenListNet = async function () {
     let data = (await httpUtils.get('https://sensilet.com/api/token_list')).data
 
     let local = getLocalTokenList();
-    if (data && local && local.length > 0) {
+    if (data) {
         let temp = {};
-        local.forEach(item => {
-            temp[item.genesis] = true
-        })
+
+        if (local && local.length > 0)
+            local.forEach(item => {
+                temp[item.genesis] = true
+            })
+
+        let allTokenTable = {};
         if (data.hot)
             //标记 为已添加
             // data.hot.map(item => {
@@ -365,14 +407,23 @@ tokenManager.getTokenListNet = async function () {
             //     return item
             // })
             //
-            data.hot = data.hot.filter(item=> !temp[item.genesis])
+            //直接过滤掉
+            data.hot = data.hot.filter(item => {
+                allTokenTable[item.genesis] = item
+                return !temp[item.genesis]
+            })
         if (data.list)
             // data.list.map(item => {
             //     item.added = temp[item.genesis]|| false;
             //     return item
             // })
-            data.list = data.list.filter(item=> !temp[item.genesis])
+            //直接过滤掉
+            data.list = data.list.filter(item => {
+                allTokenTable[item.genesis] = item
+                return !temp[item.genesis]
+            })
 
+        localStorage.setItem('allTokenTable', JSON.stringify(allTokenTable));
     }
 
     return data
@@ -415,34 +466,57 @@ tokenManager.addToken = function (tokenInfo) {
 
 tokenManager.listUserTokens = async function () {
 
-    let tokenList = getLocalTokenList();
+
+    let tokenList = [];
 
     let address = walletManager.getMainAddress();
 
-    for (let i = 0; i < tokenList.length; i++) {
-        tokenList[i].balance = await sensibleFtUtils.getBalance(tokenList[i].genesis, tokenList[i].codehash, address)
+    let result = await sensibleFtUtils.getAllBalance(address, 0, 10000)
+
+    if (result.code === 0) {
+        tokenList = result.data;
+
+        // 给数据加上logo
+        let tokenTable = await getAllTokenTable();
+        for (let i = 0; i < tokenList.length; i++) {
+            if (tokenTable[tokenList[i].genesis])
+                tokenList[i].logo = tokenTable[tokenList[i].genesis].logo;
+        }
+
+        //追加已添加但余额为空的token
+        let localList = getLocalTokenList();
+        for (let i = 0; localList && i < localList.length; i++) {
+            if(tokenList.findIndex(item=>item.genesis === localList[i].genesis ) < 0){
+                localList[i].balance = 0;
+                tokenList.push(localList[i])
+            }
+        }
+
+    } else {
+        //查询接口返回错误时
+        tokenList = getLocalTokenList();
+        for (let i = 0; i < tokenList.length; i++) {
+            tokenList[i].balance = await sensibleFtUtils.getBalance(tokenList[i].genesis, tokenList[i].codehash, address).catch(e => 0)
+        }
     }
+
+    console.log(tokenList)
 
     return tokenList;
 };
 
 tokenManager.getTokenInfo = async function (genesis) {
-    let tokenList = getLocalTokenList();
-    let tokenInfo = null;
-    for (let i = 0; i < tokenList.length; i++) {
-        if (tokenList[i].genesis === genesis) {
-            tokenInfo = tokenList[i];
-            break
-        }
-    }
-    if (!tokenInfo)
-        for (let i = 0; i < baseList.length; i++) {
-            if (baseList[i].genesis === genesis) {
-                tokenInfo = baseList[i];
-                break
-            }
-        }
+    //从已添加的列表中获取
+    let tokenTable = getLocalTokenTable();
+    let tokenInfo = tokenTable[genesis];
 
+    //没有则从所有token列表中获取信息
+    if (!tokenInfo){
+        let allInfo = await getAllTokenTable()
+        tokenInfo = allInfo[genesis];
+    }
+
+    //查询余额
     if (tokenInfo) {
         tokenInfo.balance = await sensibleFtUtils.getBalance(tokenInfo.genesis, tokenInfo.codehash, walletManager.getMainAddress())
     }
@@ -451,14 +525,14 @@ tokenManager.getTokenInfo = async function (genesis) {
 };
 
 
-tokenManager.transfer = async function (receivers, broadcast, {genesis, codehash}, utxo) {
+tokenManager.transfer = async function (receivers, broadcast, {genesis, codehash}, utxo, signers) {
     let wif = walletManager.getMainWif();
 
     //转账时，bsv Utxo 需小于等于3，转账前检查
-    let utxoCount = sensibleFtUtils.getUtxoCount(genesis, codehash, walletManager.getMainAddress());
+    let utxoCount = await sensibleFtUtils.getUtxoCount(genesis, codehash, walletManager.getMainAddress());
 
     //转账时，token Utxo 数需小于等于20，转账报错时检查
-    return await sensibleFtUtils.transfer(genesis, codehash, wif, wif, receivers, utxoCount, broadcast, utxo);
+    return sensibleFtUtils.transfer(genesis, codehash, wif, wif, receivers, utxoCount, broadcast, utxo, signers);
 };
 
 

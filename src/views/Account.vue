@@ -69,7 +69,7 @@
                         <div class="info" @click="item.open=!item.open">
                             <div class="left">
 
-                                <img style="width: 42px;height: 42px;border-radius: 50%" :src="item.logo || '/img/empty-token.png'" alt="">
+                                <img style="width: 36px;height: 36px;border-radius: 50%" :src="item.logo || '/img/empty-token.png'" alt="">
                             </div>
                             <div class="mid">
                                 <div class="balance">
@@ -116,13 +116,13 @@
             </div>
             <div class="panel">
                 <div class="account-top">
-                    <div class="title"> 热门应用</div>
+                    <div class="title"> {{$t('account.hot_app')}}</div>
                 </div>
                 <div class="app-list" v-if="appList!=null">
                     <div class="item" v-for="item in appList">
                         <a :href="item.url" target="_blank">
                             <img :src="item.logo" alt="">
-<!--                            <span> {{ item.name }}  </span>-->
+                            <!--                            <span> {{ item.name }}  </span>-->
                         </a>
                     </div>
                     <div class="item">
@@ -146,7 +146,8 @@
             </a>
             <a href="https://github.com/sensilet/sensilet" target="_blank">
                 <svg height="24" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="32" data-view-component="true" class="octicon octicon-mark-github v-align-middle">
-                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                    <path fill-rule="evenodd"
+                          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
                 </svg>
                 GitHub
             </a>
@@ -154,21 +155,28 @@
     </div>
     <a-modal v-model:visible="showAddTokenPanel" :footer="null" :closable=false>
         <div class="base-token-list" v-if="baseTokenList">
-            <div class="title">{{ $t('account.hot') }}</div>
-            <div class="item " v-for="item in baseTokenList.hot" @click="addToken(item)">
-                <img :src="item.logo||'/img/empty-token.png'" alt="">
-                <div class="info">
-                    <div class="name">{{ item.name }}</div>
-                    <div class="genesis ellipsis">Genesis: {{ item.genesis }}</div>
-                </div>
-                <svg v-if="item.added" t="1634030847866" class="icon added" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1814" width="48"
-                     height="48">
-                    <path
-                        d="M768 85.333333a85.333333 85.333333 0 0 1 85.333333 85.333334v727.978666a42.666667 42.666667 0 0 1-62.677333 37.717334l-258.688-137.301334a42.666667 42.666667 0 0 0-40.021333 0L233.386667 936.32A42.666667 42.666667 0 0 1 170.666667 898.645333V170.666667a85.333333 85.333333 0 0 1 85.333333-85.333334h512z m-83.498667 223.317334a42.666667 42.666667 0 0 0-60.117333 5.248l-164.394667 195.669333-58.965333-66.730667-3.754667-3.754666a42.666667 42.666667 0 0 0-60.16 60.245333l91.733334 103.893333 3.626666 3.626667a42.666667 42.666667 0 0 0 61.013334-4.437333l196.266666-233.642667 3.2-4.266667a42.666667 42.666667 0 0 0-8.448-55.850666z"
-                        p-id="1815" fill="#1afa29"></path>
-                </svg>
+<!--            <div class="title-container">-->
+<!--                <div class="title">{{ $t('account.hot') }}</div>-->
+<!--                <div class="action" @click="showAddCustomTokenPanel">{{ $t('account.add_custom_token') }}</div>-->
+<!--            </div>-->
+<!--            <div class="item " v-for="item in baseTokenList.hot" @click="addToken(item)">-->
+<!--                <img :src="item.logo||'/img/empty-token.png'" alt="">-->
+<!--                <div class="info">-->
+<!--                    <div class="name">{{ item.name }}</div>-->
+<!--                    <div class="genesis ellipsis">Genesis: {{ item.genesis }}</div>-->
+<!--                </div>-->
+<!--                <svg v-if="item.added" t="1634030847866" class="icon added" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1814" width="48"-->
+<!--                     height="48">-->
+<!--                    <path-->
+<!--                        d="M768 85.333333a85.333333 85.333333 0 0 1 85.333333 85.333334v727.978666a42.666667 42.666667 0 0 1-62.677333 37.717334l-258.688-137.301334a42.666667 42.666667 0 0 0-40.021333 0L233.386667 936.32A42.666667 42.666667 0 0 1 170.666667 898.645333V170.666667a85.333333 85.333333 0 0 1 85.333333-85.333334h512z m-83.498667 223.317334a42.666667 42.666667 0 0 0-60.117333 5.248l-164.394667 195.669333-58.965333-66.730667-3.754667-3.754666a42.666667 42.666667 0 0 0-60.16 60.245333l91.733334 103.893333 3.626666 3.626667a42.666667 42.666667 0 0 0 61.013334-4.437333l196.266666-233.642667 3.2-4.266667a42.666667 42.666667 0 0 0-8.448-55.850666z"-->
+<!--                        p-id="1815" fill="#1afa29"></path>-->
+<!--                </svg>-->
+<!--            </div>-->
+
+            <div class="title-container">
+                <div class="title">{{ $t('account.token_list') }}</div>
+                <div class="action" @click="showAddCustomTokenPanel">{{ $t('account.add_custom_token') }}</div>
             </div>
-            <div class="title">{{ $t('account.token_list') }}</div>
             <div class="item" v-for="item in baseTokenList.list" @click="addToken(item)">
                 <img :src="item.logo||'/img/empty-token.png'" alt="">
                 <div class="info">
@@ -193,6 +201,14 @@
         <div class="trans-info-container">
             <a-input v-model:value="transAddress" :placeholder="$t('account.input_address')"/>
             <a-input v-model:value="transAmount" :placeholder="$t('account.input_amount',[transType==='BSV'? 'BSV':transInfo.unit])"/>
+        </div>
+    </a-modal>
+    <a-modal v-model:visible="isShowAddCustomTokenPanel" @ok="addCustomToken" :closable=false>
+        <div class="custom-token-form">
+            <a-input class="input" v-model:value="customToken.genesis" placeholder="genesis"/>
+            <a-input class="input" v-model:value="customToken.codehash" placeholder="codehash"/>
+            <a-input class="input" v-model:value="customToken.name" placeholder="name"/>
+            <a-input class="input" v-model:value="customToken.decimal" type="number" placeholder="decimal"/>
         </div>
     </a-modal>
 </template>
@@ -232,6 +248,8 @@ export default {
             transAmount: null,
             transInfo: {},
             transType: "BSV",
+            isShowAddCustomTokenPanel: false,
+            customToken: {}
 
         }
     },
@@ -266,8 +284,6 @@ export default {
         this.appList = (await httpUtils.get('https://sensilet.com/api/application_list')).data
 
         await this.refreshToken();
-
-
     },
     mounted() {
         clip = new Clipboard('#icon-copy');
@@ -295,10 +311,20 @@ export default {
             this.baseTokenList = await tokenManager.getTokenListNet();
 
         },
+        showAddCustomTokenPanel() {
+            this.showAddTokenPanel = false;
+            this.isShowAddCustomTokenPanel = true;
+        },
+        addCustomToken() {
+            this.customToken.decimal = parseInt(this.customToken.decimal)
+            this.addToken(this.customToken)
+        },
         async addToken(item) {
             let err = tokenManager.addToken(item);
             if (!err) {
                 this.showAddTokenPanel = false;
+                this.isShowAddCustomTokenPanel = false;
+                this.customToken = {};
                 await this.refreshToken()
             } else {
                 antMessage.error(err.message)
@@ -421,9 +447,10 @@ export default {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+
     .item {
         box-sizing: border-box;
-        width: calc(50% - 16px );
+        width: calc(50% - 16px);
         height: 48px;
         padding: 4px;
         margin: 8px;
@@ -570,7 +597,10 @@ export default {
                 border-radius: 5px;
 
                 &:hover {
-                    background-color: #ccc;
+                    background-color: #F2F3F4;
+                }
+                &:active{
+                    background-color: #e2e3e4;
                 }
             }
         }

@@ -1,7 +1,7 @@
 <template>
     <div class="top-info">
-        <div class="title">{{ $t("wallet.mnemonic") }}</div>
-        <div class="notice">{{ $t("wallet.mnemonic_notice_4") }}</div>
+        <div class="title">{{ $t("wallet.private_key") }}</div>
+        <div class="notice">{{ $t("wallet.private_notice_4") }}</div>
         <div class="warning">
             <img src="../assets/icon-warning.svg" alt="warning" class="left">
             <div class="right">
@@ -23,16 +23,13 @@
     </div>
     <div class="panel" v-if="step===1">
         <div class="seed-container">
-            <div class="seed-title">{{ $t('wallet.mnemonic') }}</div>
+            <div class="seed-title">{{ $t('wallet.private_key') }}</div>
             <div class="copy-btn" id="icon-copy" :data-clipboard-text="mnemonic">
                 <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0H1H9V1H1V9H0V0ZM2 2H11V11H2V2ZM3 3H10V10H3V3Z" fill="#989a9b"></path>
                 </svg>
             </div>
-            <div v-if="mnemonic" id="mnemonic" class="content">{{ mnemonic }}</div>
-            <div v-else class="content">
-                <a-spin/>
-            </div>
+            <div class="content">{{ mnemonic }}</div>
         </div>
         <div class="button-container">
             <div>
@@ -46,18 +43,18 @@
 </template>
 
 <script>
-import Clipboard from "clipboard";
-let clip = null;
 
+import Clipboard from "clipboard";
+
+
+
+let clip = null;
 export default {
-    name: "ExportWallet",
+    name: "ExportPrivate",
     data: () => {
         return {
             step: 0,
-            // isMnemonicSaved: false,
-            // btnCanClick: false,
             password: "",
-
             mnemonic: null,
         }
     },
@@ -82,10 +79,10 @@ export default {
                 } else if (walletManager.checkPassword(this.password)) {
                     this.step++;
                 } else {
-                    antMessage.error(this.$t('wallet.password_error_2'))
+                    return antMessage.error(this.$t('wallet.password_error_2'))
                 }
 
-                this.mnemonic = walletManager.getMnemonic();
+                this.mnemonic = walletManager.getMainWif();
 
                 clip = new Clipboard('#icon-copy');
                 clip.on('success', e => {
@@ -108,37 +105,42 @@ export default {
 
 <style scoped lang="scss">
 
-.top-info{
+.top-info {
     width: 375px;
     margin: 0 auto;
-    .title{
+
+    .title {
         font-size: 24px;
         padding: 8px 16px;
     }
-    .notice{
+
+    .notice {
         padding: 0 16px;
     }
-   .warning{
-       background-color: #FDF4F4;
-       display: flex;
-       flex-direction: row;
-       align-items: center;
-       padding: 8px 20px 8px 0;
 
-       .left{
-           margin: 0 20px;
-       }
-       .right{
-           .title{
-               padding: 0;
+    .warning {
+        background-color: #FDF4F4;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 8px 20px 8px 0;
 
-               font-size: 14px;
-           }
-           .notice{
-               padding: 0;
-           }
-       }
-   }
+        .left {
+            margin: 0 20px;
+        }
+
+        .right {
+            .title {
+                padding: 0;
+
+                font-size: 14px;
+            }
+
+            .notice {
+                padding: 0;
+            }
+        }
+    }
 }
 
 .title {
@@ -166,7 +168,6 @@ export default {
         transform: translateY(-50%);
     }
 
-
     .copy-btn {
         position: absolute;
         top: 0;
@@ -190,6 +191,8 @@ export default {
         align-items: center;
 
         border: solid 1px #ddd;
+
+        word-break: break-all;
 
         &:hover {
             border: solid 1px #22ccff;

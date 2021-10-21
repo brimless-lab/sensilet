@@ -11,8 +11,8 @@
 
             <div class="receive-container">
                 <div class="receive-item" v-for="item in receivers">
-                    <div class="notice">{{$t('popup.receive_address')}} {{$t('popup.')}}{{ item.address }}</div>
-                    <div class="notice">{{$t('popup.amount')}}{{$t('popup.')}}
+                    <div class="notice">{{$t('popup.receive_address')}} {{ item.address }}</div>
+                    <div class="notice">{{$t('popup.amount')}}
                         <CoinShow :value="item.amount" :big-unit="tokenInfo.unit" :decimal="tokenInfo.decimal" :fixed="tokenInfo.decimal" show-big-unit/>
                     </div>
                 </div>
@@ -44,21 +44,22 @@ const urlParams = new URLSearchParams(window.location.hash.slice(1));
 const origin = urlParams.get('origin');
 const request = JSON.parse(urlParams.get('request'));
 import CoinShow from "../components/CoinShow";
+let signers = null;
+let tokenInfo = null;
 
 export default {
     name: "PayToken",
     components: {CoinShow},
     data() {
 
-
         let data = {
             isPaying: false,
             origin,
             fee: null,
-            tokenInfo: null,
             receivers: [],
             genesis: "",
             broadcast: false,
+            tokenInfo:null
         };
 
         let routerData = routerManager.data;
@@ -71,7 +72,6 @@ export default {
             data.broadcast = request.params.broadcast;
             data.genesis = request.params.genesis;
             data.utxo = request.params.utxo;
-
         }
 
 
@@ -80,18 +80,27 @@ export default {
     async mounted() {
         console.log(this.genesis)
 
-        this.tokenInfo = await tokenManager.getTokenInfo(this.genesis);
-        if (!this.tokenInfo) {
+        tokenInfo = await tokenManager.getTokenInfo(this.genesis);
+
+        if (!tokenInfo) {
             antMessage.error(this.$t('popup.unknown_token'));
             routerManager.gotoHome()
         }
+
+        this.tokenInfo = tokenInfo;
 
         //
         let op = "";
         try {
 
-            let fee = await tokenManager.sensibleFt.getTransferEsitimate(this.tokenInfo.codehash, this.tokenInfo.genesis,
-                this.receivers, walletManager.getMainWif()
+
+            if(tokenInfo.notDefaultSigners || tokenInfo.name ==="MC" ||tokenInfo.name ==="bsv/MC" ){
+                signers =await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
+            }
+
+
+            let fee = await tokenManager.sensibleFt.getTransferEsitimate(tokenInfo.codehash, tokenInfo.genesis,
+                this.receivers, walletManager.getMainWif(),signers
             );
             console.log(this.fee)
             this.fee = fee
@@ -129,7 +138,7 @@ export default {
 
             try {
                 this.isPaying = true;
-                let {txid, txHex, routeCheckTxHex} = await tokenManager.transfer(this.receivers, this.broadcast, this.tokenInfo, this.utxo);
+                let {txid, txHex, routeCheckTxHex} = await tokenManager.transfer(this.receivers, this.broadcast, tokenInfo, this.utxo,this.signers);
                 // console.log(result);
                 // antMessage.success("支付成功")
 
@@ -151,9 +160,9 @@ export default {
             } catch (e) {
                 console.error(e)
                 if (e.message.indexOf('Insufficient balance.') > -1) {
-                    antMessage.error($t("popup.error_insufficient_balance"))
+                    antMessage.error(this.$t("popup.error_insufficient_balance"))
                 } else if (e.message.indexOf('Insufficient token') > -1) {
-                    antMessage.error($t("popup.error_insufficient_token",[this.tokenInfo.name]))
+                    antMessage.error(this.$t("popup.error_insufficient_token",[this.tokenInfo.name]))
                 } else
                     antMessage.error(e.message)
             } finally {
@@ -208,3 +217,6 @@ export default {
     }
 }
 </style>
+
+
+

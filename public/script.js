@@ -47,6 +47,9 @@ window.sensilet.requestAccount = (params) => {
 window.sensilet.exitAccount = (params) => {
     return action('disConnect', params)
 };
+window.sensilet.isConnect = (params) => {
+    return action('isConnect', params)
+};
 window.sensilet.getAccount = window.sensilet.requestAccount
 
 window.sensilet.getBsvBalance = (params) => {
@@ -79,7 +82,7 @@ window.sensilet.signTx = ({list}) => {
 window.sensilet.signMsg = ({msg}) => {
     return action('signMsg', {msg})
 };
-window.sensilet.checkUtxoCount = ({genesis,codehash}) => {
+window.sensilet.checkTokenUtxoCount = ({genesis,codehash}) => {
     return action('checkTokenUtxoCount', {genesis,codehash})
 };
 /*

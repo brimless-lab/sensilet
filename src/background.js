@@ -1,6 +1,7 @@
 const responseHandlers = new Map();
 const sensibleSdk = require("sensible-sdk");
 
+require('./utils/golbalUtils')
 require('./config/errorCode')
 const walletManager = require("./manager/WalletManager");
 const tokenManager = require("./manager/tokenManager");
@@ -113,6 +114,21 @@ async function handleListGenesis(message, sender, sendResponse) {
     })
 }
 
+async function handleIsConnect(message, sender, sendResponse) {
+    if (!await checkConnect(sender)) {
+        sendResponse({
+            result: "success",
+            id: message.data.id,
+            data:false
+        });
+    }else
+        sendResponse({
+            result: "success",
+            id: message.data.id,
+            data:true
+        });
+}
+
 async function handleListNft(message, sender, sendResponse) {
     if (!await checkConnect(sender)) {
         sendResponse({
@@ -178,18 +194,20 @@ async function handleCheckTokenUtxo(message, sender, sendResponse) {
         });
     }
 
-    let {genesis,codehash} = message.data.params;
-    let utxoCount = await tokenManager.sensibleFt.getUtxoCount(genesis,codehash,walletManager.getMainAddress());
-    console.log(utxoCount)
-    return         launchPopup(message, sender, sendResponse)
+    let {genesis, codehash} = message.data.params;
+    let utxoCount = await tokenManager.sensibleFt.getUtxoCount(genesis, codehash, walletManager.getMainAddress());
+    // console.log(utxoCount)
+    return launchPopup(message, sender, sendResponse)
 
-    if(utxoCount<20) {
+    let bsvUtxoCount = await walletManager.getBsvUtxoCount();
+
+    if (utxoCount < 20 && bsvUtxoCount <= 3) {
         sendResponse({
             id: message.data.id,
             result: "success",
-            data:true,
+            data: true,
         })
-    }else{
+    } else {
         launchPopup(message, sender, sendResponse)
     }
 }
@@ -206,6 +224,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             handleListNft(message, sender, sendResponse);
         } else if (message.data.method === 'disConnect') {
             handleDisconnect(message, sender, sendResponse);
+        } else if (message.data.method === 'isConnect') {
+            handleIsConnect(message, sender, sendResponse);
         } else if (message.data.method === 'getBsvBalance') {
             handleGetBsvBalance(message, sender, sendResponse);
         } else if (message.data.method === 'getTokenBalance') {
@@ -219,7 +239,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     } else if (message.channel === 'sato_extension_background_channel') {
         const responseHandler = responseHandlers.get(message.data.id);
-        if(responseHandler) {
+        if (responseHandler) {
             responseHandlers.delete(message.data.id);
             responseHandler(message.data);
         }

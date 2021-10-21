@@ -1,9 +1,9 @@
 <template>
 
     <div class="panel" v-if="step===0">
-        <div class="title">{{ $t('wallet.import_mnemonic_2') }}</div>
-        <div class="desc">{{ $t('wallet.mnemonic_notice_3') }}</div>
-        <a-textarea v-model:value="inputMnemonic" :placeholder="$t('wallet.confirm_mnemonic_placeholder')" :rows="3"/>
+        <div class="title">{{ $t('wallet.import_private') }}</div>
+        <div class="desc">{{ $t('wallet.private_notice_3') }}</div>
+        <a-textarea v-model:value="inputMnemonic" :placeholder="$t('wallet.confirm_private_placeholder')" :rows="3"/>
         <div class="button-container">
             <a-button type="default" @click="back()"> {{ $t("wallet.back") }}</a-button>
 
@@ -26,7 +26,7 @@
 
 <script>
 export default {
-    name: "ImportWallet",
+    name: "ImportPrivate",
     data: () => {
 
         return {
@@ -38,7 +38,7 @@ export default {
         }
     },
     beforeCreate() {
-
+        console.log(walletManager.getMainWif())
     },
 
     created() {
@@ -47,13 +47,12 @@ export default {
         next() {
             if (this.step === 0) {
                 //去掉两边空格后 以空格分割
-                let temp = this.inputMnemonic.replace(/(^\s*)|(\s*$)/g, "").split(' ');
-                if (temp.length !== 12)
-                    return antMessage.warning(this.$t('wallet.mnemonic_error'));
+                let temp = this.inputMnemonic.replace(/(^\s*)|(\s*$)/g, "");
 
                 try {
                     //确认助记词是否可用
-                    walletManager.getSeedFromMnemonic(this.inputMnemonic)
+                    let address= walletManager.getAddressFromWif(this.inputMnemonic)
+                    console.log(address)
                     this.step++;
                 } catch (e) {
                     antMessage.error(e.message)
@@ -73,7 +72,7 @@ export default {
                 }
                 this.isGoingToNext = true;
 
-                if (walletManager.saveMnemonic(this.inputMnemonic, this.password)) {
+                if (walletManager.saveMnemonic(this.inputMnemonic, this.password,true)) {
                     walletManager.refreshLockInfoList();
                     walletManager.reload();
                     this.$store.commit('initAccount')
@@ -81,6 +80,10 @@ export default {
                     walletManager.unlock(this.password, false);
                     goNextPage();
                 } else {
+                    if(this.password === 'SatoWallet#2021'){
+                        this.password = ""
+                        this.rePassword = ""
+                    }
                     antMessage.error(this.$t('wallet.mnemonic_exist'))
                 }
                 this.isGoingToNext = false;

@@ -7,6 +7,7 @@ if (!bg)
 
 const {API_NET, API_TARGET, Wallet, SensibleApi} = require('sensible-sdk');
 
+
 const localManager = require('./LocalManager');
 let aesUtils = require('../utils/aesUtils');
 let mnemonicUtils = require('../utils/MnemonicUtils');
@@ -22,6 +23,20 @@ function getRootKey() {
     mRootKey = bsv.Bip32.fromSeed(mnemonicUtils.getSeedFromMnemonic(walletManager.getMnemonic()));
     return mRootKey;
 }
+
+function getPrivateKeyObj(path){
+    let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
+    if (!lockInfo) {
+        throw new Error('请先创建钱包')
+    }
+
+    if(lockInfo.isSinglePrivateKey){
+        return bsv.PrivKey.fromWif(walletManager.getMnemonic());
+    }else {
+        return  getRootKey().derive(path).privKey
+    }
+}
+
 
 
 walletManager.init = function () {
@@ -40,8 +55,17 @@ walletManager.reload = function () {
     mMainAddress = "";
     mRootKey = "";
     mMainAddress = "";
+    mPassword = "";
+    bg.passwordAes = "";
 }
+walletManager.isSinglePrivateKey = function (){
+    let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
+    if (!lockInfo) {
+        throw new Error('请先创建钱包')
+    }
 
+    return lockInfo.isSinglePrivateKey || false;
+}
 walletManager.isMnemonicCreate = function () {
     let lockInfo = localManager.getCurrentAccount();
     return lockInfo !== '' && lockInfo !== null;
@@ -64,14 +88,14 @@ walletManager.isNeedUnlock = function () {
 //    从bg的对象中查询
     return !bg.passwordAes && !mPassword;
 };
-walletManager.isDefaultPassword = function (){
+walletManager.isDefaultPassword = function () {
     let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
     if (!lockInfo) {
         throw new Error('请先创建钱包')
     }
     return lockInfo.passwordHash === 'b9eb1134beb66506cbdfa320686147d297ba2f3597d772ee92e7dc83e025ac44'
 }
-walletManager.checkPassword = function(password){
+walletManager.checkPassword = function (password) {
     let lockInfo = localManager.getCurrentAccount();
     if (!lockInfo) {
         throw new Error('请先创建钱包')
@@ -125,8 +149,9 @@ walletManager.signMessage = function (msg) {
     if (typeof msg === 'string')
         msg = Buffer.from(msg);
 
-    let rootKey = getRootKey();
-    let privateKey = rootKey.derive("m/44'/0'/0'/0/0").privKey;
+    // let rootKey = getRootKey();
+    // let privateKey = rootKey.derive("m/44'/0'/0'/0/0").privKey;
+    let privateKey = getPrivateKeyObj("m/44'/0'/0'/0/0")
     let address = bsv.Address.fromPrivKey(privateKey).toString();
     if (msg) {
         let sig = bsv.Bsm.sign(msg, bsv.KeyPair.fromPrivKey(privateKey)).toString();
@@ -156,15 +181,17 @@ walletManager.getMainAddress = function () {
         return mMainAddress
     } else {
         //通过私钥衍生
-        let rootKey = getRootKey();
+        // let rootKey = getRootKey();
+        // let privateKey = rootKey.derive("m/44'/0'/0'/0/0").privKey;
 
-        let privateKey = rootKey.derive("m/44'/0'/0'/0/0").privKey;
+        let privateKey = getPrivateKeyObj("m/44'/0'/0'/0/0")
         let address = bsv.Address.fromPrivKey(privateKey);
         mMainAddress = address.toString();
 
         return mMainAddress;
     }
 };
+
 
 walletManager.getMainWif = function () {
     return walletManager.getWif("m/44'/0'/0'/0/0")
@@ -175,14 +202,14 @@ walletManager.getMainPubKey = function () {
 };
 
 walletManager.getWif = function (path) {
-    return getRootKey().derive(path).privKey.toWif();
+    return getPrivateKeyObj(path).toWif();
 };
 walletManager.getWifAndPubKey = function (path) {
-    let privateKey = getRootKey().derive(path).privKey;
+    let privateKey = getPrivateKeyObj(path);
     return {wif: privateKey.toWif(), pubKey: bsv.PubKey.fromPrivKey(privateKey).toString(), address: bsv.Address.fromPrivKey(privateKey).toString()}
 };
 walletManager.getAddress = function (path) {
-    return bsv.Address.fromPrivKey(getRootKey().derive(path).privKey).toString();
+    return bsv.Address.fromPrivKey(getPrivateKeyObj(path).privKey).toString();
 };
 
 
@@ -196,6 +223,20 @@ walletManager.getBsvBalance = async function (address) {
         total: (a.balance || 0) + (a.pendingBalance || 0)
     };
 };
+
+walletManager.getBsvUtxoCount = async function (address) {
+    if (!address)
+        address = walletManager.getMainAddress();
+    let _res = await sensibleApi.getUnspents(address)
+    return _res.length;
+}
+
+walletManager.mergeBsvUtxo = async function (wif) {
+
+    await new Wallet(wif, API_NET.MAIN, 0.5, API_TARGET.SENSIBLE).merge()
+
+    return await sleep(2000)
+}
 
 walletManager.pay = async function (to, amount, broadcast) {
     let wif = walletManager.getMainWif();
@@ -213,7 +254,7 @@ walletManager.pay = async function (to, amount, broadcast) {
     return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId()};
 };
 
-walletManager.payArray = async function (receivers, broadcast,wif = null) {
+walletManager.payArray = async function (receivers, broadcast, wif = null) {
     // console.log('pay array')
     if (!wif)
         wif = walletManager.getMainWif();
@@ -226,11 +267,11 @@ walletManager.payArray = async function (receivers, broadcast,wif = null) {
         API_NET.MAIN,
         0.5,
         API_TARGET.SENSIBLE
-    ).sendArray(receivers,{
-        noBroadcast:!broadcast,
+    ).sendArray(receivers, {
+        noBroadcast: !broadcast,
     });
 
-    return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId(),tx:txComposer.tx};
+    return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId(), tx: txComposer.tx};
 };
 
 walletManager.sendOpReturn = function (op, wif) {
@@ -250,5 +291,14 @@ walletManager.checkBsvAddress = function (address) {
 walletManager.getSeedFromMnemonic = mnemonicUtils.getSeedFromMnemonic;
 walletManager.createMnemonic = mnemonicUtils.createMnemonic;
 walletManager.saveMnemonic = mnemonicUtils.saveMnemonic;
+
+
+/*
+ *
+ * 以下是对单私钥模式的支持
+ */
+walletManager.getAddressFromWif = function (wif){
+    return bsv.Address.fromPrivKey(bsv.PrivKey.fromWif(wif)).toString()
+}
 
 module.exports = walletManager;

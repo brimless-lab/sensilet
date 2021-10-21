@@ -27,15 +27,16 @@
 const urlParams = new URLSearchParams(window.location.hash.slice(1));
 const origin = urlParams.get('origin');
 const request = JSON.parse(urlParams.get('request'));
+import CoinShow from "../components/CoinShow";
 
 export default {
     name: "Merge",
+    components:{CoinShow},
     data(){
-
 
         let data = {
             isPaying: false,
-            fee: null,
+            fee: 0,
             tokenInfo: null,
             genesis: "",
         };
@@ -57,6 +58,7 @@ export default {
             antMessage.error(this.$t('popup.unknown_token'));
             routerManager.gotoHome()
         }
+        console.log(await walletManager.getBsvUtxoCount(),"BSV utxo count",walletManager.getMainAddress())
         //
          let fee = await tokenManager.sensibleFt.getMergeEstimateFee(this.tokenInfo.codehash, this.tokenInfo.genesis,
              walletManager.getMainWif()
@@ -83,7 +85,15 @@ export default {
             try {
                 this.isPaying = true;
 
-                let utxoCount =await tokenManager.sensibleFt.getUtxoCount(this.tokenInfo.genesis,this.tokenInfo.codehash)
+                //检查一下BSV utxo
+                let bsvUtxoCount = await walletManager.getBsvUtxoCount()
+
+                if(bsvUtxoCount>3){
+                    await walletManager.mergeBsvUtxo(walletManager.getMainWif());
+                }
+
+
+                let utxoCount =await tokenManager.sensibleFt.getUtxoCount(this.tokenInfo.genesis,this.tokenInfo.codehash,walletManager.getMainAddress())
 
                 if(utxoCount>20)
                     await tokenManager.sensibleFt.merge(walletManager.getMainWif(),walletManager.getMainWif(),this.tokenInfo.genesis,this.tokenInfo.codehash,utxoCount)
@@ -105,9 +115,9 @@ export default {
                 }
             } catch (e) {
                 if (e.message.indexOf('Insufficient balance.') > -1) {
-                    antMessage.error($t("popup.error_insufficient_balance"))
+                    antMessage.error(this.$t("popup.error_insufficient_balance"))
                 } else if (e.message.indexOf('Insufficient token') > -1) {
-                    antMessage.error($t("popup.error_insufficient_token",[this.tokenInfo.name]))
+                    antMessage.error(this.$t("popup.error_insufficient_token",[this.tokenInfo.name]))
                 } else
                     antMessage.error(e.message)
             } finally {

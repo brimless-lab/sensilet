@@ -101,7 +101,7 @@ export default {
     justify-content: center;
     background-color: white;
     border-radius: 2em;
-    padding: 4px 8px;
+    padding: 2px 8px;
     cursor: pointer;
 
 
