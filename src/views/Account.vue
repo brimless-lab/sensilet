@@ -281,7 +281,7 @@ export default {
         this.bsvAsset = assetData
         this.nftGenesisList = await nftManager.listAllNft().catch(e => []);
 
-        this.appList = (await httpUtils.get('https://sensilet.com/api/application_list')).data
+        this.getAppList();
 
         await this.refreshToken();
     },
@@ -386,6 +386,9 @@ export default {
         openHistory(address) {
             window.open(`https://blockcheck.info/address/${address}`)
         },
+        async getAppList() {
+            this.appList = (await httpUtils.get('https://sensilet.com/api/application_list')).data
+        }
 
     }
 }
