@@ -42,14 +42,14 @@
                             <a-button @click="sendBsv(bsvAsset)">{{ $t('account.send') }}</a-button>
                             <a-button @click="openHistory(bsvAsset.address)">{{ $t('account.history') }}</a-button>
 
-<!--                            <a-modal v-model:visible="bsvAsset.showQr" :footer="null" :closable=false>-->
-<!--                                <div style="display: flex;flex-direction: column;align-items: center">-->
-<!--                                    <qrcode-vue :value="bsvAsset.address" :size="200" level="H"/>-->
-<!--                                    <p style="margin-top: 20px">-->
-<!--                                        {{ bsvAsset.address }}-->
-<!--                                    </p>-->
-<!--                                </div>-->
-<!--                            </a-modal>-->
+                            <!--                            <a-modal v-model:visible="bsvAsset.showQr" :footer="null" :closable=false>-->
+                            <!--                                <div style="display: flex;flex-direction: column;align-items: center">-->
+                            <!--                                    <qrcode-vue :value="bsvAsset.address" :size="200" level="H"/>-->
+                            <!--                                    <p style="margin-top: 20px">-->
+                            <!--                                        {{ bsvAsset.address }}-->
+                            <!--                                    </p>-->
+                            <!--                                </div>-->
+                            <!--                            </a-modal>-->
                         </div>
                     </div>
                 </div>
@@ -88,14 +88,14 @@
                         <div class="action-container">
                             <a-button @click="receive(item)">{{ $t('account.receive') }}</a-button>
                             <a-button @click="sendToken(item)" :loading="btnLoading">{{ $t('account.send') }}</a-button>
-<!--                            <a-modal v-model:visible="item.showQr" :footer="null" :closable=false>-->
-<!--                                <div style="display: flex;flex-direction: column;align-items: center">-->
-<!--                                    <qrcode-vue :value="mainAddress" :size="200" level="H"/>-->
-<!--                                    <p style="margin-top: 20px" :id="item.genesis">-->
-<!--                                        {{ mainAddress }}-->
-<!--                                    </p>-->
-<!--                                </div>-->
-<!--                            </a-modal>-->
+                            <!--                            <a-modal v-model:visible="item.showQr" :footer="null" :closable=false>-->
+                            <!--                                <div style="display: flex;flex-direction: column;align-items: center">-->
+                            <!--                                    <qrcode-vue :value="mainAddress" :size="200" level="H"/>-->
+                            <!--                                    <p style="margin-top: 20px" :id="item.genesis">-->
+                            <!--                                        {{ mainAddress }}-->
+                            <!--                                    </p>-->
+                            <!--                                </div>-->
+                            <!--                            </a-modal>-->
                         </div>
                     </div>
                 </div>
@@ -210,8 +210,6 @@
         <div class="custom-token-form">
             <a-input class="input" v-model:value="customToken.genesis" placeholder="genesis"/>
             <a-input class="input" v-model:value="customToken.codehash" placeholder="codehash"/>
-            <a-input class="input" v-model:value="customToken.name" placeholder="name"/>
-            <a-input class="input" v-model:value="customToken.decimal" type="number" placeholder="decimal"/>
         </div>
     </a-modal>
     <a-modal v-model:visible="showQr" :footer="null" :closable=false>
@@ -270,7 +268,8 @@ export default {
             customToken: {},
             accountMode: walletManager.getAccountMode(),
             btnLoading: false,
-            showQr:false
+            showQr: false,
+            showRedPoint: false,
         }
     },
     beforeCreate() {
@@ -295,6 +294,9 @@ export default {
         clip2.on('success', e => {
             antMessage.success(this.$t('account.clip', [e.text]));
         });
+
+        //    获取版本号和公告
+        this.initVersionAndNotice()
     },
     unmounted() {
         //卸载组件时，销毁
@@ -303,7 +305,7 @@ export default {
     },
 
     methods: {
-        async initAsset(){
+        async initAsset() {
             let assetData = {
                 name: 'BSV',
                 balance: {},
@@ -327,7 +329,7 @@ export default {
 
             this.bsvAsset = assetData
         },
-        async initAppList(){
+        async initAppList() {
             this.appList = (await httpUtils.get('https://sensilet.com/api/application_list')).data
         },
         receive(item) {
@@ -347,9 +349,30 @@ export default {
             this.showAddTokenPanel = false;
             this.isShowAddCustomTokenPanel = true;
         },
-        addCustomToken() {
+        getCustomTokenInfo() {
+
+        },
+        async addCustomToken() {
+            if (!this.customToken.genesis || !this.customToken.codehash)
+                return;
+
+            let result = await httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${this.customToken.codehash}/${this.customToken.genesis}`)
+            if (!result || result.code !== 0)
+                return antMessage.error(this.$t("account.token_error"))
+
+            let tokenInfo = result.data;
+
             this.customToken.decimal = parseInt(this.customToken.decimal)
-            this.addToken(this.customToken)
+            return this.addToken({
+                codehash: this.customToken.codehash,
+                genesis: this.customToken.genesis,
+                network: 'mainnet',
+                name: tokenInfo.name,
+                decimal: tokenInfo.decimal,
+                fixed: tokenInfo.fixed || tokenInfo.decimal,
+                unit: tokenInfo.symbol,
+                logo: tokenInfo.icon,
+            })
         },
         async addToken(item) {
             let err = tokenManager.addToken(item);
@@ -413,8 +436,8 @@ export default {
                     //获取bsv utxo数
                     let bsvUtxoCount = await walletManager.getBsvUtxoCount();
                     if (bsvUtxoCount > 3 || utxoCount >= 20) {
-                        antMessage.warn( this.$t('popup.merge_notice'))
-                        return routerManager.goFor('/merge','/payToken', {
+                        antMessage.warn(this.$t('popup.merge_notice'))
+                        return routerManager.goFor('/merge', '/payToken', {
                             genesis: this.transInfo.genesis,
                             broadcast: true,
                             address: this.transAddress,
@@ -434,7 +457,20 @@ export default {
         openHistory(address) {
             window.open(`https://blockcheck.info/address/${address}`)
         },
+        async initVersionAndNotice() {
+            let result = await httpUtils.get('https://sensilet.com/api/version_and_notice')
+            if (result && result.code === 200) {
+                if (result.data.version) {
+                    //    版本信息
+                    this.$store.commit("refreshVersionCheck")
+                    this.$store.commit("setVersionInfo", result.data.version)
+                }
+                if (result.data.notice) {
+                    //    公告信息
 
+                }
+            }
+        }
     }
 }
 </script>

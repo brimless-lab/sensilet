@@ -6,6 +6,8 @@ export default createStore({
         accountList: [],
         account: null,
         tokenList: null,
+        version: {},
+        versionChecked:0,
     },
     getters: {
         address(state) {
@@ -20,6 +22,11 @@ export default createStore({
         accountMode(state) {
             return state.account ? state.account.accountMode : ""
         },
+        hasNewVersion(state) {
+            if (state.version && config)
+                return state.version.versionCode > config.versionCode && state.version.versionCode > state.versionChecked
+            return false;
+        }
 
     },
     mutations: {
@@ -27,7 +34,7 @@ export default createStore({
             let account = walletManager.listAccount();
             state.accountList = account.map(item => {
                 item.addressShow = showLongString(item.address, 12);
-                item.accountMode =walletManager.getAccountMode(item)
+                item.accountMode = walletManager.getAccountMode(item)
                 return item
             });
             state.account = walletManager.getCurrentAccount();
@@ -37,8 +44,13 @@ export default createStore({
                 state.account.alias = ""; //这里需要重置一下数据，才会触发界面改变，原因未知
                 state.account.alias = alias
             }
+        },
+        setVersionInfo(state, version) {
+            state.version = version;
+        },
+        refreshVersionCheck(state){
+            state.versionChecked = localManager.getVersionChecked();
         }
-
     },
     actions: {
         async refreshAsset({commit, state}) {

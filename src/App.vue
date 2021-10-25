@@ -13,7 +13,10 @@
         </div>
         <AccountChoose v-else-if="showAccountChoose"/>
 
-        <span class="version" :class="{'right-little':showSetting}"> {{ version }}</span>
+        <span class="version" :class="{'right-little':showSetting,'has-new':$store.getters.hasNewVersion}" @click="newVersion()">
+            {{ version }}
+            <div class="red-point"></div>
+        </span>
     </div>
     <!--        <router-view/>-->
     <!--        因为插件的特殊性，这里需要自己维护路由-->
@@ -176,6 +179,23 @@ export default {
 
     },
     methods: {
+        newVersion(){
+            if(this.$store.getters.hasNewVersion){
+
+                let url = this.$store.state.version.url;
+                localManager.setVersionChecked(this.$store.state.version.versionCode)
+                this.$store.commit("refreshVersionCheck")
+
+                antModal.confirm({
+                    title: this.$t('app.has_new_version'),
+                    content: this.$store.state.version.detail,
+                    onOk() {
+                        if(url)
+                            window.open(url)
+                    }
+                })
+            }
+        },
         openWeb(url) {
             window.open(window.location.href)
         },
@@ -268,6 +288,28 @@ body {
 
         &.right-little{
             right: 50px;
+        }
+
+        .red-point{
+            width: 8px;
+            height: 8px;
+
+            position: absolute;
+            top: -4px;
+            right: -6px;
+
+            border-radius: 50%;
+            background-color: red;
+
+            display: none;
+        }
+
+        &.has-new{
+            cursor: pointer;
+            .red-point{
+                display: block;
+
+            }
         }
     }
 

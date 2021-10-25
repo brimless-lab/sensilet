@@ -1,4 +1,6 @@
-let localManager = {};
+let localManager = {
+
+};
 let bg = chrome.extension.getBackgroundPage();
 
 
@@ -97,6 +99,17 @@ localManager.saveGenesis = function (info) {
     _lockInfoList[getIndex()] = lockInfo;
     setItem('lockInfoList', _lockInfoList);
 };
+
+localManager.setVersionChecked = function (versionCode) {
+    localStorage.setItem('versionCodeChecked',versionCode)
+}
+localManager.getVersionChecked = function () {
+    let code = localStorage.getItem('versionCodeChecked')
+    if(code)
+        return parseInt(code)
+    else
+        return 0;
+}
 
 function getObjItem(key) {
     let temp = localStorage.getItem(key);

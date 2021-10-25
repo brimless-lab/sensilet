@@ -1,4 +1,7 @@
 export default {
+    app:{
+        has_new_version:"New Version!"
+    },
     wallet: {
         begin:"Start",
         // this.$t('wallet.') {{$t('wallet.')}} :placeholder="$t('wallet.')"
@@ -68,6 +71,7 @@ export default {
         input_address: "input address",
         input_amount: "input amount(unit:{0})",
         clip: "{0} copied！",
+        token_error: "invalid Token",
         address_error: "invalid address",
         amount_error: "invalid value",
         amount_error_2: "the value need be bigger than 0",
