@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "__MSG_extName__",
-  "homepage_url": "http://localhost:8080/",
+  "homepage_url": "https://sensilet.com/",
   "description": "A Browser Extension Wallet",
   "default_locale": "en",
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
@@ -20,12 +20,7 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://*.tswap.io/*",
-        "https://*.sensilet.com/*",
-        "https://*.enfty.io/*",
-        "https://*.defrontier.net/*"
-      ],
+      "matches": ["http://*/*", "https://*/*"],
       "js": [
         "js/content-script.js"
       ],

@@ -1,5 +1,6 @@
 export default {
     wallet: {
+        begin:"Start",
         // this.$t('wallet.') {{$t('wallet.')}} :placeholder="$t('wallet.')"
         create_wallet: "Create New Wallet",
         create_wallet_notice: "Create a new wallet to hold BSV and Token",
@@ -74,18 +75,24 @@ export default {
         add_custom_token:"Add custom token",
 
         choose:"Choose",
-        add:"Add New(create new Mnemonic)",
+        add:"Add New Account...",
+        add_new:"Add New(create new Mnemonic)",
         alias_input:"input an alias",
 
+        mode_single_key:"PrivKey",
+        mode_HD:"HD",
+
+        alias_max_limit:"alias need less than 12 char",
+        alias_min_limit:"alias need more than 0 char",
     },
     setting: {
         expand_view: "Expand View",
         import_mnemonic: "Import Mnemonic",
         export_mnemonic: "Export Mnemonic",
         import_private_key: "Import Private Key",
-        export_private_key: "Export Private Key",
-        notice_1:"DO NOT share this phrase with anyone!",
-        notice_2:"These words can be used to steal this account.",
+        export_private_key: "Export Private Key(Default Address)",
+        notice_1:"DO NOT share the mnemonic with anyone!",
+        notice_2:"Your funds will be transfered unexpectedly if the mnemonic is unintentionally revealed.",
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

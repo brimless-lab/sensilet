@@ -1,6 +1,20 @@
 <template>
-
-    <div class="panel" v-if="step===0">
+    <div class="panel" v-if="step===-1">
+        <div class="title">
+            Welcome to Sensilet
+        </div>
+        <div class="desc">
+            Sensilet will help you connect to the blockchain.
+        </div>
+        <div class="desc">
+            Nice to meet you.
+        </div>
+        <div class="button-container">
+            <div></div>
+            <a-button type="primary" @click="next">{{ $t('wallet.begin') }}</a-button>
+        </div>
+    </div>
+    <div class="panel" v-else-if="step===0">
 
         <div class="title">{{ $t('wallet.create_wallet') }}</div>
         <div class="desc">{{ $t('wallet.create_wallet_notice') }}</div>
@@ -14,26 +28,18 @@
         </div>
         <div class="desc">{{ $t('wallet.create_wallet_notice_3') }}</div>
         <div class="desc">{{ $t('wallet.create_wallet_notice_4') }}</div>
-<!--        <div class="check-container" v-if="showCheckContainer">-->
-<!--            <a-checkbox v-model:checked="isMnemonicSaved">-->
-<!--                <span>{{ $t('wallet.mnemonic_saved') }}</span>-->
-<!--            </a-checkbox>-->
+        <div class="word-btn" @click="showCustomPanel()">{{ $t('wallet.adv_options') }}</div>
 
-<!--        </div>-->
-<!--        <div class="check-container" v-else style="height: 20px">-->
-
-<!--        </div>-->
-        <!--<span>{{isMnemonicSaved}}</span>-->
         <div class="button-container">
             <div class="import-btn" @click="gotoImport()">
                 {{ $t('wallet.import_mnemonic') }}
             </div>
 
-            <a-button type="primary" @click="next" >{{ $t('wallet.next') }}</a-button>
-<!--            <a-button v-else type="primary">{{ $t('wallet.next') }}</a-button>-->
+            <a-button type="primary" @click="next">{{ $t('wallet.next') }}</a-button>
+            <!--            <a-button v-else type="primary">{{ $t('wallet.next') }}</a-button>-->
         </div>
     </div>
-    <div class="panel" v-if="step===1">
+    <div class="panel" v-else-if="step===1">
         <div class="title">{{ $t('wallet.confirm_mnemonic') }}</div>
         <div class="desc">{{ $t('wallet.mnemonic_notice') }}</div>
         <a-textarea v-model:value="inputMnemonic" :placeholder="$t('wallet.confirm_mnemonic_placeholder')" :rows="3"/>
@@ -43,7 +49,7 @@
             <a-button type="primary" @click="next" :disabled="inputMnemonic!==mnemonic">{{ $t('wallet.next') }}</a-button>
         </div>
     </div>
-    <div class="panel" v-if="step===2">
+    <div class="panel" v-else-if="step===2">
         <div class="title">{{ $t('wallet.set_password') }}</div>
         <div class="desc">{{ $t('wallet.set_password_notice') }}</div>
         <a-input v-model:value="password" :placeholder="$t('wallet.input_password')" type="password"/>
@@ -56,6 +62,31 @@
 
         </div>
     </div>
+    <a-modal v-model:visible="showCustom" :closable=false @ok="setOpt">
+        <div class="custom-panel">
+            <div class="notice warning">
+                <img src="../assets/icon-warning.svg" alt="warning" class="left">
+                <span>
+                    {{ $t('wallet.options_notice') }}
+                </span>
+            </div>
+            {{ $t('wallet.passphrase') }}
+            <a-tooltip placement="top" color="orange">
+                <template #title>
+                    <div style="font-size: 14px">
+                        {{ $t('wallet.passphrase_notice_1') }}<br>
+                        {{ $t('wallet.passphrase_notice_2') }}<br>
+                        {{ $t('wallet.passphrase_notice_3') }}<br>
+                        {{ $t('wallet.passphrase_notice_4') }}
+                    </div>
+                </template>
+                <img src="../assets/icon-question.png" style="width: 24px;margin-bottom: 2px" alt="">
+            </a-tooltip>
+            <a-input v-model:value="inputPassphrase"/>
+            {{ $t('wallet.der_path') }}
+            <a-input v-model:value="inputPath"/>
+        </div>
+    </a-modal>
 </template>
 
 <script>
@@ -63,8 +94,9 @@ let _this = null;
 export default {
     name: "CreateWallet",
     data: () => {
+        let isFirstEnter = localStorage.getItem('firstEnterTimestamp') === null
         return {
-            step: 0,
+            step: isFirstEnter ? -1 : 0,
             // isMnemonicSaved: false,
             // btnCanClick: false,
             password: "",
@@ -73,10 +105,17 @@ export default {
             isGoingToNext: false,
             inputMnemonic: "",
             // showCheckContainer: true,
-            clickCount:0,
+            clickCount: 0,
+            passphrase: "",
+            path: "m/44'/0'/0'",
+            showCustom: false,
+            inputPassphrase: "",
+            inputPath: "m/44'/0'/0'",
         }
     },
     beforeCreate() {
+        // routerManager.goto('/import')
+
         if (walletManager.isMnemonicCreate()) {
             if (walletManager.isNeedUnlock()) {
                 //    需要解锁
@@ -89,25 +128,25 @@ export default {
     // watch: {
     //     isMnemonicSaved: (newVal) => {
 
-            // _this.btnCanClick = newVal
-            // _this.clickCount ++;
-            // //在弹出窗口中，点击checkbox 后 组件未刷新(原因未知)。这里通过v-if 触发强制刷新 (chrome更新后无效了，尔平那又可以...)
-            // _this.showCheckContainer = false;
-            // setTimeout(() => {
-            //     _this.showCheckContainer = true;
-            // }, 10)
-            //
-            //
-            // if(_this.clickCount>3){
-            //     antModal.confirm({
-            //         content:"在网页中打开",
-            //         onOk(){
-            //             window.open("/popup.html")
-            //
-            //         }
-            //     })
-            // }
-        // }
+    // _this.btnCanClick = newVal
+    // _this.clickCount ++;
+    // //在弹出窗口中，点击checkbox 后 组件未刷新(原因未知)。这里通过v-if 触发强制刷新 (chrome更新后无效了，尔平那又可以...)
+    // _this.showCheckContainer = false;
+    // setTimeout(() => {
+    //     _this.showCheckContainer = true;
+    // }, 10)
+    //
+    //
+    // if(_this.clickCount>3){
+    //     antModal.confirm({
+    //         content:"在网页中打开",
+    //         onOk(){
+    //             window.open("/popup.html")
+    //
+    //         }
+    //     })
+    // }
+    // }
     // },
 
     created() {
@@ -124,14 +163,27 @@ export default {
 
     },
     methods: {
+        showCustomPanel() {
+            this.inputPassphrase = this.passphrase;
+            this.inputPath = this.path;
+            this.showCustom = true
+        },
+        setOpt() {
+            this.passphrase = this.inputPassphrase;
+            this.path = this.inputPath;
+            this.showCustom = false;
+        },
         toggleSaveCheckbox() {
             this.isMnemonicSaved = !this.isMnemonicSaved
         },
         next() {
-            if (this.step === 0) {
+            if (this.step === -1) {
+                localStorage.setItem('firstEnterTimestamp', Date.now())
+                this.step++;
+            } else if (this.step === 0) {
                 antModal.confirm({
-                    content:_this.$t("wallet.mnemonic_saved"),
-                    onOk(){
+                    content: _this.$t("wallet.mnemonic_saved"),
+                    onOk() {
                         _this.step++;
                     }
                 })
@@ -149,7 +201,7 @@ export default {
                     this.rePassword = 'SatoWallet#2021'
                 }
 
-                if (walletManager.saveMnemonic(this.mnemonic, this.password)) {
+                if (walletManager.saveMnemonic(this.mnemonic, this.password, false, this.passphrase, this.path)) {
                     sessionStorage.removeItem('mnemonic');
 
                     this.isGoingToNext = true;
@@ -267,6 +319,7 @@ function goNextPage() {
     align-items: center;
 
     .import-btn {
+        cursor: pointer;
         color: #666;
         text-decoration: underline;
     }

@@ -49,7 +49,7 @@ metaIdUtils.buildMetaData = function (publicKey, parentTxid, node_name, data = '
 
 function send(privateKey, data) {
     return new Promise((resolve, reject) => {
-        console.log(data);
+        // console.log(data);
         // return resolve();
         datapay.send({
             safe: true,
@@ -83,8 +83,8 @@ metaIdUtils.createMetaId = async function (gid) {
     let privateKeyObj = bsv.PrivKey.fromWif(privateKey);
     let publicKey = new bsv.PubKey().fromPrivKey(privateKeyObj).toHex();
 
-    console.log(publicKey);
-    console.log(bsv.Address.fromPrivKey(privateKeyObj).toString());
+    // console.log(publicKey);
+    // console.log(bsv.Address.fromPrivKey(privateKeyObj).toString());
 
     //2.创建root节点
     // let result = await send(privateKey,buildMetaData(publicKey,"NULL","Root"))

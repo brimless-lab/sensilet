@@ -6,12 +6,14 @@
             </div>
             <!--            <img v-else src="./assets/logo.png" alt="logo">-->
         </div>
-
-        <div v-if="showSetting" class="right" @click="gotoSetting()">
-            <img class="icon" src="./assets/icon-setting.svg" alt="">
+        <div class="right"  v-if="showSetting">
+            <div  @click="gotoSetting()">
+                <img class="icon" src="./assets/icon-setting.svg" alt="">
+            </div>
         </div>
         <AccountChoose v-else-if="showAccountChoose"/>
 
+        <span class="version" :class="{'right-little':showSetting}"> {{ version }}</span>
     </div>
     <!--        <router-view/>-->
     <!--        因为插件的特殊性，这里需要自己维护路由-->
@@ -91,16 +93,17 @@ export default {
             walletName: config.walletName,
             currentPage: routerManager.getCurrentPage(),
             count: global.bg.count,
-            showAccountChoose:false,
+            showAccountChoose: false,
+            version: config.version,
             // showSetting: true
         }
     },
-    computed:{
-        showSetting(){
-            return this.currentPage  === '/account'
+    computed: {
+        showSetting() {
+            return this.currentPage === '/account'
         },
-        showAccountChoose(){
-            return this.currentPage  === '/'
+        showAccountChoose() {
+            return this.currentPage === '/'
         }
     },
     beforeCreate() {
@@ -226,7 +229,7 @@ body {
     height: 56px;
     box-sizing: border-box;
     //background-color: #22ccff;
-    background-color: #F2F3F4;
+    background-color: #FaFaFa;
     color: #fff;
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.12);
 
@@ -250,6 +253,22 @@ body {
         right: 16px;
         cursor: pointer;
 
+        display: flex;
+        align-items: center;
+
+    }
+
+    .version{
+        position: absolute;
+        right: 16px;
+
+        font-size: 12px;
+        color: #bbb;
+        margin-right: 4px;
+
+        &.right-little{
+            right: 50px;
+        }
     }
 
 }
@@ -268,10 +287,46 @@ body {
 }
 
 .main {
-    height: calc(100vh - 104px);
+    height: calc(100vh - 56px);
+    overflow-y: scroll;
+    &::-webkit-scrollbar{
+        width:0;
+        height: 0;
+    }
+}
+
+
+.word-btn {
+    margin-top: 10px;
+    text-decoration: underline;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.custom-panel {
+    padding: 8px;
+    border-radius: 5px;
+    margin-top: 8px;
+    background-color: whitesmoke;
+
+    .notice {
+        color: red;
+        margin-bottom: 8px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        img {
+            width: 32px;
+            height: 32px;
+            margin-right: 8px;
+        }
+    }
+
 }
 
 .footer {
+    margin-top: 8px;
     height: 36px;
     display: flex;
     flex-direction: row;
@@ -284,9 +339,13 @@ body {
         color: #57606a;
         display: flex;
         align-items: center;
-        img{
+
+
+        img,svg {
             border-radius: 50%;
-            width: 24px;
+            width: 18px;
+            height: 18px;
+            margin-right:8px;
         }
     }
 }
@@ -325,11 +384,13 @@ body {
     &::-webkit-scrollbar {
         width: 0;
     }
-    .title-container{
+
+    .title-container {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        .action{
+
+        .action {
             color: #666;
             text-decoration: underline;
             cursor: pointer;
@@ -402,11 +463,48 @@ body {
     z-index: 990;
 }
 
-.custom-token-form{
-    .input{
-        &:not(:first-child){
+.custom-token-form {
+    .input {
+        &:not(:first-child) {
             margin-top: 10px;
         }
+    }
+}
+
+.add-choose-container{
+    display: flex;
+    flex-direction: column;
+
+    .item{
+        margin-top: 10px;
+        padding: 4px 8px;
+        //background-color: #eee;
+        //border-radius: 5px;
+
+        display: flex;
+        align-items: center;
+
+        span {
+            margin-left: 4px;
+        }
+
+    }
+
+    .line{
+
+    }
+}
+
+.copy-address{
+    padding: 4px 8px;
+    border-radius: 5px;
+
+    &:hover {
+        background-color: #F2F3F4;
+    }
+
+    &:active {
+        background-color: #e2e3e4;
     }
 }
 

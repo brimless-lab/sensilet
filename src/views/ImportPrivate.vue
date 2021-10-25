@@ -38,7 +38,6 @@ export default {
         }
     },
     beforeCreate() {
-        console.log(walletManager.getMainWif())
     },
 
     created() {

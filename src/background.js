@@ -197,7 +197,6 @@ async function handleCheckTokenUtxo(message, sender, sendResponse) {
     let {genesis, codehash} = message.data.params;
     let utxoCount = await tokenManager.sensibleFt.getUtxoCount(genesis, codehash, walletManager.getMainAddress());
     // console.log(utxoCount)
-    return launchPopup(message, sender, sendResponse)
 
     let bsvUtxoCount = await walletManager.getBsvUtxoCount();
 

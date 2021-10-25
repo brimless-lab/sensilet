@@ -1,26 +1,26 @@
 <template>
-<div class="panel">
-    <div class="title">{{$t('popup.too_many_utxo')}}</div>
-    <div v-if="tokenInfo" style="margin-top: 20px">
-        <img class="logo" :src="tokenInfo.logo" alt="">
-        <div class="notice">{{ tokenInfo.name }}</div>
-        <div class="notice">Genesis: {{ tokenInfo.genesis }}</div>
+    <div class="panel">
+        <div class="title">{{ $t('popup.too_many_utxo') }}</div>
+        <div v-if="tokenInfo" style="margin-top: 20px">
+            <img class="logo" :src="tokenInfo.logo" alt="">
+            <div class="notice">{{ tokenInfo.name }}</div>
+            <div class="notice">Genesis: {{ tokenInfo.genesis }}</div>
 
-       <div class="notice">
-           {{$t('popup.merge_notice')}}
-       </div>
-        <div class="notice">{{$t('popup.fee')}}
-            <CoinShow :value="fee" big-unit="BSV" :decimal=8 :fixed=8 show-big-unit/>
-        </div>
+            <div class="notice">
+                {{ $t('popup.merge_notice') }}
+            </div>
+            <div class="notice">{{ $t('popup.fee') }}
+                <CoinShow :value="fee" big-unit="BSV" :decimal=8 :fixed=8 show-big-unit/>
+            </div>
 
-        <div class="action-container" v-if="!isPaying">
-            <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
-            <a-button type="primary" @click="commit">{{$t('popup.commit')}}</a-button>
+            <div class="action-container" v-if="!isPaying">
+                <a-button @click="cancel">{{ $t('popup.cancel') }}</a-button>
+                <a-button type="primary" @click="commit">{{ $t('popup.commit') }}</a-button>
+            </div>
+            <a-spin v-else/>
         </div>
         <a-spin v-else/>
     </div>
-    <a-spin v-else/>
-</div>
 </template>
 
 <script>
@@ -29,10 +29,13 @@ const origin = urlParams.get('origin');
 const request = JSON.parse(urlParams.get('request'));
 import CoinShow from "../components/CoinShow";
 
+let signers = null;
+let tokenInfo = null;
+
 export default {
     name: "Merge",
-    components:{CoinShow},
-    data(){
+    components: {CoinShow},
+    data() {
 
         let data = {
             isPaying: false,
@@ -53,15 +56,24 @@ export default {
     },
     async mounted() {
         console.log(this.genesis)
-        this.tokenInfo = await tokenManager.getTokenInfo(this.genesis);
-        if (!this.tokenInfo) {
+
+        tokenInfo = await tokenManager.getTokenInfo(this.genesis);
+
+        if (!tokenInfo) {
             antMessage.error(this.$t('popup.unknown_token'));
             routerManager.gotoHome()
         }
-        console.log(await walletManager.getBsvUtxoCount(),"BSV utxo count",walletManager.getMainAddress())
+
+        this.tokenInfo = tokenInfo;
+
+        if (tokenInfo.notDefaultSigners || tokenInfo.name === "MC" || tokenInfo.name === "bsv/MC") {
+            signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
+        }
+
+        console.log(await walletManager.getBsvUtxoCount(), "BSV utxo count", walletManager.getMainAddress())
         //
-         let fee = await tokenManager.sensibleFt.getMergeEstimateFee(this.tokenInfo.codehash, this.tokenInfo.genesis,
-             walletManager.getMainWif()
+        let fee = await tokenManager.sensibleFt.getMergeEstimateFee(tokenInfo.codehash, tokenInfo.genesis,
+            walletManager.getMainWif(), signers
         );
         console.log(fee)
         this.fee = fee
@@ -88,15 +100,15 @@ export default {
                 //检查一下BSV utxo
                 let bsvUtxoCount = await walletManager.getBsvUtxoCount()
 
-                if(bsvUtxoCount>3){
+                if (bsvUtxoCount > 3) {
                     await walletManager.mergeBsvUtxo(walletManager.getMainWif());
                 }
 
 
-                let utxoCount =await tokenManager.sensibleFt.getUtxoCount(this.tokenInfo.genesis,this.tokenInfo.codehash,walletManager.getMainAddress())
+                let utxoCount = await tokenManager.sensibleFt.getUtxoCount(tokenInfo.genesis, tokenInfo.codehash, walletManager.getMainAddress())
 
-                if(utxoCount>20)
-                    await tokenManager.sensibleFt.merge(walletManager.getMainWif(),walletManager.getMainWif(),this.tokenInfo.genesis,this.tokenInfo.codehash,utxoCount)
+                if (utxoCount >= 20)
+                    await tokenManager.sensibleFt.merge(walletManager.getMainWif(), walletManager.getMainWif(), tokenInfo.genesis, tokenInfo.codehash, utxoCount)
 
 
                 if (origin) {
@@ -106,18 +118,18 @@ export default {
                         data: {
                             id: request.id,
                             result: "success",
-                            data:true,
+                            data: true,
                         },
                     });
                     window.close();
                 } else {
-                    routerManager.gotoHome();
+                    routerManager.goNext();
                 }
             } catch (e) {
                 if (e.message.indexOf('Insufficient balance.') > -1) {
                     antMessage.error(this.$t("popup.error_insufficient_balance"))
                 } else if (e.message.indexOf('Insufficient token') > -1) {
-                    antMessage.error(this.$t("popup.error_insufficient_token",[this.tokenInfo.name]))
+                    antMessage.error(this.$t("popup.error_insufficient_token", [this.tokenInfo.name]))
                 } else
                     antMessage.error(e.message)
             } finally {

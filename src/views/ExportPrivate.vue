@@ -22,6 +22,7 @@
         </div>
     </div>
     <div class="panel" v-if="step===1">
+<!--        <div class="notice"></div>-->
         <div class="seed-container">
             <div class="seed-title">{{ $t('wallet.private_key') }}</div>
             <div class="copy-btn" id="icon-copy" :data-clipboard-text="mnemonic">
@@ -33,6 +34,7 @@
         </div>
         <div class="button-container">
             <div>
+                Path:{{path}}
             </div>
 
             <a-button type="primary" @click="goBack">{{ $t('wallet.pre') }}</a-button>
@@ -83,6 +85,7 @@ export default {
                 }
 
                 this.mnemonic = walletManager.getMainWif();
+                this.path = walletManager.getPath() +'/0/0';
 
                 clip = new Clipboard('#icon-copy');
                 clip.on('success', e => {

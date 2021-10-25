@@ -100,9 +100,24 @@ routerManager.goto = function (url, data) {
         listener[i](current);
     }
 };
+let goForUrl = '/'
+let goForData = null
+routerManager.goFor = function (url, forUrl, data) {
+    goForUrl = forUrl;
+    goForData = data;
+    routerManager.goto(url, data)
+}
+routerManager.goNext = function () {
+    if (goForUrl !== '/') {
+        routerManager.goto(goForUrl, goForData)
+    } else
+        routerManager.gotoHome();
+}
 
 routerManager.gotoHome = function () {
     history.pushState(null, null, location.pathname);
+    goForUrl = '/'
+    goForData = null
     routerManager.goto('/')
 }
 

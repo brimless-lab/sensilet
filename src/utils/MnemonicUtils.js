@@ -7,25 +7,30 @@ utils.createMnemonic = function () {
     return new bsv.Bip39().fromRandom().toString();
 };
 
-utils.saveMnemonic = function (mnemonic, password, isSinglePrivateKey = false) {
+
+utils.saveMnemonic = function (mnemonic, password, isSinglePrivateKey = false, passphrase = '', path = "m/44'/0'/0'") {
 
     //加盐
     password += 'SatoWallet';
     //计算hash，使用此hash作为秘钥
     password = bsv.Hash.sha256(Buffer.from(password)).toString('hex');
 
+    //对于有passphrase的情况，加密储存的是助记词和passphrase
+
     //加密
     let locked = aesUtils.AESEncrypto(mnemonic, password);
 
     //加盐
-    password += 'SatoWallet';
+    let password2 = password + 'SatoWallet';
     //计算hash，使用此hash确认用户是否输入了正确的密码
-    let passwordHash = bsv.Hash.sha256(Buffer.from(password)).toString('hex');
+    let passwordHash = bsv.Hash.sha256(Buffer.from(password2)).toString('hex');
+
+    let seed = isSinglePrivateKey ? "" : utils.getSeedFromMnemonic(mnemonic, passphrase);
 
 
     let privateKey = isSinglePrivateKey
         ? bsv.PrivKey.fromWif(mnemonic)
-        : bsv.Bip32.fromSeed(utils.getSeedFromMnemonic(mnemonic)).derive("m/44'/0'/0'/0/0").privKey;
+        : bsv.Bip32.fromSeed(seed).derive(`${path}/0/0`).privKey;
     let address = bsv.Address.fromPrivKey(privateKey).toString();
 
 
@@ -39,7 +44,17 @@ utils.saveMnemonic = function (mnemonic, password, isSinglePrivateKey = false) {
         }
     }
 
-    let saveInfo = {passwordHash, locked, address, alias: `Account ${lockInfoList.length + 1}`, isSinglePrivateKey};
+    let saveInfo = {
+        passwordHash,
+        locked,
+        address,
+        alias: `Account ${lockInfoList.length + 1}`,
+        isSinglePrivateKey, path,
+    };
+    if (passphrase !== "") {
+        saveInfo.seedLocked = aesUtils.AESEncrypto(seed.toString('hex'), password);
+        saveInfo.hasPassphrase = true;
+    }
     //本地保存
     localStorage.setItem('lockInfo', JSON.stringify(saveInfo));
 
@@ -50,8 +65,8 @@ utils.saveMnemonic = function (mnemonic, password, isSinglePrivateKey = false) {
 };
 
 
-utils.getSeedFromMnemonic = function (mnemonic) {
-    return new bsv.Bip39(mnemonic).toSeed();
+utils.getSeedFromMnemonic = function (mnemonic, passphrase = '') {
+    return new bsv.Bip39(mnemonic).toSeed(passphrase);
 };
 
 module.exports = utils;

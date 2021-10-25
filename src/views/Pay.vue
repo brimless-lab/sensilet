@@ -7,7 +7,7 @@
         <div class="receive-container">
         <div class="receive-item" v-for="item in receivers">
             <div class="notice">{{$t('popup.receive_address')}} {{ item.address }}</div>
-            <div class="notice">{{$t('popup.amount')}}
+            <div class="notice main-word">{{$t('popup.amount')}}
                 <CoinShow :value="item.amount" big-unit="BSV" :decimal="8" fixed="8" show-big-unit/>
             </div>
         </div>
@@ -61,13 +61,15 @@ export default {
         return data
     },
     async mounted() {
-        //
         // let op = "";
         // this.fee = await nftManager.sensibleNft.getIssueFee(op);
         let {total} = await walletManager.getBsvBalance();
         this.balance = total;
 
-        let {fee} = await walletManager.payArray(this.receivers, false);
+        let {fee} = await walletManager.payArray(this.receivers, false).catch(e=>{
+            console.log(e)
+            return 0
+        });
         this.fee = fee;
     },
     methods: {
@@ -127,6 +129,7 @@ export default {
 
                     window.close();
                 } else {
+                    antMessage.success('Success')
                     await sleep(2000)
                     routerManager.gotoHome();
                 }
@@ -158,6 +161,10 @@ export default {
 
 .notice {
     margin: 10px;
+    &.main-word {
+        color: #222;
+        font-weight: bold;
+    }
 }
 
 .action-container {

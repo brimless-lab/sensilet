@@ -1,6 +1,6 @@
 <template>
     <div class="panel">
-        <div class="title" v-if="origin">{{$t('popup.pay_request',[""])}}</div>
+        <div class="title" v-if="origin">{{ $t('popup.pay_request', [""]) }}</div>
         <div class="pay-info" v-if="origin">
             <div class="origin">{{ origin }}</div>
         </div>
@@ -11,26 +11,27 @@
 
             <div class="receive-container">
                 <div class="receive-item" v-for="item in receivers">
-                    <div class="notice">{{$t('popup.receive_address')}} {{ item.address }}</div>
-                    <div class="notice">{{$t('popup.amount')}}
+                    <div class="notice">{{ $t('popup.receive_address') }} {{ item.address }}</div>
+                    <div class="notice main-word">{{ $t('popup.amount') }}
                         <CoinShow :value="item.amount" :big-unit="tokenInfo.unit" :decimal="tokenInfo.decimal" :fixed="tokenInfo.decimal" show-big-unit/>
                     </div>
                 </div>
             </div>
 
-            <div class="notice">{{$t('popup.balance')}}
+            <div class="notice">{{ $t('popup.balance') }}
                 <CoinShow :value="tokenInfo.balance" :big-unit="tokenInfo.unit" :decimal="tokenInfo.decimal" :fixed="tokenInfo.decimal" show-big-unit/>
             </div>
-            <div class="notice">{{$t('popup.fee')}}
-                <span style="display: none">{{fee}}</span>
+            <div v-if="fee!=null" class="notice">{{ $t('popup.fee') }}
+                <span style="display: none">{{ fee }}</span>
                 <CoinShow :value="fee" big-unit="BSV" :decimal=8 :fixed=8 show-big-unit/>
             </div>
+            <a-spin v-else/>
 
 
-            <div class="notice">{{$t('popup.broadcast')}} {{ broadcast ? $t('popup.yes') : $t('popup.no') }}</div>
+            <div class="notice">{{ $t('popup.broadcast') }} {{ broadcast ? $t('popup.yes') : $t('popup.no') }}</div>
             <div class="action-container" v-if="!isPaying">
-                <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
-                <a-button type="primary" @click="commit">{{$t('popup.commit')}}</a-button>
+                <a-button @click="cancel">{{ $t('popup.cancel') }}</a-button>
+                <a-button type="primary" @click="commit">{{ $t('popup.commit') }}</a-button>
             </div>
             <a-spin v-else/>
         </div>
@@ -44,6 +45,7 @@ const urlParams = new URLSearchParams(window.location.hash.slice(1));
 const origin = urlParams.get('origin');
 const request = JSON.parse(urlParams.get('request'));
 import CoinShow from "../components/CoinShow";
+
 let signers = null;
 let tokenInfo = null;
 
@@ -59,7 +61,7 @@ export default {
             receivers: [],
             genesis: "",
             broadcast: false,
-            tokenInfo:null
+            tokenInfo: null
         };
 
         let routerData = routerManager.data;
@@ -79,7 +81,7 @@ export default {
     },
     async mounted() {
         console.log(this.genesis)
-
+        signers = null;
         tokenInfo = await tokenManager.getTokenInfo(this.genesis);
 
         if (!tokenInfo) {
@@ -89,20 +91,17 @@ export default {
 
         this.tokenInfo = tokenInfo;
 
-        //
-        let op = "";
         try {
 
-
-            if(tokenInfo.notDefaultSigners || tokenInfo.name ==="MC" ||tokenInfo.name ==="bsv/MC" ){
-                signers =await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
+            if (tokenInfo.notDefaultSigners || tokenInfo.name === "MC" || tokenInfo.name === "bsv/MC") {
+                signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
             }
-
+            console.log(signers)
 
             let fee = await tokenManager.sensibleFt.getTransferEsitimate(tokenInfo.codehash, tokenInfo.genesis,
-                this.receivers, walletManager.getMainWif(),signers
+                this.receivers, walletManager.getMainWif(), signers
             );
-            console.log(this.fee)
+            console.log(fee)
             this.fee = fee
             // this.fee = 0;
             // let _this = this;
@@ -138,9 +137,14 @@ export default {
 
             try {
                 this.isPaying = true;
-                let {txid, txHex, routeCheckTxHex} = await tokenManager.transfer(this.receivers, this.broadcast, tokenInfo, this.utxo,this.signers);
+                let {txid, txHex, routeCheckTxHex} = await tokenManager.transfer(this.receivers, this.broadcast, tokenInfo, this.utxo, signers);
                 // console.log(result);
                 // antMessage.success("支付成功")
+
+                if(this.broadcast){
+                    antMessage.success('Success')
+                    await sleep(2000)
+                }
 
                 if (origin) {
                     //外部请求
@@ -154,7 +158,6 @@ export default {
                     });
                     window.close();
                 } else {
-                    await sleep(2000)
                     routerManager.gotoHome();
                 }
             } catch (e) {
@@ -162,7 +165,7 @@ export default {
                 if (e.message.indexOf('Insufficient balance.') > -1) {
                     antMessage.error(this.$t("popup.error_insufficient_balance"))
                 } else if (e.message.indexOf('Insufficient token') > -1) {
-                    antMessage.error(this.$t("popup.error_insufficient_token",[this.tokenInfo.name]))
+                    antMessage.error(this.$t("popup.error_insufficient_token", [this.tokenInfo.name]))
                 } else
                     antMessage.error(e.message)
             } finally {
@@ -195,6 +198,11 @@ export default {
 
 .notice {
     margin: 10px;
+
+    &.main-word {
+        color: #222;
+        font-weight: bold;
+    }
 }
 
 .action-container {

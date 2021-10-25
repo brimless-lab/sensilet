@@ -1,8 +1,9 @@
 let config = {
     network:"mainnet",
     walletName:"Sensilet",
-    version:"0.1.12",
-    versionCode:3,
+    version:"0.1.3",
+    versionCode:4,
+    path:"m/44'/0'/0'",
 
 };
 console.log('init config');

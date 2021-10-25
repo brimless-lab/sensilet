@@ -474,13 +474,15 @@ tokenManager.listUserTokens = async function () {
     let result = await sensibleFtUtils.getAllBalance(address, 0, 10000)
 
     if (result.code === 0) {
-        tokenList = result.data;
+        tokenList = result.data || [];
 
         // 给数据加上logo
         let tokenTable = await getAllTokenTable();
         for (let i = 0; i < tokenList.length; i++) {
             if (tokenTable[tokenList[i].genesis])
                 tokenList[i].logo = tokenTable[tokenList[i].genesis].logo;
+
+            tokenList[i].balance += tokenList[i].pendingBalance;
         }
 
         //追加已添加但余额为空的token
@@ -500,7 +502,7 @@ tokenManager.listUserTokens = async function () {
         }
     }
 
-    console.log(tokenList)
+    // console.log(tokenList)
 
     return tokenList;
 };

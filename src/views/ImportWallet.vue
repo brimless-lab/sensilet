@@ -4,6 +4,8 @@
         <div class="title">{{ $t('wallet.import_mnemonic_2') }}</div>
         <div class="desc">{{ $t('wallet.mnemonic_notice_3') }}</div>
         <a-textarea v-model:value="inputMnemonic" :placeholder="$t('wallet.confirm_mnemonic_placeholder')" :rows="3"/>
+        <div class="word-btn" @click="showCustomPanel()">{{ $t('wallet.adv_options') }}</div>
+
         <div class="button-container">
             <a-button type="default" @click="back()"> {{ $t("wallet.back") }}</a-button>
 
@@ -22,6 +24,30 @@
             <a-spin v-if="isGoingToNext"/>
         </div>
     </div>
+    <a-modal v-model:visible="showCustom" :closable=false @ok="setOpt">
+
+        <div class="custom-panel" v-show="showCustom">
+            <div class="notice warning">
+                <img src="../assets/icon-warning.svg" alt="warning" class="left">
+                <span>
+                    {{ $t('wallet.options_notice') }}
+                </span>
+            </div>
+            {{ $t('wallet.passphrase') }}
+            <a-tooltip placement="top" color="orange">
+                <template #title>
+                    <div style="font-size: 14px">
+                        {{ $t('wallet.passphrase_import_notice_1') }}<br>
+                        {{ $t('wallet.passphrase_import_notice_2') }}
+                    </div>
+                </template>
+                <img src="../assets/icon-question.png" style="width: 24px;margin-bottom: 2px" alt="">
+            </a-tooltip>
+            <a-input v-model:value="inputPassphrase" />
+            {{ $t('wallet.der_path') }}
+            <a-input v-model:value="inputPath"/>
+        </div>
+    </a-modal>
 </template>
 
 <script>
@@ -35,6 +61,11 @@ export default {
             rePassword: "",
             isGoingToNext: false,
             inputMnemonic: "",
+            passphrase: "",
+            path: "m/44'/0'/0'",
+            showCustom: false,
+            inputPassphrase:"",
+            inputPath:"m/44'/0'/0'",
         }
     },
     beforeCreate() {
@@ -44,6 +75,16 @@ export default {
     created() {
     },
     methods: {
+        showCustomPanel(){
+            this.inputPassphrase = this.passphrase;
+            this.inputPath = this.path;
+            this.showCustom = true
+        },
+        setOpt() {
+            this.passphrase = this.inputPassphrase;
+            this.path = this.inputPath;
+            this.showCustom = false;
+        },
         next() {
             if (this.step === 0) {
                 //去掉两边空格后 以空格分割
@@ -59,7 +100,6 @@ export default {
                     antMessage.error(e.message)
                 }
 
-
             } else if (this.step === 1) {
                 //如果输入了密码则检查
                 if (this.password && this.password.length > 0) {
@@ -73,7 +113,7 @@ export default {
                 }
                 this.isGoingToNext = true;
 
-                if (walletManager.saveMnemonic(this.inputMnemonic, this.password)) {
+                if (walletManager.saveMnemonic(this.inputMnemonic, this.password, false, this.passphrase, this.path)) {
                     walletManager.refreshLockInfoList();
                     walletManager.reload();
                     this.$store.commit('initAccount')
@@ -125,6 +165,7 @@ function goNextPage() {
 .desc {
     margin: 12px 0;
 }
+
 
 .seed-container {
     margin-top: 16px;

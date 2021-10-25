@@ -3,7 +3,7 @@
         <div class="current-account" @click.prevent>
 
             <div class="word ellipsis account-word" v-if="$store.state.account!=null">
-                <div class="account"> {{ $store.getters.alias }}</div>
+                <div class="account"> {{ $store.getters.alias }} <span class="account-mode">{{ $t(accountMode) }}</span></div>
                 <div class="address">
                     {{ $store.getters.addressShow }}
                 </div>
@@ -11,7 +11,7 @@
             </div>
 
             <div class="word ellipsis" v-else-if="$store.state.accountList && $store.state.accountList.length>0">
-                请选择
+                {{ $t("account.choose") }}
 
             </div>
             <DownOutlined style="color:#E0534F;"/>
@@ -22,22 +22,44 @@
                 <a-menu-item v-for="item in $store.state.accountList" @click="choose(item)" class="account-item">
                     <div class="info" :class="{'has-alias':item.alias}">
                         <div class="alias ">
-                            {{ item.alias }}
+                            <div>
+                                <div class="alias-word ellipsis">{{ item.alias }}</div>
+                                <span class="account-mode"> {{ $t(item.accountMode) }}</span>
+                            </div>
                             <EditOutlined style="padding: 8px" @click.stop="openEdit(item)"/>
                         </div>
-                        <div class="address ellipsis">{{ item.addressShow }}</div>
+                        <div class="address">
+                            {{ item.addressShow }}
+                        </div>
                     </div>
                 </a-menu-item>
                 <a-menu-divider/>
-                <a-menu-item @click="add">
-                    新增 (将会创建独立的助记词)
+                <a-menu-item @click="isShowAddNew=true">
+                    {{ $t("account.add") }}
                 </a-menu-item>
             </a-menu>
         </template>
     </a-dropdown>
     <a-modal v-model:visible="isShowEdit" @ok="handleOk">
-        <p>请输入一个方便识别的别名</p>
-        <a-input v-model:value="editAlias" placeholder="请输入别名..."/>
+        <p>{{ $t("account.alias_input") }}</p>
+        <a-input v-model:value="editAlias" :placeholder="$t('account.alias_input')"/>
+    </a-modal>
+    <a-modal v-model:visible="isShowAddNew" @ok="AddNew" :closable=false>
+        <div class="add-choose-container">
+            <label class="item">
+                <input name="addType" type="radio" v-model="addNewUrl" value="/create"/>
+                <span>Create New Mnemonic(12-Words) Account</span>
+            </label>
+            <div class="line"></div>
+            <label class="item">
+                <input name="addType" type="radio" v-model="addNewUrl" value="/import"/>
+                <span>Restore from Mnemonic</span>
+            </label>
+            <label class="item">
+                <input name="addType" type="radio" v-model="addNewUrl" value="/importPrivateKey"/>
+                <span>Restore from Private Key</span>
+            </label>
+        </div>
     </a-modal>
 </template>
 
@@ -56,6 +78,9 @@ export default {
             showEditItem: null,
             isShowEdit: false,
             editAlias: "",
+            accountMode: walletManager.getAccountMode(),
+            isShowAddNew: false,
+            addNewUrl: '/create',
         }
     },
     methods: {
@@ -69,10 +94,17 @@ export default {
             this.isShowEdit = true;
         },
         handleOk() {
+            if (!this.editAlias)
+                return;
+            if (this.editAlias.length > 12)
+                return antMessage.error(this.$t('account.alias_max_limit'))
+            if (this.editAlias.length < 1)
+                return antMessage.error(this.$t('account.alias_min_limit'))
+
             this.showEditItem.alias = this.editAlias;
             walletManager.saveAlias(this.showEditItem);
 
-            console.log(this.$store.state.account, this.showEditItem)
+            // console.log(this.$store.state.account, this.showEditItem)
             if (this.$store.state.account && this.$store.state.account.address === this.showEditItem.address) {
                 this.$store.commit('editAlias', this.editAlias)
             }
@@ -82,9 +114,15 @@ export default {
             this.editAlias = "";
         },
         choose(item) {
-            walletManager.chooseAccount(item);
             walletManager.reload();
+            walletManager.chooseAccount(item);
             window.location.reload();
+        },
+        AddNew() {
+            if(this.addNewUrl==='/create'){
+                this.add()
+            }else
+                routerManager.goto(this.addNewUrl)
         }
     }
 
@@ -101,12 +139,12 @@ export default {
     justify-content: center;
     background-color: white;
     border-radius: 2em;
-    padding: 2px 8px;
+    padding: 2px 16px;
     cursor: pointer;
 
 
     .word {
-        width: 180px;
+        max-width: 180px;
         color: #333;
     }
 
@@ -120,7 +158,15 @@ export default {
             font-size: 12px;
             color: #999;
         }
+
     }
+}
+
+.account-mode {
+    background-color: #f6f6f6;
+    color: #999;
+    padding: 0 4px;
+    border-radius: 3px;
 }
 
 .account-item {
@@ -129,17 +175,26 @@ export default {
     align-items: center;
     justify-content: space-between;
 
+    border-bottom: 1px #999 solid;
+
     .info {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        max-width: 300px;
+        max-width: 325px;
         min-width: 200px;
 
 
         .alias {
-            max-width: 100px;
-            overflow: scroll;
+            width: 120px;
+            //overflow: scroll;
+            display: flex;
+            align-items: center;
+
+
+            .alias-word {
+                width: 90px;
+            }
 
             &::-webkit-scrollbar {
                 display: none;
@@ -147,8 +202,19 @@ export default {
         }
 
         .address {
+            font-family: 'Courier New', Monaco, 'Helvetica Neue', Helvetica, Arial, sans-serif;
             padding-left: 8px;
             color: #666;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+
+
+            .account-mode {
+
+            }
         }
 
     }

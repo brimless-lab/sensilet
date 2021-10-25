@@ -12,6 +12,9 @@
                     <!--                </div>-->
                     <!--            </div>-->
                     <AccountChoose/>
+                    <!--                    <div class="account-mode">-->
+                    <!--                        {{ $t(accountMode) }}-->
+                    <!--                    </div>-->
                 </div>
                 <div class="list" v-if="bsvAsset==null" style="text-align: center">
                     <a-spin/>
@@ -39,14 +42,14 @@
                             <a-button @click="sendBsv(bsvAsset)">{{ $t('account.send') }}</a-button>
                             <a-button @click="openHistory(bsvAsset.address)">{{ $t('account.history') }}</a-button>
 
-                            <a-modal v-model:visible="bsvAsset.showQr" :footer="null" :closable=false>
-                                <div style="display: flex;flex-direction: column;align-items: center">
-                                    <qrcode-vue :value="bsvAsset.address" :size="200" level="H"/>
-                                    <p style="margin-top: 20px">
-                                        {{ bsvAsset.address }}
-                                    </p>
-                                </div>
-                            </a-modal>
+<!--                            <a-modal v-model:visible="bsvAsset.showQr" :footer="null" :closable=false>-->
+<!--                                <div style="display: flex;flex-direction: column;align-items: center">-->
+<!--                                    <qrcode-vue :value="bsvAsset.address" :size="200" level="H"/>-->
+<!--                                    <p style="margin-top: 20px">-->
+<!--                                        {{ bsvAsset.address }}-->
+<!--                                    </p>-->
+<!--                                </div>-->
+<!--                            </a-modal>-->
                         </div>
                     </div>
                 </div>
@@ -84,15 +87,15 @@
                         </div>
                         <div class="action-container">
                             <a-button @click="receive(item)">{{ $t('account.receive') }}</a-button>
-                            <a-button @click="sendToken(item)">{{ $t('account.send') }}</a-button>
-                            <a-modal v-model:visible="item.showQr" :footer="null" :closable=false>
-                                <div style="display: flex;flex-direction: column;align-items: center">
-                                    <qrcode-vue :value="mainAddress" :size="200" level="H"/>
-                                    <p style="margin-top: 20px">
-                                        {{ mainAddress }}
-                                    </p>
-                                </div>
-                            </a-modal>
+                            <a-button @click="sendToken(item)" :loading="btnLoading">{{ $t('account.send') }}</a-button>
+<!--                            <a-modal v-model:visible="item.showQr" :footer="null" :closable=false>-->
+<!--                                <div style="display: flex;flex-direction: column;align-items: center">-->
+<!--                                    <qrcode-vue :value="mainAddress" :size="200" level="H"/>-->
+<!--                                    <p style="margin-top: 20px" :id="item.genesis">-->
+<!--                                        {{ mainAddress }}-->
+<!--                                    </p>-->
+<!--                                </div>-->
+<!--                            </a-modal>-->
                         </div>
                     </div>
                 </div>
@@ -116,7 +119,7 @@
             </div>
             <div class="panel">
                 <div class="account-top">
-                    <div class="title"> {{$t('account.hot_app')}}</div>
+                    <div class="title"> {{ $t('account.hot_app') }}</div>
                 </div>
                 <div class="app-list" v-if="appList!=null">
                     <div class="item" v-for="item in appList">
@@ -145,7 +148,7 @@
                 Telegram
             </a>
             <a href="https://github.com/sensilet/sensilet" target="_blank">
-                <svg height="24" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="32" data-view-component="true" class="octicon octicon-mark-github v-align-middle">
+                <svg height="18" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="18" data-view-component="true" class="octicon octicon-mark-github v-align-middle">
                     <path fill-rule="evenodd"
                           d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
                 </svg>
@@ -155,23 +158,23 @@
     </div>
     <a-modal v-model:visible="showAddTokenPanel" :footer="null" :closable=false>
         <div class="base-token-list" v-if="baseTokenList">
-<!--            <div class="title-container">-->
-<!--                <div class="title">{{ $t('account.hot') }}</div>-->
-<!--                <div class="action" @click="showAddCustomTokenPanel">{{ $t('account.add_custom_token') }}</div>-->
-<!--            </div>-->
-<!--            <div class="item " v-for="item in baseTokenList.hot" @click="addToken(item)">-->
-<!--                <img :src="item.logo||'/img/empty-token.png'" alt="">-->
-<!--                <div class="info">-->
-<!--                    <div class="name">{{ item.name }}</div>-->
-<!--                    <div class="genesis ellipsis">Genesis: {{ item.genesis }}</div>-->
-<!--                </div>-->
-<!--                <svg v-if="item.added" t="1634030847866" class="icon added" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1814" width="48"-->
-<!--                     height="48">-->
-<!--                    <path-->
-<!--                        d="M768 85.333333a85.333333 85.333333 0 0 1 85.333333 85.333334v727.978666a42.666667 42.666667 0 0 1-62.677333 37.717334l-258.688-137.301334a42.666667 42.666667 0 0 0-40.021333 0L233.386667 936.32A42.666667 42.666667 0 0 1 170.666667 898.645333V170.666667a85.333333 85.333333 0 0 1 85.333333-85.333334h512z m-83.498667 223.317334a42.666667 42.666667 0 0 0-60.117333 5.248l-164.394667 195.669333-58.965333-66.730667-3.754667-3.754666a42.666667 42.666667 0 0 0-60.16 60.245333l91.733334 103.893333 3.626666 3.626667a42.666667 42.666667 0 0 0 61.013334-4.437333l196.266666-233.642667 3.2-4.266667a42.666667 42.666667 0 0 0-8.448-55.850666z"-->
-<!--                        p-id="1815" fill="#1afa29"></path>-->
-<!--                </svg>-->
-<!--            </div>-->
+            <!--            <div class="title-container">-->
+            <!--                <div class="title">{{ $t('account.hot') }}</div>-->
+            <!--                <div class="action" @click="showAddCustomTokenPanel">{{ $t('account.add_custom_token') }}</div>-->
+            <!--            </div>-->
+            <!--            <div class="item " v-for="item in baseTokenList.hot" @click="addToken(item)">-->
+            <!--                <img :src="item.logo||'/img/empty-token.png'" alt="">-->
+            <!--                <div class="info">-->
+            <!--                    <div class="name">{{ item.name }}</div>-->
+            <!--                    <div class="genesis ellipsis">Genesis: {{ item.genesis }}</div>-->
+            <!--                </div>-->
+            <!--                <svg v-if="item.added" t="1634030847866" class="icon added" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1814" width="48"-->
+            <!--                     height="48">-->
+            <!--                    <path-->
+            <!--                        d="M768 85.333333a85.333333 85.333333 0 0 1 85.333333 85.333334v727.978666a42.666667 42.666667 0 0 1-62.677333 37.717334l-258.688-137.301334a42.666667 42.666667 0 0 0-40.021333 0L233.386667 936.32A42.666667 42.666667 0 0 1 170.666667 898.645333V170.666667a85.333333 85.333333 0 0 1 85.333333-85.333334h512z m-83.498667 223.317334a42.666667 42.666667 0 0 0-60.117333 5.248l-164.394667 195.669333-58.965333-66.730667-3.754667-3.754666a42.666667 42.666667 0 0 0-60.16 60.245333l91.733334 103.893333 3.626666 3.626667a42.666667 42.666667 0 0 0 61.013334-4.437333l196.266666-233.642667 3.2-4.266667a42.666667 42.666667 0 0 0-8.448-55.850666z"-->
+            <!--                        p-id="1815" fill="#1afa29"></path>-->
+            <!--                </svg>-->
+            <!--            </div>-->
 
             <div class="title-container">
                 <div class="title">{{ $t('account.token_list') }}</div>
@@ -200,7 +203,7 @@
     <a-modal v-model:visible="showTransPanel" @ok="transfer()" :closable=false>
         <div class="trans-info-container">
             <a-input v-model:value="transAddress" :placeholder="$t('account.input_address')"/>
-            <a-input v-model:value="transAmount" :placeholder="$t('account.input_amount',[transType==='BSV'? 'BSV':transInfo.unit])"/>
+            <a-input v-model:value="transAmount" :placeholder="$t('account.input_amount',[transType==='BSV'? 'BSV':(transInfo.unit||transInfo.symbol)])"/>
         </div>
     </a-modal>
     <a-modal v-model:visible="isShowAddCustomTokenPanel" @ok="addCustomToken" :closable=false>
@@ -209,6 +212,20 @@
             <a-input class="input" v-model:value="customToken.codehash" placeholder="codehash"/>
             <a-input class="input" v-model:value="customToken.name" placeholder="name"/>
             <a-input class="input" v-model:value="customToken.decimal" type="number" placeholder="decimal"/>
+        </div>
+    </a-modal>
+    <a-modal v-model:visible="showQr" :footer="null" :closable=false>
+        <div style="display: flex;flex-direction: column;align-items: center">
+            <qrcode-vue :value="$store.getters.address" :size="200" level="H"/>
+            <p class="copy-address" style="margin-top: 20px;" id="address-copy" :data-clipboard-text="$store.getters.address">
+                {{ $store.getters.address }}
+                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0H1H9V1H1V9H0V0ZM2 2H11V11H2V2ZM3 3H10V10H3V3Z" fill="#989a9b"></path>
+                </svg>
+            </p>
+            <p style="color: #999">
+                The address can only receive BSV or Sensible FT Token
+            </p>
         </div>
     </a-modal>
 </template>
@@ -223,6 +240,7 @@ import Clipboard from "clipboard";
 import httpUtils from '../utils/httpUtils';
 
 let clip = null;
+let clip2 = null;
 
 export default {
     name: "Account",
@@ -234,7 +252,7 @@ export default {
     },
     data() {
         return {
-            extName: chrome.i18n.getMessage("extName"),
+            // extName: chrome.i18n.getMessage("extName"),
             asset: [],
             bsvAsset: null,
             appList: null,
@@ -249,39 +267,21 @@ export default {
             transInfo: {},
             transType: "BSV",
             isShowAddCustomTokenPanel: false,
-            customToken: {}
-
+            customToken: {},
+            accountMode: walletManager.getAccountMode(),
+            btnLoading: false,
+            showQr:false
         }
     },
     beforeCreate() {
+
     },
     async created() {
 
-        let assetData = {
-            name: 'BSV',
-            balance: {},
-            decimal: 8,
-            isRefreshingAmount: true,
-            address: walletManager.getMainAddress(),
-            open: false,
-        };
+        this.initAsset();
 
-        assetData.addressShow = showLongString(assetData.address, 10)
-
-        let balance = await walletManager.getBsvBalance();
-
-        assetData.balance = {
-            total: balance.confirmed + balance.unconfirmed,
-            confirmed: balance.confirmed,
-            unconfirmed: balance.unconfirmed,
-        };
-        assetData.isRefreshingAmount = false;
-
-
-        this.bsvAsset = assetData
-        this.nftGenesisList = await nftManager.listAllNft().catch(e => []);
-
-        this.appList = (await httpUtils.get('https://sensilet.com/api/application_list')).data
+        // this.nftGenesisList = await nftManager.listAllNft().catch(e => []);
+        this.initAppList();
 
         await this.refreshToken();
     },
@@ -290,16 +290,48 @@ export default {
         clip.on('success', e => {
             antMessage.success(this.$t('account.clip', [e.text]));
         });
+
+        clip2 = new Clipboard('#address-copy');
+        clip2.on('success', e => {
+            antMessage.success(this.$t('account.clip', [e.text]));
+        });
     },
     unmounted() {
         //卸载组件时，销毁
         clip.destroy()
+        clip2.destroy()
     },
 
     methods: {
+        async initAsset(){
+            let assetData = {
+                name: 'BSV',
+                balance: {},
+                decimal: 8,
+                isRefreshingAmount: true,
+                address: walletManager.getMainAddress(),
+                open: false,
+            };
 
+            assetData.addressShow = showLongString(assetData.address, 10)
+
+            let balance = await walletManager.getBsvBalance();
+
+            assetData.balance = {
+                total: balance.confirmed + balance.unconfirmed,
+                confirmed: balance.confirmed,
+                unconfirmed: balance.unconfirmed,
+            };
+            assetData.isRefreshingAmount = false;
+
+
+            this.bsvAsset = assetData
+        },
+        async initAppList(){
+            this.appList = (await httpUtils.get('https://sensilet.com/api/application_list')).data
+        },
         receive(item) {
-            item.showQr = true
+            this.showQr = true
         },
         async refreshToken() {
             this.$store.dispatch('refreshAllToken')
@@ -342,7 +374,7 @@ export default {
             this.transInfo = item;
             this.showTransPanel = true;
         },
-        transfer() {
+        async transfer() {
             //检查信息
             if (!walletManager.checkBsvAddress(this.transAddress)) {
                 return antMessage.error(this.$t('account.address_error'))
@@ -373,6 +405,22 @@ export default {
                         return antMessage.error(this.$t('account.amount_error_2'))
                     if (amount > this.transInfo.balance)
                         return antMessage.error(this.$t('account.balance_not_enough'))
+
+                    this.btnLoading = true;
+
+                    //获取token utxo数
+                    let utxoCount = await tokenManager.sensibleFt.getUtxoCount(this.transInfo.genesis, this.transInfo.codehash, walletManager.getMainAddress());
+                    //获取bsv utxo数
+                    let bsvUtxoCount = await walletManager.getBsvUtxoCount();
+                    if (bsvUtxoCount > 3 || utxoCount >= 20) {
+                        antMessage.warn( this.$t('popup.merge_notice'))
+                        return routerManager.goFor('/merge','/payToken', {
+                            genesis: this.transInfo.genesis,
+                            broadcast: true,
+                            address: this.transAddress,
+                            amount,
+                        });
+                    }
 
                     routerManager.goto('/payToken', {
                         genesis: this.transInfo.genesis,
@@ -418,7 +466,16 @@ export default {
 
     &.account {
         justify-content: center;
+
+        position: relative;
+
+        .account-mode {
+            position: absolute;
+            right: 8px;
+            color: #bbb;
+        }
     }
+
 
     .title {
 
@@ -599,7 +656,8 @@ export default {
                 &:hover {
                     background-color: #F2F3F4;
                 }
-                &:active{
+
+                &:active {
                     background-color: #e2e3e4;
                 }
             }

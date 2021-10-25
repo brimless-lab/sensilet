@@ -1,10 +1,7 @@
 let bg = chrome.extension.getBackgroundPage();
 if (bg) {
-    bg.count++;
     global.bg = bg;
     console.log(bg);
-    console.log(bg.count);
-    localStorage.setItem("count", bg.count);
 
     //从background中获取bsv对象
     global.bsv = bg.bsv;
@@ -30,6 +27,7 @@ import store from './store'
 
 //antd 样式相关导入
 import Spin from 'ant-design-vue/lib/spin';
+import Tooltip from 'ant-design-vue/lib/tooltip';
 import Collapse from 'ant-design-vue/lib/collapse';
 import Card from 'ant-design-vue/lib/card';
 import CheckBox from 'ant-design-vue/lib/checkbox';
@@ -73,7 +71,7 @@ console.log('init i18n')
 // global.antMessage = {};
 // global.antModal = {};
 createApp(App).use(i18n).use(store)
-    .use(Spin).use(Collapse).use(Card).use(CheckBox).use(Button).use(Input).use(Select).use(antModal).use(Dropdown).use(Menu)
+    .use(Spin).use(Collapse).use(Card).use(CheckBox).use(Button).use(Input).use(Select).use(antModal).use(Dropdown).use(Menu).use(Tooltip)
     .mount('#app');
 
 // console.log('###123');

@@ -17,26 +17,32 @@ let mRootKey = "";
 let mMainAddress = "";
 const sensibleApi = new SensibleApi(API_NET.MAIN, API_TARGET.SENSIBLE);
 
-function getRootKey() {
+function getRootKey(fromSeed = false) {
     if (mRootKey)
         return mRootKey;
-    mRootKey = bsv.Bip32.fromSeed(mnemonicUtils.getSeedFromMnemonic(walletManager.getMnemonic()));
+    if (fromSeed)
+        mRootKey = bsv.Bip32.fromSeed(walletManager.getSeedFromLocked());
+    else
+        mRootKey = bsv.Bip32.fromSeed(mnemonicUtils.getSeedFromMnemonic(walletManager.getMnemonic()));
     return mRootKey;
 }
 
-function getPrivateKeyObj(path){
+function getPrivateKeyObj(path = '/0/0') {
+
     let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
     if (!lockInfo) {
-        throw new Error('请先创建钱包')
+        throw new Error('Create Wallet First')
     }
+    path = (lockInfo.path ? lockInfo.path : "m/44'/0'/0'") + path
 
-    if(lockInfo.isSinglePrivateKey){
+    if (lockInfo.isSinglePrivateKey) {
         return bsv.PrivKey.fromWif(walletManager.getMnemonic());
-    }else {
-        return  getRootKey().derive(path).privKey
+    } else if (lockInfo.hasPassphrase) {
+        return getRootKey(true).derive(path).privKey
+    } else {
+        return getRootKey().derive(path).privKey
     }
 }
-
 
 
 walletManager.init = function () {
@@ -58,13 +64,25 @@ walletManager.reload = function () {
     mPassword = "";
     bg.passwordAes = "";
 }
-walletManager.isSinglePrivateKey = function (){
+walletManager.isSinglePrivateKey = function () {
     let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
     if (!lockInfo) {
-        throw new Error('请先创建钱包')
+        throw new Error('Create Wallet First')
     }
 
     return lockInfo.isSinglePrivateKey || false;
+}
+walletManager.getAccountMode = function (lockInfo) {
+    if (!lockInfo)
+        lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
+    if (!lockInfo) {
+        return ""
+    }
+    if (lockInfo.isSinglePrivateKey)
+        return "account.mode_single_key"
+
+    return "account.mode_HD"
+
 }
 walletManager.isMnemonicCreate = function () {
     let lockInfo = localManager.getCurrentAccount();
@@ -75,7 +93,7 @@ walletManager.isMnemonicCreate = function () {
 walletManager.isNeedUnlock = function () {
     let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
     if (!lockInfo) {
-        throw new Error('请先创建钱包')
+        throw new Error('Create Wallet First')
     }
 
     //默认密码
@@ -91,14 +109,14 @@ walletManager.isNeedUnlock = function () {
 walletManager.isDefaultPassword = function () {
     let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
     if (!lockInfo) {
-        throw new Error('请先创建钱包')
+        throw new Error('Create Wallet First')
     }
     return lockInfo.passwordHash === 'b9eb1134beb66506cbdfa320686147d297ba2f3597d772ee92e7dc83e025ac44'
 }
 walletManager.checkPassword = function (password) {
     let lockInfo = localManager.getCurrentAccount();
     if (!lockInfo) {
-        throw new Error('请先创建钱包')
+        throw new Error('Create Wallet First')
     }
     password += 'SatoWallet';
     password = bsv.Hash.sha256(Buffer.from(password)).toString('hex');
@@ -110,7 +128,7 @@ walletManager.unlock = function (password, keep) {
 
     let lockInfo = localManager.getCurrentAccount();
     if (!lockInfo) {
-        throw new Error('请先创建钱包')
+        throw new Error('Create Wallet First')
     }
     password += 'SatoWallet';
     password = bsv.Hash.sha256(Buffer.from(password)).toString('hex');
@@ -126,23 +144,48 @@ walletManager.unlock = function (password, keep) {
 
         return true;
     }
-
     return false;
 };
 walletManager.getMnemonic = function () {
     let lockInfo = localManager.getCurrentAccount();
     if (!lockInfo) {
-        throw new Error('请先创建钱包')
+        throw new Error('Create Wallet First')
     }
 
     if (!mPassword) {
         if (!bg.passwordAes)
-            throw new Error('请先解锁钱包');
+            throw new Error('Unlock Wallet First');
 
         mPassword = aesUtils.AESDecrypto(bg.passwordAes, passwordAesKey)
     }
     return aesUtils.AESDecrypto(lockInfo.locked, mPassword)
+};
 
+walletManager.getPath = function () {
+    let lockInfo = localManager.getCurrentAccount();
+    if (!lockInfo) {
+        throw new Error('Create Wallet First')
+    }
+
+    return lockInfo.path || config.path
+};
+
+walletManager.getSeedFromLocked = function () {
+    let lockInfo = localManager.getCurrentAccount();
+    if (!lockInfo) {
+        throw new Error('Create Wallet First')
+    }
+
+    if (!mPassword) {
+        if (!bg.passwordAes)
+            throw new Error('Unlock Wallet First');
+
+        mPassword = aesUtils.AESDecrypto(bg.passwordAes, passwordAesKey)
+    }
+
+    let seedStr = aesUtils.AESDecrypto(lockInfo.seedLocked, mPassword);
+
+    return Buffer.from(seedStr, 'hex')
 };
 
 walletManager.signMessage = function (msg) {
@@ -151,13 +194,13 @@ walletManager.signMessage = function (msg) {
 
     // let rootKey = getRootKey();
     // let privateKey = rootKey.derive("m/44'/0'/0'/0/0").privKey;
-    let privateKey = getPrivateKeyObj("m/44'/0'/0'/0/0")
+    let privateKey = getPrivateKeyObj("/0/0")
     let address = bsv.Address.fromPrivKey(privateKey).toString();
     if (msg) {
         let sig = bsv.Bsm.sign(msg, bsv.KeyPair.fromPrivKey(privateKey)).toString();
 
-        console.log(address, sig, msg)
-        console.log(bsv.Bsm.verify(Buffer.from(msg, 'base64'), sig, bsv.Address.fromString(address)))
+        // console.log(address, sig, msg)
+        // console.log(bsv.Bsm.verify(Buffer.from(msg, 'base64'), sig, bsv.Address.fromString(address)))
 
 
         return {address, sig}
@@ -166,7 +209,7 @@ walletManager.signMessage = function (msg) {
 };
 
 /*
-主账户("m/44'/0'/0'/0/0)，用于接收 bsv、token、nft
+主账户("/0/0)，用于接收 bsv、token、nft
 
 次1账户("m/44'/0'/1'/0/0) 用于 genesis 新的nft
 次2账户("m/44'/0'/1'/0/1) 用于 genesis 新nft 的metaid 树 root节点
@@ -182,9 +225,9 @@ walletManager.getMainAddress = function () {
     } else {
         //通过私钥衍生
         // let rootKey = getRootKey();
-        // let privateKey = rootKey.derive("m/44'/0'/0'/0/0").privKey;
+        // let privateKey = rootKey.derive("/0/0").privKey;
 
-        let privateKey = getPrivateKeyObj("m/44'/0'/0'/0/0")
+        let privateKey = getPrivateKeyObj("/0/0")
         let address = bsv.Address.fromPrivKey(privateKey);
         mMainAddress = address.toString();
 
@@ -194,22 +237,22 @@ walletManager.getMainAddress = function () {
 
 
 walletManager.getMainWif = function () {
-    return walletManager.getWif("m/44'/0'/0'/0/0")
+    return walletManager.getWif("/0/0")
 };
 
 walletManager.getMainPubKey = function () {
-    return walletManager.getWifAndPubKey("m/44'/0'/0'/0/0").pubKey
+    return walletManager.getWifAndPubKey("/0/0").pubKey
 };
 
-walletManager.getWif = function (path) {
+walletManager.getWif = function (path = '/0/0') {
     return getPrivateKeyObj(path).toWif();
 };
-walletManager.getWifAndPubKey = function (path) {
+walletManager.getWifAndPubKey = function (path = '/0/0') {
     let privateKey = getPrivateKeyObj(path);
     return {wif: privateKey.toWif(), pubKey: bsv.PubKey.fromPrivKey(privateKey).toString(), address: bsv.Address.fromPrivKey(privateKey).toString()}
 };
-walletManager.getAddress = function (path) {
-    return bsv.Address.fromPrivKey(getPrivateKeyObj(path).privKey).toString();
+walletManager.getAddress = function (path = '/0/0') {
+    return bsv.Address.fromPrivKey(getPrivateKeyObj(path)).toString();
 };
 
 
@@ -271,6 +314,8 @@ walletManager.payArray = async function (receivers, broadcast, wif = null) {
         noBroadcast: !broadcast,
     });
 
+    console.log(txComposer)
+
     return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId(), tx: txComposer.tx};
 };
 
@@ -297,7 +342,7 @@ walletManager.saveMnemonic = mnemonicUtils.saveMnemonic;
  *
  * 以下是对单私钥模式的支持
  */
-walletManager.getAddressFromWif = function (wif){
+walletManager.getAddressFromWif = function (wif) {
     return bsv.Address.fromPrivKey(bsv.PrivKey.fromWif(wif)).toString()
 }
 

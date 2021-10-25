@@ -51,20 +51,20 @@ const ft = new SensibleFT({
     // signers,
 });
 
-utils.getSignersFromRabinApis =async function (signers) {
+utils.getSignersFromRabinApis = async function (signers) {
     if (!signers)
         return null;
     let result = [];
 
     for (let i = 0; i < signers.length; i++) {
         if (notDefaultSigners[signers[i]]) {
-            result.push( notDefaultSigners[signers[i]])
+            result.push(notDefaultSigners[signers[i]])
         } else {
-            let data=await httpUtils.get(signers[i])
-            if(data && data.code===0){
+            let data = await httpUtils.get(signers[i])
+            if (data && data.code === 0) {
                 result.push({
                     satotxApiPrefix: signers[i],
-                    satotxPubKey:data.data.pubKey,
+                    satotxPubKey: data.data.pubKey,
                 })
             }
         }
@@ -82,8 +82,8 @@ utils.getBalance = function (genesis, codehash, address) {
     });
 };
 
-utils.getAllBalance = function (address,offset,limit){
-    return  httpUtils.get(`https://api.sensiblequery.com/ft/summary/${address}?cursor=${offset}&size=${limit}`)
+utils.getAllBalance = function (address, offset, limit) {
+    return httpUtils.get(`https://api.sensiblequery.com/ft/summary/${address}?cursor=${offset}&size=${limit}`)
 }
 
 utils.getUtxoCount = async (genesis, codehash, address) => {
@@ -182,12 +182,25 @@ utils.getTransferEsitimate = (codehash, genesis, receivers, senderWif, signers) 
         })
 }
 
-utils.getMergeEstimateFee = (codehash, genesis, senderWif) => {
-    return ft.getMergeEstimateFee({
-        codehash, genesis,
-        ownerWif: senderWif,
-        utxoMaxCount: 3
-    })
+utils.getMergeEstimateFee = (codehash, genesis, senderWif, signers) => {
+    if (signers && signers.length > 0)
+        return new SensibleFT({
+                network: config.network, //mainnet or testnet
+                purse: "", //the wif of a bsv address to offer transaction fees
+                feeb: 0.5,
+                signers,
+            }
+        ).getMergeEstimateFee({
+            codehash, genesis,
+            ownerWif: senderWif,
+            utxoMaxCount: 3
+        })
+    else
+        return ft.getMergeEstimateFee({
+            codehash, genesis,
+            ownerWif: senderWif,
+            utxoMaxCount: 3
+        })
 }
 
 module.exports = utils;
