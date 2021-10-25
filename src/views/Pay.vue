@@ -106,7 +106,7 @@ export default {
                             data: {
                                 id: request.id,
                                 result: "success",
-                                data: {txid},
+                                data: {txid,txHex: rawHex,},
                             },
                         });
                     } else {

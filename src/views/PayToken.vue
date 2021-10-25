@@ -153,7 +153,7 @@ export default {
                         data: {
                             id: request.id,
                             result: "success",
-                            data: this.broadcast ? {txid} : {txHex, routeCheckTxHex},
+                            data: this.broadcast ? {txid,txHex} : {txHex, routeCheckTxHex},
                         },
                     });
                     window.close();
