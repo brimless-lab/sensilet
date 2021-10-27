@@ -4,13 +4,13 @@
 ### v0.1.3 (2021-10-27)
 
 - Support Single Private Key 
-- Support Mnemonic Export on Settings page
-- Support Mnemonic Passphrase (optional)
-- Support Mnemonic Custom derive path
-- Logos for more tokens
-- Better respensiveness for token list
-- UI refinement
-- fix: cannot spend MC and MC/BSV 
+- for Mnemonic (12-words)
+	+ Export on the 'Settings' page
+	+ Additional Passphrase (optional)
+	+ Custom Derive Path
+- MC tokens are now spendable
+- Better responsiveness for token list
+- UI layout & logo refinements
 
 ### v0.1.2 (2021-10-21)
 
