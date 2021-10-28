@@ -25,3 +25,26 @@ global.showLongString = (str,length=10)=>{
         return str;
     return str.substring(0,length/2) + '...'+str.substring(str.length-length/2 , str.length)
 };
+
+global.showDecimal = function (num,fixed,decimal){
+
+    if(typeof num ==='string')
+        num = parseFloat(num)
+
+    let temp = (num / Math.pow(10, decimal))
+    let tempStr = temp+'';
+    let index = tempStr.indexOf(".");
+    if(index <0){
+        return {
+            integer: temp,
+            decimal: ""
+        }
+    }else {
+        temp = temp.toFixed(fixed)
+        index = temp.indexOf(".")
+        return {
+            integer:temp.substring(0,index),
+            decimal:temp.substring(index+1,temp.length)
+        }
+    }
+}

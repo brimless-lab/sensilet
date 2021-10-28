@@ -3,18 +3,7 @@
         <div>
             <div class="panel">
                 <div class="account-top account">
-                    <!--                    <div class="title action" > Main Account-->
-                    <!--                       -->
-                    <!--                    </div>-->
-                    <!--            <div class="action-container">-->
-                    <!--                <div class="add">-->
-                    <!--                    <PlusOutlined/>-->
-                    <!--                </div>-->
-                    <!--            </div>-->
                     <AccountChoose/>
-                    <!--                    <div class="account-mode">-->
-                    <!--                        {{ $t(accountMode) }}-->
-                    <!--                    </div>-->
                 </div>
                 <div class="list" v-if="bsvAsset==null" style="text-align: center">
                     <a-spin/>
@@ -22,12 +11,15 @@
                 <div class="list" v-else>
                     <div class="bsv-item">
                         <div class="info">
-
-
                             <div class="balance">
                                 <img src="../assets/bsv-icon.svg" alt="">
                                 <a-spin v-if="bsvAsset.isRefreshingAmount"/>
-                                <span v-else>{{ bsvAsset.balance.total / Math.pow(10, bsvAsset.decimal) }} {{ bsvAsset.name }}</span>
+                                <span v-else>
+                                    <span class="integer">{{bsvAsset.showBalance.integer}}</span>
+                                    <span class="decimal" v-if="bsvAsset.showBalance.decimal.length>0">.{{bsvAsset.showBalance.decimal}}</span>
+<!--                                    {{ bsvAsset.balance.total / Math.pow(10, bsvAsset.decimal) }} -->
+                                    <span style="margin-left: 4px">{{ bsvAsset.name }}</span>
+                                </span>
                             </div>
                             <div class="address" id="icon-copy" :data-clipboard-text="$store.getters.address">
                                 {{ bsvAsset.addressShow }}
@@ -41,15 +33,6 @@
                             <a-button @click="receive(bsvAsset)">{{ $t('account.receive') }}</a-button>
                             <a-button @click="sendBsv(bsvAsset)">{{ $t('account.send') }}</a-button>
                             <a-button @click="openHistory(bsvAsset.address)">{{ $t('account.history') }}</a-button>
-
-                            <!--                            <a-modal v-model:visible="bsvAsset.showQr" :footer="null" :closable=false>-->
-                            <!--                                <div style="display: flex;flex-direction: column;align-items: center">-->
-                            <!--                                    <qrcode-vue :value="bsvAsset.address" :size="200" level="H"/>-->
-                            <!--                                    <p style="margin-top: 20px">-->
-                            <!--                                        {{ bsvAsset.address }}-->
-                            <!--                                    </p>-->
-                            <!--                                </div>-->
-                            <!--                            </a-modal>-->
                         </div>
                     </div>
                 </div>
@@ -70,7 +53,7 @@
                 <div class="list" v-else>
                     <div class="item" v-for="item in $store.state.tokenList" :class="{'open':item.open}">
                         <div class="info" @click="item.open=!item.open">
-                            <div class="left">
+                            <div class="left" @click="seeTokenDetail(item)">
 
                                 <img style="width: 36px;height: 36px;border-radius: 50%" :src="item.logo || '/img/empty-token.png'" alt="">
                             </div>
@@ -88,14 +71,6 @@
                         <div class="action-container">
                             <a-button @click="receive(item)">{{ $t('account.receive') }}</a-button>
                             <a-button @click="sendToken(item)" :loading="btnLoading">{{ $t('account.send') }}</a-button>
-                            <!--                            <a-modal v-model:visible="item.showQr" :footer="null" :closable=false>-->
-                            <!--                                <div style="display: flex;flex-direction: column;align-items: center">-->
-                            <!--                                    <qrcode-vue :value="mainAddress" :size="200" level="H"/>-->
-                            <!--                                    <p style="margin-top: 20px" :id="item.genesis">-->
-                            <!--                                        {{ mainAddress }}-->
-                            <!--                                    </p>-->
-                            <!--                                </div>-->
-                            <!--                            </a-modal>-->
                         </div>
                     </div>
                 </div>
@@ -122,15 +97,21 @@
                     <div class="title"> {{ $t('account.hot_app') }}</div>
                 </div>
                 <div class="app-list" v-if="appList!=null">
+<!--                <div class="app-list" v-if="false">-->
                     <div class="item" v-for="item in appList">
+                        <img :src="item.logo" alt="">
+                        <div class="info">
+                            <div class="title">{{ item.name }}</div>
+                            <div class="desc ellipsis">{{item.desc}}
+                            </div>
+                        </div>
                         <a :href="item.url" target="_blank">
-                            <img :src="item.logo" alt="">
-                            <!--                            <span> {{ item.name }}  </span>-->
+                            Enter
                         </a>
                     </div>
-                    <div class="item">
-                        and more ...
-                    </div>
+<!--                    <div class="item">-->
+<!--                        and more ...-->
+<!--                    </div>-->
                 </div>
                 <a-spin v-else></a-spin>
             </div>
@@ -326,6 +307,8 @@ export default {
             };
             assetData.isRefreshingAmount = false;
 
+            assetData.showBalance = showDecimal(assetData.balance.total,8,8)
+            console.log(assetData.showBalance)
 
             this.bsvAsset = assetData
         },
@@ -454,6 +437,9 @@ export default {
                     break;
             }
         },
+        seeTokenDetail({genesis, codehash}) {
+            window.open(`https://blockcheck.info/ft/${codehash}/${genesis}`)
+        },
         openHistory(address) {
             window.open(`https://blockcheck.info/address/${address}`)
         },
@@ -533,18 +519,21 @@ export default {
             cursor: pointer;
 
         }
+
+
     }
 }
 
 .app-list {
     display: flex;
+    flex-direction: column;
     align-items: center;
     flex-wrap: wrap;
 
     .item {
         box-sizing: border-box;
-        width: calc(50% - 16px);
-        height: 48px;
+        width: calc(100% - 16px);
+        height: 56px;
         padding: 4px;
         margin: 8px;
         background: #fff;
@@ -553,22 +542,35 @@ export default {
 
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         //box-shadow: 3px 3px 9px 0 rgba(0, 0, 0, 0.1);
 
-        a {
+        img{
+            width: 48px;
+            border-radius: 5px;
+        }
+
+        .info{
+            flex:1;
+            margin-left: 8px;
+
             display: flex;
             flex-direction: column;
-            align-items: center;
-
-            img {
-                //width: 48px;
-                height: 42px;
+            .title{
+                font-size: 16px;
+                font-weight: bold;
+            }
+            .desc{
+                width: 232px;
+                color: #999;
             }
 
-            span {
-                margin-top: 8px;
-            }
+        }
+
+        a {
+            padding: 4px 10px;
+            border-radius: 2em;
+            background-color: #eee;
         }
     }
 }
@@ -638,6 +640,7 @@ export default {
 
             cursor: auto;
 
+            position: relative;
         }
 
         &.open {

@@ -1,7 +1,7 @@
 const responseHandlers = new Map();
 const sensibleSdk = require("sensible-sdk");
 
-require('./utils/golbalUtils')
+require('./utils/globalUtils')
 require('./config/errorCode')
 const walletManager = require("./manager/WalletManager");
 const tokenManager = require("./manager/tokenManager");

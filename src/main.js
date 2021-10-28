@@ -13,7 +13,7 @@ if (bg) {
 } else
     window.location.reload();
 
-import {} from './utils/golbalUtils'
+import {} from './utils/globalUtils'
 
 console.log('######## config');
 import config from './config/base'

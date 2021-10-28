@@ -550,4 +550,22 @@ body {
     }
 }
 
+.more-action{
+    position: absolute;
+    right: 16px;
+
+    img{
+        width: 32px;
+        height: 32px;
+    }
+}
+
+.integer{
+
+}
+.decimal{
+    font-size: .85em;
+    color: #888;
+}
+
 </style>
