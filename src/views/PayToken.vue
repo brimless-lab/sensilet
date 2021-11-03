@@ -69,10 +69,12 @@ export default {
             data.receivers = [{amount: routerData.amount, address: routerData.address}]
             data.broadcast = routerData.broadcast;
             data.genesis = routerData.genesis;
+            data.codehash = routerData.codehash;
         } else {
             data.receivers = request.params.receivers;
             data.broadcast = request.params.broadcast;
             data.genesis = request.params.genesis;
+            data.codehash = request.params.codehash;
             data.utxo = request.params.utxo;
         }
 
@@ -80,13 +82,14 @@ export default {
         return data;
     },
     async mounted() {
-        console.log(this.genesis)
+        console.log(this.genesis,this.codehash)
         signers = null;
-        tokenInfo = await tokenManager.getTokenInfo(this.genesis);
+        tokenInfo = await tokenManager.getTokenInfo(this.genesis,this.codehash);
 
         if (!tokenInfo) {
             antMessage.error(this.$t('popup.unknown_token'));
             routerManager.gotoHome()
+            return
         }
 
         this.tokenInfo = tokenInfo;

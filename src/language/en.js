@@ -97,6 +97,11 @@ export default {
         export_private_key: "Export Private Key(Default Address)",
         notice_1:"DO NOT share the mnemonic with anyone!",
         notice_2:"Your funds will be transfered unexpectedly if the mnemonic is unintentionally revealed.",
+
+        register_address:"Register my address for future airdrops",
+        // share_address_notice:"You will have chance to get Token airdrop",
+        address_exists:"Address already registered",
+        register_success:"Address register success",
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

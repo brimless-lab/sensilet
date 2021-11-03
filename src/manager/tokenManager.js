@@ -507,7 +507,27 @@ tokenManager.listUserTokens = async function () {
     return tokenList;
 };
 
-tokenManager.getTokenInfo = async function (genesis) {
+tokenManager.getTokenInfoNet = async function (genesis,codehash){
+
+    let result = await httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${codehash}/${genesis}`)
+    if (!result || result.code !== 0)
+        return null
+
+    let tokenInfo = result.data;
+
+    return {
+        codehash: codehash,
+        genesis: genesis,
+        network: 'mainnet',
+        name: tokenInfo.name,
+        decimal: tokenInfo.decimal,
+        fixed: tokenInfo.fixed || tokenInfo.decimal,
+        unit: tokenInfo.symbol,
+        logo: tokenInfo.icon,
+    }
+}
+
+tokenManager.getTokenInfo = async function (genesis,codehash) {
     //从已添加的列表中获取
     let tokenTable = getLocalTokenTable();
     let tokenInfo = tokenTable[genesis];
@@ -516,6 +536,11 @@ tokenManager.getTokenInfo = async function (genesis) {
     if (!tokenInfo){
         let allInfo = await getAllTokenTable()
         tokenInfo = allInfo[genesis];
+    }
+
+    //仍然没有就从api获取
+    if(!tokenInfo){
+        tokenInfo = await tokenManager.getTokenInfoNet(genesis,codehash)
     }
 
     //查询余额

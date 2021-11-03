@@ -9,6 +9,7 @@
         <div class="right"  v-if="showSetting">
             <div  @click="gotoSetting()">
                 <img class="icon" src="./assets/icon-setting.svg" alt="">
+                <div class="red-point" :class="{'show':!$store.state.isSettingChecked}"></div>
             </div>
         </div>
         <AccountChoose v-else-if="showAccountChoose"/>
@@ -203,6 +204,9 @@ export default {
             routerManager.gotoHome();
         },
         gotoSetting() {
+            localManager.setSettingChecked()
+            this.$store.commit("initSettingChecked")
+
             routerManager.goto('/setting')
         }
     }
@@ -276,6 +280,11 @@ body {
         display: flex;
         align-items: center;
 
+        .red-point{
+            top: 1px;
+            right:-2px;
+        }
+
     }
 
     .version{
@@ -290,20 +299,6 @@ body {
             right: 50px;
         }
 
-        .red-point{
-            width: 8px;
-            height: 8px;
-
-            position: absolute;
-            top: -4px;
-            right: -6px;
-
-            border-radius: 50%;
-            background-color: red;
-
-            display: none;
-        }
-
         &.has-new{
             cursor: pointer;
             .red-point{
@@ -314,6 +309,26 @@ body {
     }
 
 }
+
+
+.red-point{
+    width: 8px;
+    height: 8px;
+
+    position: absolute;
+    top: -4px;
+    right: -6px;
+
+    border-radius: 50%;
+    background-color: red;
+
+    display: none;
+
+    &.show{
+        display: block;
+    }
+}
+
 
 #nav {
     padding: 30px;

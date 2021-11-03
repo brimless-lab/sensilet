@@ -7,7 +7,8 @@ export default createStore({
         account: null,
         tokenList: null,
         version: {},
-        versionChecked:0,
+        versionChecked: 0,
+        isSettingChecked: true,
     },
     getters: {
         address(state) {
@@ -48,11 +49,15 @@ export default createStore({
         setVersionInfo(state, version) {
             state.version = version;
         },
-        refreshVersionCheck(state){
+        refreshVersionCheck(state) {
             state.versionChecked = localManager.getVersionChecked();
-        }
+        },
+        initSettingChecked(state) {
+            state.isSettingChecked = localManager.isSettingChecked();
+        },
     },
     actions: {
+
         async refreshAsset({commit, state}) {
 
         },

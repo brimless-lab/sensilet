@@ -1,6 +1,4 @@
-let localManager = {
-
-};
+let localManager = {};
 let bg = chrome.extension.getBackgroundPage();
 
 
@@ -101,15 +99,47 @@ localManager.saveGenesis = function (info) {
 };
 
 localManager.setVersionChecked = function (versionCode) {
-    localStorage.setItem('versionCodeChecked',versionCode)
+    localStorage.setItem('versionCodeChecked', versionCode)
 }
 localManager.getVersionChecked = function () {
     let code = localStorage.getItem('versionCodeChecked')
-    if(code)
+    if (code)
         return parseInt(code)
     else
         return 0;
 }
+
+
+localManager.setSettingChecked = function () {
+    localStorage.setItem('isSettingChecked','yes')
+}
+localManager.isSettingChecked = function () {
+    let str = localStorage.getItem('isSettingChecked')
+    // console.log(str)
+    return str && str === 'yes';
+}
+
+
+localManager.isAddressRegistered = function (address) {
+    let list = localStorage.getItem('registeredAddress')
+    if(!list)
+        return false
+    list = JSON.parse(list)
+    return list.indexOf(address) > -1;
+}
+
+localManager.setAddressRegistered = function (address) {
+    let list = localStorage.getItem('registeredAddress')
+    if(!list)
+        list = '[]'
+    list = JSON.parse(list)
+    if(list.indexOf(address)<0){
+        list.push(address);
+        localStorage.setItem('registeredAddress',JSON.stringify(list))
+    }
+}
+
+
 
 function getObjItem(key) {
     let temp = localStorage.getItem(key);

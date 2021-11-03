@@ -52,13 +52,27 @@ export default {
         amount_error_2: "轉出金額需大於0",
         balance_not_enough: "賬戶余額不足",
         add_custom_token:"添加自定義Token",
+
+        choose:"Choose",
+        add:"Add New Account...",
+        add_new:"Add New(create new Mnemonic)",
+        alias_input:"input an alias",
+
+        mode_single_key:"PrivKey",
+        mode_HD:"HD",
+
+        alias_max_limit:"alias need less than 12 char",
+        alias_min_limit:"alias need more than 0 char",
     },
     setting: {
         expand_view: "展開視圖",
         import_mnemonic: "導入助記詞",
         export_mnemonic: "導出助記詞",
-        notice_1:"DO NOT share this phrase with anyone!",
-        notice_2:"These words can be used to steal this account.",
+        import_private_key: "Import Private Key",
+        export_private_key: "Export Private Key(Default Address)",
+        notice_1:"DO NOT share the mnemonic with anyone!",
+        notice_2:"Your funds will be transfered unexpectedly if the mnemonic is unintentionally revealed.",
+
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

@@ -258,6 +258,8 @@ export default {
     },
     async created() {
 
+        this.$store.commit("initSettingChecked")
+
         this.initAsset();
 
         // this.nftGenesisList = await nftManager.listAllNft().catch(e => []);
@@ -427,9 +429,10 @@ export default {
                             amount,
                         });
                     }
-
+                    console.log(this.transInfo)
                     routerManager.goto('/payToken', {
                         genesis: this.transInfo.genesis,
+                        codehash: this.transInfo.codehash,
                         broadcast: true,
                         address: this.transAddress,
                         amount,

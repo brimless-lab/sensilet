@@ -42,13 +42,16 @@ export default {
             fee: 0,
             tokenInfo: null,
             genesis: "",
+            codehash: "",
         };
 
         let routerData = routerManager.data;
         if (routerData) {
             data.genesis = routerData.genesis;
+            data.codehash = routerData.codehash;
         } else {
             data.genesis = request.params.genesis;
+            data.codehash = request.params.codehash;
         }
 
 
@@ -57,7 +60,7 @@ export default {
     async mounted() {
         console.log(this.genesis)
 
-        tokenInfo = await tokenManager.getTokenInfo(this.genesis);
+        tokenInfo = await tokenManager.getTokenInfo(this.genesis,this.codehash);
 
         if (!tokenInfo) {
             antMessage.error(this.$t('popup.unknown_token'));
