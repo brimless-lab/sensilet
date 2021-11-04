@@ -1,8 +1,9 @@
 <template>
     <div class="top">
         <div class="title">
-            <div style="overflow: hidden">
-                <img style="height: 150px;" src="./assets/logo_h.svg" alt="logo">
+          <div style="overflow: hidden">
+<!--                <img src="./assets/logo_h_white.png" alt="logo">-->
+                <img style="width: 150px" src="./assets/logo_h.svg" alt="logo">
             </div>
             <!--            <img v-else src="./assets/logo.png" alt="logo">-->
         </div>
@@ -266,7 +267,9 @@ body {
         left: 0;
 
         img {
-            height: 42px;
+            //height: 45px;
+            //margin-left: 8px;
+
         }
     }
 

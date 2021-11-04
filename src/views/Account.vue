@@ -59,7 +59,7 @@
                     <div class="title"> Tokens</div>
                     <div v-if="!editTokenMode" class="type-choose">
                         <a-radio-group v-model:value="showTokenType" button-style="solid" size="small" @change="showTokenTypeChanged">
-                            <a-radio-button value="added">Added</a-radio-button>
+                            <a-radio-button value="added">Mine</a-radio-button>
                             <a-radio-button value="all">All</a-radio-button>
                         </a-radio-group>
                     </div>
