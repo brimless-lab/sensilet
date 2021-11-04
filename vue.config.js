@@ -1,4 +1,16 @@
 module.exports = {
+  css:{
+    loaderOptions: {
+      less: {
+        lessOptions: {
+          modifyVars: {
+            'primary-color': '#527195',
+          },
+          javascriptEnabled: true,
+        },
+      },
+    },
+  },
   lintOnSave: false,
   pages: {
     popup: {
@@ -22,5 +34,5 @@ module.exports = {
         }
       }
     }
-  }
+  },
 }

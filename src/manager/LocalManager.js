@@ -138,8 +138,12 @@ localManager.setAddressRegistered = function (address) {
         localStorage.setItem('registeredAddress',JSON.stringify(list))
     }
 }
-
-
+localManager.getShowTokenType = function (){
+    return localStorage.getItem('showTokenType') || 'mine'
+}
+localManager.setShowTokenType = function (type){
+    localStorage.setItem('showTokenType',type)
+}
 
 function getObjItem(key) {
     let temp = localStorage.getItem(key);

@@ -14,7 +14,7 @@
                 {{ $t("account.choose") }}
 
             </div>
-            <DownOutlined style="color:#E0534F;"/>
+            <DownOutlined style="color:#999;font-size: 22px ;padding-left: 4px"/>
 
         </div>
         <template #overlay>
@@ -132,15 +132,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+@import "../style/color";
+
+
 .current-account {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    background-color: white;
     border-radius: 2em;
-    padding: 2px 16px;
+    padding: 4px 16px;
     cursor: pointer;
+    max-width: 375px;
+    min-width: 200px;
+
+    background-color: $main-bg;
+    transition: .35s;
+
+    &:hover {
+        background-color: white;
+        box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 5%);;
+    }
 
 
     .word {

@@ -1,10 +1,11 @@
 <template>
     <div class="account-container">
         <div>
+            <div class="account-top account">
+                <AccountChoose/>
+            </div>
             <div class="panel">
-                <div class="account-top account">
-                    <AccountChoose/>
-                </div>
+
                 <div class="list" v-if="bsvAsset==null" style="text-align: center">
                     <a-spin/>
                 </div>
@@ -15,10 +16,10 @@
                                 <img src="../assets/bsv-icon.svg" alt="">
                                 <a-spin v-if="bsvAsset.isRefreshingAmount"/>
                                 <span v-else>
-                                    <span class="integer">{{bsvAsset.showBalance.integer}}</span>
-                                    <span class="decimal" v-if="bsvAsset.showBalance.decimal.length>0">.{{bsvAsset.showBalance.decimal}}</span>
-<!--                                    {{ bsvAsset.balance.total / Math.pow(10, bsvAsset.decimal) }} -->
-                                    <span style="margin-left: 4px">{{ bsvAsset.name }}</span>
+                                    <span class="integer">{{ bsvAsset.showBalance.integer }}</span>
+                                    <span class="decimal" v-if="bsvAsset.showBalance.decimal.length>0">.{{ bsvAsset.showBalance.decimal }}</span>
+                                    <!--                                    {{ bsvAsset.balance.total / Math.pow(10, bsvAsset.decimal) }} -->
+                                    <span style="margin-left: 4px;font-size: .85em">{{ bsvAsset.name }}</span>
                                 </span>
                             </div>
                             <div class="address" id="icon-copy" :data-clipboard-text="$store.getters.address">
@@ -30,9 +31,24 @@
 
                         </div>
                         <div class="action-container">
-                            <a-button @click="receive(bsvAsset)">{{ $t('account.receive') }}</a-button>
-                            <a-button @click="sendBsv(bsvAsset)">{{ $t('account.send') }}</a-button>
-                            <a-button @click="openHistory(bsvAsset.address)">{{ $t('account.history') }}</a-button>
+                            <a-button shape="round" @click="receive(bsvAsset)">
+                                <template #icon>
+                                    <img src="../assets/icon-qrcode.svg" alt="">
+                                </template>
+                                {{ $t('account.receive') }}
+                            </a-button>
+                            <a-button shape="round" @click="sendBsv(bsvAsset)">
+                                <template #icon>
+                                    <img src="../assets/icon-transfer.svg" alt="">
+                                </template>
+                                {{ $t('account.send') }}
+                            </a-button>
+                            <a-button shape="round" @click="openHistory(bsvAsset.address)">
+                                <template #icon>
+                                    <img src="../assets/icon-history.svg" alt="">
+                                </template>
+                                {{ $t('account.history') }}
+                            </a-button>
                         </div>
                     </div>
                 </div>
@@ -41,37 +57,94 @@
             <div class="panel">
                 <div class="account-top">
                     <div class="title"> Tokens</div>
-                    <div class="action-container">
+                    <div v-if="!editTokenMode" class="type-choose">
+                        <a-radio-group v-model:value="showTokenType" button-style="solid" size="small" @change="showTokenTypeChanged">
+                            <a-radio-button value="added">Added</a-radio-button>
+                            <a-radio-button value="all">All</a-radio-button>
+                        </a-radio-group>
+                    </div>
+                    <div v-if="!editTokenMode" class="action-container" :class="{'disable':showTokenType==='all'}">
                         <div class="add" @click="openTokenList">
-                            <PlusOutlined/>
+                            <img src="../assets/icon-add.svg" alt="">
+                        </div>
+                        <div class="add" @click="enterEditTokenListMode">
+                            <img src="../assets/icon-sort.svg" alt="">
+                        </div>
+                    </div>
+                    <div v-else class="action-container">
+                        <div class="add" @click="cancelEdit">
+                            <CloseOutlined/>
+                        </div>
+                        <div class="add" @click="commitEdit">
+                            <CheckOutlined/>
                         </div>
                     </div>
                 </div>
-                <div class="list" v-if="$store.state.tokenList==null" style="text-align: center">
+                <div class="list" v-if="$store.state.tokenList==null" style="padding:16px;text-align: center">
                     <a-spin/>
                 </div>
-                <div class="list" v-else>
-                    <div class="item" v-for="item in $store.state.tokenList" :class="{'open':item.open}">
-                        <div class="info" @click="item.open=!item.open">
+                <div class="list" v-else-if="$store.state.tokenList.length>0">
+                    <div class="item" v-for="(item,index) in editTokenMode? editList:$store.state.tokenList" :class="{'open':item.open&&!editTokenMode }">
+                        <div class="info" @click="toggleItem(item)">
                             <div class="left" @click="seeTokenDetail(item)">
 
-                                <img style="width: 36px;height: 36px;border-radius: 50%" :src="item.logo || '/img/empty-token.png'" alt="">
+                                <img style="width: 24px;height: 24px;border-radius: 50%" :src="item.logo || '/img/empty-token.png'" alt="">
                             </div>
                             <div class="mid">
                                 <div class="balance">
                                     <a-spin v-if="item.isRefreshingAmount"/>
-                                    <span v-else>{{ item.balance / Math.pow(10, item.decimal) }} {{ item.name }}</span>
+                                    <div v-else>
+                                        <span v-if="!editTokenMode" style="font-weight: bold">{{ item.balance / Math.pow(10, item.decimal) }} </span>
+                                        <span>{{ item.name }}</span>
+                                    </div>
                                 </div>
-                                <div class="address">{{ item.address }}</div>
                             </div>
-                            <div class="right">
-                                <DownOutlined/>
+                            <div class="right" v-if="!editTokenMode">
+                                <DownOutlined style="color: #999"/>
+                            </div>
+                            <div class="right actions" v-else>
+                                <div class="action" @click="editActionAdd(index)">
+                                    <ArrowUpOutlined/>
+                                </div>
+                                <div class="action" @click="editActionSub(index)">
+                                    <ArrowDownOutlined/>
+                                </div>
+                                <div class="action" :class="{'checked':item.topped}" @click="editActionTop(index)">
+                                    <VerticalAlignTopOutlined/>
+                                </div>
+
+                                <a-popconfirm
+                                    title="Are you sure remove this?"
+                                    @confirm="editActionRemove(index)"
+                                    :arrowPointAtCenter="true"
+                                    placement="topRight"
+                                >
+                                    <div class="action">
+                                        <DeleteOutlined/>
+                                    </div>
+                                </a-popconfirm>
+
                             </div>
                         </div>
                         <div class="action-container">
-                            <a-button @click="receive(item)">{{ $t('account.receive') }}</a-button>
-                            <a-button @click="sendToken(item)" :loading="btnLoading">{{ $t('account.send') }}</a-button>
+                            <a-button shape="round" @click="receive(item)">
+                                <template #icon>
+                                    <img src="../assets/icon-qrcode.svg" alt="">
+                                </template>
+                                {{ $t('account.receive') }}
+                            </a-button>
+                            <a-button shape="round" @click="sendToken(item)" :loading="btnLoading">
+                                <template #icon>
+                                    <img src="../assets/icon-transfer.svg" alt="">
+                                </template>
+                                {{ $t('account.send') }}
+                            </a-button>
                         </div>
+                    </div>
+                </div>
+                <div class="list" v-else>
+                    <div class="empty">
+                        empty
                     </div>
                 </div>
             </div>
@@ -97,45 +170,27 @@
                     <div class="title"> {{ $t('account.hot_app') }}</div>
                 </div>
                 <div class="app-list" v-if="appList!=null">
-<!--                <div class="app-list" v-if="false">-->
+                    <!--                <div class="app-list" v-if="false">-->
                     <div class="item" v-for="item in appList">
                         <img :src="item.logo" alt="">
                         <div class="info">
                             <div class="title">{{ item.name }}</div>
-                            <div class="desc ellipsis">{{item.desc}}
+                            <div class="desc ellipsis">{{ item.desc }}
                             </div>
                         </div>
                         <a :href="item.url" target="_blank">
                             Enter
                         </a>
                     </div>
-<!--                    <div class="item">-->
-<!--                        and more ...-->
-<!--                    </div>-->
+                    <!--                    <div class="item">-->
+                    <!--                        and more ...-->
+                    <!--                    </div>-->
                 </div>
-                <a-spin v-else></a-spin>
+                <a-spin v-else style="padding:16px;text-align: center"></a-spin>
             </div>
         </div>
 
-
-        <div class="footer">
-            <a href="https://sensilet.com" target="_blank">
-                <img src="../assets/logo.png" alt="">
-                Sensilet
-            </a>
-            <a href="https://t.me/sensilet" target="_blank">
-                <img src="/img/telegram.png" alt="">
-
-                Telegram
-            </a>
-            <a href="https://github.com/sensilet/sensilet" target="_blank">
-                <svg height="18" aria-hidden="true" viewBox="0 0 16 16" version="1.1" width="18" data-view-component="true" class="octicon octicon-mark-github v-align-middle">
-                    <path fill-rule="evenodd"
-                          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
-                GitHub
-            </a>
-        </div>
+        <Footer></Footer>
     </div>
     <a-modal v-model:visible="showAddTokenPanel" :footer="null" :closable=false>
         <div class="base-token-list" v-if="baseTokenList">
@@ -195,7 +250,7 @@
     </a-modal>
     <a-modal v-model:visible="showQr" :footer="null" :closable=false>
         <div style="display: flex;flex-direction: column;align-items: center">
-            <qrcode-vue :value="$store.getters.address" :size="200" level="H"/>
+            <QrcodeVue :value="$store.getters.address" :size="200" level="H"/>
             <p class="copy-address" style="margin-top: 20px;" id="address-copy" :data-clipboard-text="$store.getters.address">
                 {{ $store.getters.address }}
                 <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -212,9 +267,17 @@
 <script>
 import PlusOutlined from '@ant-design/icons-vue/lib/icons/PlusOutlined'
 import DownOutlined from '@ant-design/icons-vue/lib/icons/DownOutlined'
+import ArrowUpOutlined from '@ant-design/icons-vue/lib/icons/ArrowUpOutlined'
+import ArrowDownOutlined from '@ant-design/icons-vue/lib/icons/ArrowDownOutlined'
+import VerticalAlignTopOutlined from '@ant-design/icons-vue/lib/icons/VerticalAlignTopOutlined'
+import CheckOutlined from '@ant-design/icons-vue/lib/icons/CheckOutlined'
+import CloseOutlined from '@ant-design/icons-vue/lib/icons/CloseOutlined'
+import DeleteOutlined from '@ant-design/icons-vue/lib/icons/DeleteOutlined'
+
 import QrcodeVue from 'qrcode.vue'
 
 import AccountChoose from "../components/AccountChoose";
+import Footer from "../components/Footer";
 import Clipboard from "clipboard";
 import httpUtils from '../utils/httpUtils';
 
@@ -225,9 +288,15 @@ export default {
     name: "Account",
     components: {
         AccountChoose,
-
+        Footer,
         QrcodeVue, PlusOutlined,
-        DownOutlined
+        DownOutlined,
+        ArrowUpOutlined,
+        ArrowDownOutlined,
+        VerticalAlignTopOutlined,
+        CheckOutlined,
+        CloseOutlined,
+        DeleteOutlined,
     },
     data() {
         return {
@@ -251,6 +320,9 @@ export default {
             btnLoading: false,
             showQr: false,
             showRedPoint: false,
+            showTokenType: localManager.getShowTokenType(),
+            editTokenMode: false,
+            editList: [],
         }
     },
     beforeCreate() {
@@ -288,6 +360,7 @@ export default {
     },
 
     methods: {
+
         async initAsset() {
             let assetData = {
                 name: 'BSV',
@@ -309,13 +382,24 @@ export default {
             };
             assetData.isRefreshingAmount = false;
 
-            assetData.showBalance = showDecimal(assetData.balance.total,8,8)
+            assetData.showBalance = showDecimal(assetData.balance.total, 8, 8)
             console.log(assetData.showBalance)
 
             this.bsvAsset = assetData
         },
         async initAppList() {
-            this.appList = (await httpUtils.get('https://sensilet.com/api/application_list')).data
+            try {
+
+
+            let temp = localStorage.getItem('appList', data);
+            if (temp)
+                this.appList = JSON.parse(temp);
+            }catch (e){
+                console.error(e)
+            }
+            let data = (await httpUtils.get('https://sensilet.com/api/application_list')).data
+            localStorage.setItem('appList',JSON.stringify( data));
+            this.appList = data;
         },
         receive(item) {
             this.showQr = true
@@ -323,20 +407,120 @@ export default {
         async refreshToken() {
             this.$store.dispatch('refreshAllToken')
         },
+        toggleItem(item) {
+            if (!this.editTokenMode)
+                item.open = !item.open
+        },
+        showTokenTypeChanged() {
+            localManager.setShowTokenType(this.showTokenType)
+            this.$store.dispatch('refreshAllToken')
+        },
         async openTokenList() {
+            if (this.showTokenType === 'all')
+                return
             this.showAddTokenPanel = true;
             this.baseTokenList = null;
 
             this.baseTokenList = await tokenManager.getTokenListNet();
 
         },
+        enterEditTokenListMode() {
+            if (this.showTokenType === 'all')
+                return
+            //拷贝一份token数据用于临时编辑
+            let tempList = JSON.parse(JSON.stringify(this.$store.state.tokenList))
+            // 遍历，给上基础排序信息
+            for (let i = 0; i < tempList.length; i++) {
+                if (!tempList[i].addTime) {
+                    //    非置顶
+                    tempList[i].addTime = 0;
+                }
+            }
+            this.editList = tempList;
+            this.editTokenMode = true
+        },
+        commitEdit() {
+            tokenManager.reSaveToken(this.editList)
+            this.$store.dispatch('refreshAllToken')
+
+            this.editTokenMode = false;
+            this.editList = [];
+        },
+        cancelEdit() {
+            this.editTokenMode = false;
+            this.editList = [];
+        },
+        editActionAdd(index) {
+            if (!this.editTokenMode || !this.editList || this.editList.length < 1)
+                return
+            if (index <= 0)
+                return;
+
+            if (!this.editList[index] || !this.editList[index - 1])
+                return;
+
+            if (this.editList[index - 1].topped && !this.editList[index].topped)
+                return;
+
+
+            let temp = this.editList[index - 1]
+            this.editList[index - 1] = this.editList[index]
+            this.editList[index] = temp;
+
+        },
+        editActionSub(index) {
+            if (!this.editTokenMode || !this.editList || this.editList.length < 1)
+                return
+            if (index >= this.editList.length - 1)
+                return;
+            if (!this.editList[index] || !this.editList[index + 1])
+                return;
+            if (this.editList[index].topped && !this.editList[index + 1].topped)
+                return;
+
+            let temp = this.editList[index + 1];
+            this.editList[index + 1] = this.editList[index];
+            this.editList[index] = temp;
+
+        },
+        editActionTop(index) {
+            if (!this.editTokenMode || !this.editList || this.editList.length < 1)
+                return
+
+            if (!this.editList[index])
+                return;
+
+            let temp = this.editList[index];
+            if (temp.topped) {
+                temp.topped = false;
+                //    取消置顶的元素应该放哪呢
+                //    暂时策略，移到非置顶的第一个
+                this.editList.splice(index, 1);
+
+                let i = this.editList.findIndex(item => !item.topped)
+
+                if (i >= 0)
+                    this.editList.splice(i, 0, temp);
+                else
+                    this.editList.push(temp)
+
+            } else {
+                temp.topped = true;
+                this.editList.splice(index, 1);
+                this.editList.unshift(temp)
+            }
+        },
+        editActionRemove(index) {
+            if (!this.editTokenMode || !this.editList || this.editList.length < 1)
+                return
+
+            this.editList.splice(index, 1);
+        },
         showAddCustomTokenPanel() {
             this.showAddTokenPanel = false;
             this.isShowAddCustomTokenPanel = true;
         },
-        getCustomTokenInfo() {
 
-        },
         async addCustomToken() {
             if (!this.customToken.genesis || !this.customToken.codehash)
                 return;
@@ -466,32 +650,46 @@ export default {
 
 <style scoped lang="scss">
 
+@import "../style/color";
+
 .account-container {
     min-height: calc(100vh - 56px);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background-color: $main-bg;
 }
 
 .panel {
-    padding: 0
+    padding: 0;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 7.5%);;
+    transition: .25s;
+
+    &:hover {
+        box-shadow: 0px 12px 24px 0px rgb(0 0 0 / 15%);;
+    }
 }
 
 .account-top {
-    height: 56px;
+    height: 36px;
     width: 100%;
-    padding: 0 8px;
+    padding: 0 8px 0 16px;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    background-color: #f5f5f5;
-    color: rgba(0, 0, 0, .87);
+    background-color: $base-color;
+    color: white;
+    position: relative;
 
     &.account {
-        justify-content: center;
+        margin-top: 24px;
 
+        background-color: $main-bg;
+        justify-content: center;
         position: relative;
 
         .account-mode {
@@ -503,7 +701,8 @@ export default {
 
 
     .title {
-
+        font-size: 16px;
+        font-weight: bold;
 
         &.action {
             z-index: 1;
@@ -517,10 +716,47 @@ export default {
         }
     }
 
+    .type-choose {
+        border-radius: 2em;
+        overflow: hidden;
+
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
     .action-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-left: -8px;
+
+        &.disable {
+
+            opacity: 0.2;
+            cursor: none;
+
+            .add {
+                cursor: default;
+            }
+        }
+
+        .sort {
+
+        }
+
         .add {
             cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 5px;
 
+            &:hover {
+                background-color: rgba(0, 0, 0, .15);
+            }
+
+            img {
+                width: 22px;
+            }
         }
 
 
@@ -537,7 +773,7 @@ export default {
         box-sizing: border-box;
         width: calc(100% - 16px);
         height: 56px;
-        padding: 4px;
+        padding: 8px;
         margin: 8px;
         background: #fff;
         border-radius: 8px;
@@ -548,23 +784,26 @@ export default {
         justify-content: space-between;
         //box-shadow: 3px 3px 9px 0 rgba(0, 0, 0, 0.1);
 
-        img{
-            width: 48px;
+        img {
+            width: 36px;
             border-radius: 5px;
         }
 
-        .info{
-            flex:1;
-            margin-left: 8px;
+        .info {
+            flex: 1;
+            margin-left: 16px;
 
             display: flex;
             flex-direction: column;
-            .title{
-                font-size: 16px;
+
+            .title {
+                font-size: 14px;
                 font-weight: bold;
             }
-            .desc{
-                width: 232px;
+
+            .desc {
+                font-size: 12px;
+                width: 200px;
                 color: #999;
             }
 
@@ -573,19 +812,27 @@ export default {
         a {
             padding: 4px 10px;
             border-radius: 2em;
-            background-color: #eee;
+            background-color: #f1f2f3;
+            font-weight: 700;
         }
     }
 }
 
 .list {
+
+    .empty {
+        padding: 16px;
+        text-align: center;
+    }
+
     .item {
         cursor: pointer;
+        border-bottom: #eee 1px solid;
 
         .info {
             display: flex;
             justify-content: space-between;
-            padding: 8px;
+            padding: 10px;
             align-items: center;
 
             &:active {
@@ -607,11 +854,15 @@ export default {
                 flex-grow: 99;
 
                 .balance {
-
+                    div {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-right: 8px;
+                    }
                 }
 
                 .address {
-                    color: #666;
+                    color: $font-weaken;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
@@ -621,11 +872,42 @@ export default {
             }
 
             .right {
+                margin-right: 2px;
                 transition: .25s ease-in-out;
 
                 span {
-                    font-size: 18px;
+                    font-size: 12px;
+                }
 
+                &.actions {
+                    display: flex;
+
+                    .action {
+                        padding: 8px;
+                        margin-right: 2px;
+                        border-radius: 4px;
+                        display: flex;
+                        align-items: center;
+
+                        &.checked {
+                            background-color: $base-color;
+                            color: white;
+
+                            span {
+                                font-weight: bold;
+                                font-size: 18px;
+
+                            }
+                        }
+
+                        &:hover {
+                            background-color: rgba(0, 0, 0, .15);
+                        }
+
+                        span {
+                            font-size: 16px;
+                        }
+                    }
                 }
             }
         }
@@ -664,24 +946,27 @@ export default {
 
     .bsv-item {
         margin-top: 16px;
+        padding: 16px;
 
         .info {
-            margin-top: 16px;
+            //margin-top: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            transform: scale(1.05);
 
             img {
-                width: 32px;
-                height: 32px;
-                border-radius: 50%
+                width: 26px;
+                //height: 26px;
+                border-radius: 50%;
+                margin-bottom: 3px;
             }
 
             .balance {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 32px;
+                font-size: 24px;
                 color: #333;
 
                 img {
@@ -692,8 +977,10 @@ export default {
             }
 
             .address {
+                margin: 8px;
                 padding: 4px 8px;
                 border-radius: 5px;
+                color: $font-weaken;
 
                 &:hover {
                     background-color: #F2F3F4;
@@ -706,7 +993,7 @@ export default {
         }
 
         .action-container {
-            padding: 16px;
+            padding: 8px;
             display: flex;
             align-items: center;
             justify-content: space-around;

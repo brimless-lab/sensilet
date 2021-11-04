@@ -4,6 +4,7 @@ const httpUtils = require('../utils/httpUtils');
 const sensibleFtUtils = require('../utils/sensibleFTUtils');
 tokenManager.sensibleFt = sensibleFtUtils;
 
+const localManager = require('./LocalManager')
 // const baseList = [
 //     {
 //         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
@@ -428,7 +429,9 @@ tokenManager.getTokenListNet = async function () {
 
     return data
 }
-
+tokenManager.reSaveToken = function (tokenList=[]){
+    localStorage.setItem('tokenList', JSON.stringify(tokenList))
+},
 tokenManager.addToken = function (tokenInfo) {
     for (let key in infoLimit) {
         if (infoLimit[key].required) {
@@ -458,15 +461,18 @@ tokenManager.addToken = function (tokenInfo) {
     if (!tokenInfo.network)
         tokenInfo.network = 'mainnet';
 
+    tokenInfo.topped = false; //排序设定
 
     tokenList.push(tokenInfo);
 
     localStorage.setItem('tokenList', JSON.stringify(tokenList))
 };
 
+
 tokenManager.listUserTokens = async function () {
 
-
+    let onlyShowAdded = localManager.getShowTokenType() === 'added';
+    console.log('#1',onlyShowAdded)
     let tokenList = [];
 
     let address = walletManager.getMainAddress();
@@ -474,25 +480,36 @@ tokenManager.listUserTokens = async function () {
     let result = await sensibleFtUtils.getAllBalance(address, 0, 10000)
 
     if (result.code === 0) {
-        tokenList = result.data || [];
+        let tempList = result.data || [];
 
-        // 给数据加上logo
         let tokenTable = await getAllTokenTable();
-        for (let i = 0; i < tokenList.length; i++) {
-            if (tokenTable[tokenList[i].genesis])
-                tokenList[i].logo = tokenTable[tokenList[i].genesis].logo;
+        for (let i = 0; i < tempList.length; i++) {
+            if (tokenTable[tempList[i].genesis])
+                tempList[i].logo = tokenTable[tempList[i].genesis].logo;        // 给数据加上logo
 
-            tokenList[i].balance += tokenList[i].pendingBalance;
+            tempList[i].balance += tempList[i].pendingBalance;
+
+
         }
 
-        //追加已添加但余额为空的token
-        let localList = getLocalTokenList();
-        for (let i = 0; localList && i < localList.length; i++) {
-            if(tokenList.findIndex(item=>item.genesis === localList[i].genesis ) < 0){
-                localList[i].balance = 0;
-                tokenList.push(localList[i])
+
+        if (onlyShowAdded) {
+            //追加已添加但余额为空的token
+            let localList = getLocalTokenList();
+            for (let i = 0; localList && i < localList.length; i++) {
+                let index = tempList.findIndex(item => item.genesis === localList[i].genesis);
+                if (index < 0) {
+                    localList[i].balance = 0;
+                }else
+                    localList[i].balance = tempList[index].balance
+
+                if(!localList[i].logo && tokenTable[localList[i].genesis]){
+                    localList[i].logo = tokenTable[localList[i].genesis].logo
+                }
             }
-        }
+            tokenList = localList;
+        }else
+            tokenList = tempList;
 
     } else {
         //查询接口返回错误时
@@ -501,13 +518,24 @@ tokenManager.listUserTokens = async function () {
             tokenList[i].balance = await sensibleFtUtils.getBalance(tokenList[i].genesis, tokenList[i].codehash, address).catch(e => 0)
         }
     }
+    if(tokenList && tokenList.length>0){
+        tokenList.sort((a,b)=>{
+            if(a.sort>0 && b.sort===undefined){
+                return -1;
+            }
+            if(b.sort>0 && a.sort===undefined){
+                return 1;
+            }
+            return b -a
+        })
+    }
 
-    // console.log(tokenList)
+    console.log(tokenList)
 
     return tokenList;
 };
 
-tokenManager.getTokenInfoNet = async function (genesis,codehash){
+tokenManager.getTokenInfoNet = async function (genesis, codehash) {
 
     let result = await httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${codehash}/${genesis}`)
     if (!result || result.code !== 0)
@@ -527,20 +555,20 @@ tokenManager.getTokenInfoNet = async function (genesis,codehash){
     }
 }
 
-tokenManager.getTokenInfo = async function (genesis,codehash) {
+tokenManager.getTokenInfo = async function (genesis, codehash) {
     //从已添加的列表中获取
     let tokenTable = getLocalTokenTable();
     let tokenInfo = tokenTable[genesis];
 
     //没有则从所有token列表中获取信息
-    if (!tokenInfo){
+    if (!tokenInfo) {
         let allInfo = await getAllTokenTable()
         tokenInfo = allInfo[genesis];
     }
 
     //仍然没有就从api获取
-    if(!tokenInfo){
-        tokenInfo = await tokenManager.getTokenInfoNet(genesis,codehash)
+    if (!tokenInfo) {
+        tokenInfo = await tokenManager.getTokenInfoNet(genesis, codehash)
     }
 
     //查询余额

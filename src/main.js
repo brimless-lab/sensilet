@@ -26,7 +26,10 @@ import {createApp} from 'vue'
 import store from './store'
 
 //antd 样式相关导入
+import PopConfirm from 'ant-design-vue/lib/popconfirm';
 import Spin from 'ant-design-vue/lib/spin';
+import Radio from 'ant-design-vue/lib/radio';
+import Switch from 'ant-design-vue/lib/switch';
 import Tooltip from 'ant-design-vue/lib/tooltip';
 import Collapse from 'ant-design-vue/lib/collapse';
 import Card from 'ant-design-vue/lib/card';
@@ -38,7 +41,7 @@ import Dropdown from 'ant-design-vue/lib/dropdown';
 import Menu from 'ant-design-vue/lib/menu';
 import antMessage from 'ant-design-vue/lib/message';
 import antModal from 'ant-design-vue/lib/modal';
-import 'ant-design-vue/dist/antd.css';
+import 'ant-design-vue/dist/antd.less';
 
 
 
@@ -71,7 +74,7 @@ console.log('init i18n')
 // global.antMessage = {};
 // global.antModal = {};
 createApp(App).use(i18n).use(store)
-    .use(Spin).use(Collapse).use(Card).use(CheckBox).use(Button).use(Input).use(Select).use(antModal).use(Dropdown).use(Menu).use(Tooltip)
+    .use(Spin).use(Collapse).use(Card).use(PopConfirm).use(Radio).use(Switch).use(CheckBox).use(Button).use(Input).use(Select).use(antModal).use(Dropdown).use(Menu).use(Tooltip)
     .mount('#app');
 
 // console.log('###123');

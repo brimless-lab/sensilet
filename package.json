@@ -31,7 +31,10 @@
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-browser-extension": "latest",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "less": "^3.13.1",
+    "less-loader": "^6.0.0"
+
   },
   "main": "index.js",
   "author": "",

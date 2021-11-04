@@ -63,7 +63,7 @@ export default {
     account: {
         // this.$t('account.') {{$t('account.')}} :placeholder="$t('account.')"
         receive: "Receive",
-        send: "Send",
+        send: "　Send　",
         history: "History",
         hot: "Hot Token",
         token_list: "Token List",

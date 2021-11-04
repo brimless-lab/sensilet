@@ -97,7 +97,6 @@ export default {
             walletName: config.walletName,
             currentPage: routerManager.getCurrentPage(),
             count: global.bg.count,
-            showAccountChoose: false,
             version: config.version,
             // showSetting: true
         }
@@ -215,7 +214,7 @@ export default {
 </script>
 
 <style lang="scss">
-$base-color: #E0534F;
+@import "./style/color";
 
 body {
     margin: 0;
@@ -252,8 +251,7 @@ body {
     width: 100%;
     height: 56px;
     box-sizing: border-box;
-    //background-color: #22ccff;
-    background-color: #FaFaFa;
+    background-color: $base-color;
     color: #fff;
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.12);
 
@@ -382,43 +380,20 @@ body {
 
 }
 
-.footer {
-    margin-top: 8px;
-    height: 36px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    background-color: #f5f5f5;
-
-    a {
-        margin: 0 16px;
-        color: #57606a;
-        display: flex;
-        align-items: center;
-
-
-        img,svg {
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            margin-right:8px;
-        }
-    }
-}
-
 .panel {
-    width: 375px;
+    width: calc(100vw - 32px);
+    max-width: 375px;
     box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
-    margin: 0 auto;
     padding: 20px;
     border-radius: 4px;
     //line-height: 1.43;
     letter-spacing: 0.01071em;
 
-    @media (min-width: 450px) {
-        margin-top: 10px;
-    }
+    //@media (min-width: 450px) {
+    margin: 24px auto 0;
+    //}
+
+    overflow: hidden;
 
     &.no-shadow {
         box-shadow: unset;
@@ -582,5 +557,7 @@ body {
     font-size: .85em;
     color: #888;
 }
+
+
 
 </style>
