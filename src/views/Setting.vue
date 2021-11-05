@@ -5,27 +5,36 @@
                 <img class="icon" src="../assets/icon-arrow-left.svg" alt="">
             </div>
             <div class="action-list">
+                <div class="item btn" @click="openWeb">
+                    <FullscreenOutlined class="item-icon"/>
+                    <span>{{ $t("setting.expand_view") }}</span>
+                </div>
+
+                <div class="divider">
+                    Account Management
+                    <span class="account-mode">
+                        {{ $t(accountMode) }}
+                    </span>
+                </div>
                 <div class="item btn" @click="uploadAddressConfirm()">
                     <img v-if="registered" src="../assets/icon-checked.svg" alt="">
                     <img v-else src="../assets/icon-check.svg" alt="">
                     <div class="two-line">
                         <span>{{ $t("setting.register_address") }}</span>
                         <div>
-                            <a href="">Privacy</a>
+                            <a href="https://sensilet.com/privacy-policy.html" target="_blank">Privacy</a>
                             <span>{{ $store.getters.addressShow }}</span>
                         </div>
                     </div>
                 </div>
-                <div class="item btn" @click="openWeb">
-                    <img src="../assets/icon-share.svg" alt="">
-                    <span>{{ $t("setting.expand_view") }}</span>
-                </div>
+
+
                 <!--                <div class="item btn" v-if="!isSinglePrivateKey" @click="gotoImport">-->
                 <!--                    <img src="../assets/icon-import.svg" alt="">-->
                 <!--                    <span>{{ $t("setting.import_mnemonic") }}</span>-->
                 <!--                </div>-->
                 <div class="item btn warning" v-if="!isSinglePrivateKey" @click="gotoExport">
-                    <img src="../assets/icon-export.svg" alt="">
+                    <KeyOutlined class="item-icon"/>
                     <span>{{ $t("setting.export_mnemonic") }}</span>
                 </div>
                 <!--                <div class="item btn" @click="gotoImportPrivateKey">-->
@@ -33,36 +42,97 @@
                 <!--                    <span>{{ $t("setting.import_private_key") }}</span>-->
                 <!--                </div>-->
                 <div class="item btn warning" @click="gotoExportPrivateKey">
-                    <img src="../assets/icon-export.svg" alt="">
+                    <KeyOutlined class="item-icon"/>
                     <span>{{ $t("setting.export_private_key") }}</span>
+                </div>
+                <div class="item btn" @click="openEdit">
+                    <EditOutlined class="item-icon"/>
+                    <div>
+                        <span>{{ $t("setting.edit_account_alias") }}:</span>
+                        <span class="value">{{ $store.getters.alias }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom">
+                <div class="version">
+                    <a href="https://github.com/sensilet/sensilet/blob/main/release_notes.md" target="_blank">
+                        Sensilet {{ version }}
+                    </a>
+                </div>
+                <div class="term-container">
+                    <a href="https://sensilet.com/privacy-policy.html" class="term" target="_blank">
+                        Privacy Policy
+                    </a>
+                    <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank">
+                        Terms of Service
+                    </a>
                 </div>
             </div>
         </div>
         <Footer></Footer>
 
     </div>
-
+    <a-modal v-model:visible="isShowEdit" @ok="handleOk">
+        <p>{{ $t("account.alias_input") }}</p>
+        <a-input v-model:value="editAlias" :placeholder="$t('account.alias_input')"/>
+    </a-modal>
 </template>
 
 <script>
 import httpUtils from '../utils/httpUtils';
-import Footer     from "../components/Footer";
+import Footer from "../components/Footer";
+
+import KeyOutlined from '@ant-design/icons-vue/lib/icons/KeyOutlined'
+import FullscreenOutlined from '@ant-design/icons-vue/lib/icons/FullscreenOutlined'
+import EditOutlined from '@ant-design/icons-vue/lib/icons/EditOutlined'
+
 
 import {h} from 'vue'
-import AccountChoose from "@/components/AccountChoose";
 
 export default {
     name: "Setting",
     components: {
         Footer,
+        KeyOutlined,
+        FullscreenOutlined, EditOutlined
     },
     data() {
         return {
+            version: config.version,
+            accountMode: walletManager.getAccountMode(),
+            editAlias: "",
+            isShowEdit: false,
             registered: localManager.isAddressRegistered(walletManager.getMainAddress()),
             isSinglePrivateKey: walletManager.isSinglePrivateKey(),
         }
     },
     methods: {
+        openEdit() {
+            this.isShowEdit = true;
+        },
+        handleOk() {
+            if (!this.editAlias)
+                return;
+            if (this.editAlias.length > 12)
+                return antMessage.error(this.$t('account.alias_max_limit'))
+            if (this.editAlias.length < 1)
+                return antMessage.error(this.$t('account.alias_min_limit'))
+
+
+            walletManager.saveAlias({
+                address: this.$store.getters.address,
+                alias: this.editAlias
+            });
+
+            // console.log(this.$store.state.account, this.showEditItem)
+            // if (this.$store.state.account && this.$store.state.account.address === this.showEditItem.address) {
+            this.$store.commit('editAlias', this.editAlias)
+            // }
+
+            this.isShowEdit = false;
+            this.showEditItem = null;
+            this.editAlias = "";
+        },
         goBack() {
             routerManager.gotoHome();
         },
@@ -99,15 +169,14 @@ export default {
             let _this = this;
             antModal.confirm({
                 title: this.$t('setting.register_address'),
-                content: h("div",{style: {display: "flex", "justify-content": "space-between"  },},
+                content: h("div", {style: {display: "flex", "justify-content": "space-between"},},
                     [
-                        h('a', {href: "baidu.com"}, "Privacy"),
+                        h('a', {href: "https://sensilet.com/privacy-policy.html", target: "_blank"}, "Privacy"),
                         h('span', {style: {color: "#999"}}, this.$store.getters.addressShow)
                     ]
                 ),
                 onOk() {
-                    httpUtils.post('https://sensilet.com/api/register_address',{
-                    // httpUtils.post('http://127.0.0.1:30021/register_address', {
+                    httpUtils.post('https://sensilet.com/api/register_address', {
                         address: walletManager.getMainAddress()
                     }).then((data) => {
                         if (data.code === 200) {
@@ -129,6 +198,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
+
+@import "../style/color";
+
+
 .setting-container {
     height: calc(100vh - 56px);
     display: flex;
@@ -146,6 +219,9 @@ export default {
     border-radius: 5px;
     box-shadow: 0 1px 2px #ddd;
 
+    display: flex;
+    flex-direction: column;
+
     .btn {
         position: relative;
         box-shadow: 0 1px 2px #ddd;
@@ -158,7 +234,38 @@ export default {
             box-shadow: 0 1px 1px #ddd;
         }
 
+        .value {
 
+        }
+
+    }
+
+    .bottom {
+        .version {
+            margin: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            a {
+                text-align: center;
+                text-decoration: underline;
+            }
+        }
+
+        .term-container {
+            display: flex;
+            justify-content: space-around;
+
+            @media (min-width: 720px) {
+                display: none;
+            }
+
+            .term {
+                //margin: 8px;
+                color: #888;
+            }
+        }
     }
 
     .back {
@@ -172,9 +279,27 @@ export default {
     }
 
     .action-list {
+        flex: 1;
+        padding-top: 20px;
+
+        .divider {
+            padding: 4px;
+            font-size: 16px;
+            font-weight: bold;
+
+            margin-top: 32px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid $base-color;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+        }
+
         .item {
             background-color: white;
-            margin-top: 20px;
+            margin-bottom: 20px;
             padding: 8px 16px;
             border-radius: 5px;
             display: flex;
@@ -212,6 +337,16 @@ export default {
                 height: 10px;
                 top: 0;
                 right: 0;
+            }
+
+            .item-icon {
+                font-size: 22px;
+                color: #888;
+            }
+
+            .value {
+                margin-left: 8px;
+                color: #999;
             }
         }
     }

@@ -5,8 +5,12 @@ $font-main: #222;
 
 $font-weaken: #999;
 
+.ant-btn{
+    border-radius: 2em;
+}
+
 .ant-btn-round {
-    //color: $base-color;
+    color: #7a7a7a;
     //border-color: #d2f1e5;
     //background-color: white;
     width: 100px;
@@ -17,32 +21,62 @@ $font-weaken: #999;
     align-items: center;
     justify-content: center;
 
+
+
+    &:hover{
+        color: #333;
+    }
+
     span {
         min-width: 56px;
+        margin-top: 1px;
     }
 
     img {
         width: 18px;
         margin-right: 2px;
     }
+
+    @media (max-width:400px) {
+        width: 92px;
+
+        img{width: 17px}
+    }
 }
 .account-top {
     .ant-radio-button-wrapper {
-        width: 56px;
+        width: 72px;
         text-align: center;
         background-color: #f5f7fa;
         border-color: #f5f7fa;
+        border-width: 2px;
+
+        &:first-child {
+            border-bottom-left-radius: 2em;
+            border-top-left-radius: 2em;
+        }
+
+        &:last-child{
+            border-bottom-right-radius: 2em;
+            border-top-right-radius: 2em;
+        }
+
 
 
     }
 
     .ant-radio-button-wrapper-checked {
-        background-color: #44B549;
-        border-color: #44B549;
+        background-color: #82a1b5;
+        border-width: 2px;
+        border-color: white;
+
+        &:not(.ant-radio-button-wrapper-disabled)::before{
+            background-color:#f5f7fa ;
+        }
 
         &:hover{
-            background-color: #44B549;
-            border-color: #44B549;
+            background-color: #92b1c5;
+            border-color: white;
         }
     }
 }

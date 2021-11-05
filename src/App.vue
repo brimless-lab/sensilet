@@ -1,14 +1,14 @@
 <template>
     <div class="top">
         <div class="title">
-          <div style="overflow: hidden">
-<!--                <img src="./assets/logo_h_white.png" alt="logo">-->
+            <div v-if="true" style="overflow: hidden">
+                <!--                <img src="./assets/logo_h_white.png" alt="logo">-->
                 <img style="width: 150px" src="./assets/logo_h.svg" alt="logo">
             </div>
-            <!--            <img v-else src="./assets/logo.png" alt="logo">-->
+            <img style="width: 36px;margin-left: 16px" v-else src="./assets/logo.png" alt="logo">
         </div>
-        <div class="right"  v-if="showSetting">
-            <div  @click="gotoSetting()">
+        <div class="right" v-if="showSetting">
+            <div @click="gotoSetting()">
                 <img class="icon" src="./assets/icon-setting.svg" alt="">
                 <div class="red-point" :class="{'show':!$store.state.isSettingChecked}"></div>
             </div>
@@ -180,8 +180,8 @@ export default {
 
     },
     methods: {
-        newVersion(){
-            if(this.$store.getters.hasNewVersion){
+        newVersion() {
+            if (this.$store.getters.hasNewVersion) {
 
                 let url = this.$store.state.version.url;
                 localManager.setVersionChecked(this.$store.state.version.versionCode)
@@ -191,7 +191,7 @@ export default {
                     title: this.$t('app.has_new_version'),
                     content: this.$store.state.version.detail,
                     onOk() {
-                        if(url)
+                        if (url)
                             window.open(url)
                     }
                 })
@@ -281,28 +281,29 @@ body {
         display: flex;
         align-items: center;
 
-        .red-point{
+        .red-point {
             top: 1px;
-            right:-2px;
+            right: -2px;
         }
 
     }
 
-    .version{
+    .version {
         position: absolute;
         right: 16px;
 
         font-size: 12px;
-        color: #bbb;
+        color: #ddd;
         margin-right: 4px;
 
-        &.right-little{
+        &.right-little {
             right: 50px;
         }
 
-        &.has-new{
+        &.has-new {
             cursor: pointer;
-            .red-point{
+
+            .red-point {
                 display: block;
 
             }
@@ -312,7 +313,7 @@ body {
 }
 
 
-.red-point{
+.red-point {
     width: 8px;
     height: 8px;
 
@@ -325,7 +326,7 @@ body {
 
     display: none;
 
-    &.show{
+    &.show {
         display: block;
     }
 }
@@ -347,8 +348,9 @@ body {
 .main {
     height: calc(100vh - 56px);
     overflow-y: scroll;
-    &::-webkit-scrollbar{
-        width:0;
+
+    &::-webkit-scrollbar {
+        width: 0;
         height: 0;
     }
 }
@@ -400,8 +402,12 @@ body {
 
     &.no-shadow {
         box-shadow: unset;
-
     }
+
+    &:hover {
+        box-shadow: 0 2px 4px 1px rgb(0 0 0 / 15%), 0px 1px 1px 0px rgb(0 0 0 / 12%), 0px 1px 3px 0px rgb(0 0 0 / 8%);
+    }
+
 }
 
 
@@ -506,11 +512,11 @@ body {
     }
 }
 
-.add-choose-container{
+.add-choose-container {
     display: flex;
     flex-direction: column;
 
-    .item{
+    .item {
         margin-top: 10px;
         padding: 4px 8px;
         //background-color: #eee;
@@ -525,12 +531,12 @@ body {
 
     }
 
-    .line{
+    .line {
 
     }
 }
 
-.copy-address{
+.copy-address {
     padding: 4px 8px;
     border-radius: 5px;
 
@@ -543,24 +549,60 @@ body {
     }
 }
 
-.more-action{
+.more-action {
     position: absolute;
     right: 16px;
 
-    img{
+    img {
         width: 32px;
         height: 32px;
     }
 }
 
-.integer{
+.integer {
 
 }
-.decimal{
+
+.decimal {
     font-size: .85em;
     color: #888;
 }
 
+.account-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
+    .arrow{
+
+        display: none;
+        color: $base-color;
+        align-items: center;
+        font-size: 22px;
+    }
+
+    &.selected{
+        cursor: default;
+        &:hover{
+            background-color: white;
+        }
+
+        .arrow{
+            display: block;
+        }
+    }
+
+}
+
+
+.account-mode {
+    background-color: #f1f1f1;
+    color: #999;
+    padding: 0 4px;
+    border-radius: 5px;
+    font-size: 14px;
+    //display: flex;
+    align-items: center;
+}
 
 </style>

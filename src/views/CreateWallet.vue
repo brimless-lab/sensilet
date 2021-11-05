@@ -9,9 +9,15 @@
         <div class="desc">
             Nice to meet you.
         </div>
+        <a-checkbox class="keep" v-model:checked="agreeTerm">
+            <span>{{$t('wallet.agree_term')}}</span>
+            <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank">
+                Terms of Service
+            </a>
+        </a-checkbox>
         <div class="button-container">
             <div></div>
-            <a-button type="primary" @click="next">{{ $t('wallet.begin') }}</a-button>
+            <a-button type="primary" :disabled="!agreeTerm" @click="next">{{ $t('wallet.begin') }}</a-button>
         </div>
     </div>
     <div class="panel" v-else-if="step===0">
@@ -97,6 +103,7 @@ export default {
         let isFirstEnter = localStorage.getItem('firstEnterTimestamp') === null
         return {
             step: isFirstEnter ? -1 : 0,
+            agreeTerm:false,
             // isMnemonicSaved: false,
             // btnCanClick: false,
             password: "",

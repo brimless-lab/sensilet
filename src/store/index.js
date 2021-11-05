@@ -34,7 +34,7 @@ export default createStore({
         initAccount(state) {
             let account = walletManager.listAccount();
             state.accountList = account.map(item => {
-                item.addressShow = showLongString(item.address, 12);
+                item.addressShow = showLongString(item.address, 10);
                 item.accountMode = walletManager.getAccountMode(item)
                 return item
             });

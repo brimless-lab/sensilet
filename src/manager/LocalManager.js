@@ -75,7 +75,7 @@ localManager.saveAlias = function (accountInfo) {
 
     let lockInfo = localManager.getCurrentAccount();
 
-    if (accountInfo.address === lockInfo.address) {
+    if (lockInfo && accountInfo.address === lockInfo.address) {
         lockInfo.alias = accountInfo.alias;
         localStorage.setItem('lockInfo', JSON.stringify(lockInfo));
     }
@@ -111,7 +111,7 @@ localManager.getVersionChecked = function () {
 
 
 localManager.setSettingChecked = function () {
-    localStorage.setItem('isSettingChecked','yes')
+    localStorage.setItem('isSettingChecked', 'yes')
 }
 localManager.isSettingChecked = function () {
     let str = localStorage.getItem('isSettingChecked')
@@ -122,7 +122,7 @@ localManager.isSettingChecked = function () {
 
 localManager.isAddressRegistered = function (address) {
     let list = localStorage.getItem('registeredAddress')
-    if(!list)
+    if (!list)
         return false
     list = JSON.parse(list)
     return list.indexOf(address) > -1;
@@ -130,19 +130,19 @@ localManager.isAddressRegistered = function (address) {
 
 localManager.setAddressRegistered = function (address) {
     let list = localStorage.getItem('registeredAddress')
-    if(!list)
+    if (!list)
         list = '[]'
     list = JSON.parse(list)
-    if(list.indexOf(address)<0){
+    if (list.indexOf(address) < 0) {
         list.push(address);
-        localStorage.setItem('registeredAddress',JSON.stringify(list))
+        localStorage.setItem('registeredAddress', JSON.stringify(list))
     }
 }
-localManager.getShowTokenType = function (){
-    return localStorage.getItem('showTokenType') || 'mine'
+localManager.getShowTokenType = function () {
+    return localStorage.getItem('showTokenType') || 'added'
 }
-localManager.setShowTokenType = function (type){
-    localStorage.setItem('showTokenType',type)
+localManager.setShowTokenType = function (type) {
+    localStorage.setItem('showTokenType', type)
 }
 
 function getObjItem(key) {

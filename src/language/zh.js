@@ -35,6 +35,29 @@ export default {
         keep_unlock: "保持解鎖",
         unlock: "解鎖",
         password_error_2: "密碼錯誤",
+
+
+        mnemonic_notice_4:"If you ever change browsers or move computers, you will need the Mnemonic Words to access this account. Save them somewhere safe and secret.",
+
+        private_key:"Private Key",
+        import_private: "Restore From Private Key(Wif)",
+        private_notice_3: "Please enter your Private Key(Wif) to confirm",
+        confirm_private_placeholder: "please enter your Private Key...",
+        private_notice_4:"If you ever change browsers or move computers, you will need this Private Key to access this account. Save them somewhere safe and secret.",
+
+        adv_options:"Advanced Options",
+        options_notice:"If you don't know what the following options are, please don't modify them.",
+        passphrase:"Passphrase: (Optional)",
+        passphrase_notice_1:"The passphrase can provide additional protection to your assets. Even if your mnemonic is stolen, your assets are safe if the passphrase is not revealed.",
+        passphrase_notice_2:"If the passphrase is set, you need to input this when importing your mnemonic words.",
+        passphrase_notice_3:"If the passphrase is set, but the 12 mnemonic words are imported without inputing the passphrase, the wallet with the passphrase will NOT be restored and a new wallet without the passphrase will be created.",
+        passphrase_notice_4:"The passphrase is not saved. So please be careful that, if you forget it, you will never be able to restore your assets.",
+        der_path :"Derivation Path:",
+
+        passphrase_import_notice_1:"You should input this if you have set it before.",
+        passphrase_import_notice_2:"If you input a wrong passphrase, the restored wallet won't be the same wallet with the original passphrase.",
+
+        agree_term: "Agree to the Terms of Service",
     },
     account: {
         // this.$t('account.') {{$t('account.')}} :placeholder="$t('account.')"

@@ -59,7 +59,7 @@
                     <div class="title"> Tokens</div>
                     <div v-if="!editTokenMode" class="type-choose">
                         <a-radio-group v-model:value="showTokenType" button-style="solid" size="small" @change="showTokenTypeChanged">
-                            <a-radio-button value="added">Mine</a-radio-button>
+                            <a-radio-button value="added">Selected</a-radio-button>
                             <a-radio-button value="all">All</a-radio-button>
                         </a-radio-group>
                     </div>
@@ -94,8 +94,9 @@
                                 <div class="balance">
                                     <a-spin v-if="item.isRefreshingAmount"/>
                                     <div v-else>
-                                        <span v-if="!editTokenMode" style="font-weight: bold">{{ item.balance / Math.pow(10, item.decimal) }} </span>
                                         <span>{{ item.name }}</span>
+
+                                        <span v-if="!editTokenMode" style="font-weight: bold">{{ item.balance / Math.pow(10, item.decimal) }} </span>
                                     </div>
                                 </div>
                             </div>
@@ -852,6 +853,7 @@ export default {
 
             .mid {
                 flex-grow: 99;
+                margin-right: 16px;
 
                 .balance {
                     div {
@@ -872,7 +874,7 @@ export default {
             }
 
             .right {
-                margin-right: 2px;
+                margin-right: 8px;
                 transition: .25s ease-in-out;
 
                 span {

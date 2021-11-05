@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 141.73 141.73">
     <defs>
         <style>
-            .cls-1{isolation:isolate;}.cls-2{opacity:0.5;}.cls-2,.cls-4{mix-blend-mode:multiply;}.cls-3{fill:#f2e3e3;}.cls-4{opacity:0.7;}.cls-5{fill:#f0c64c;}.cls-6{fill:#e0534f;}.cls-7{fill:#ffffff}
+            .cls-1{isolation:isolate;}.cls-2{opacity:0.25;}.cls-2,.cls-4{mix-blend-mode:normal;}.cls-3{fill:#feefef;}.cls-4{opacity:0.6 ;}.cls-5{fill:#f0c64c;}.cls-6{fill:#f75651;}.cls-7{fill:#ffffff}
         </style>
     </defs>
     <title>LOGO</title>

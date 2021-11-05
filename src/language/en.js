@@ -59,6 +59,8 @@ export default {
 
         passphrase_import_notice_1:"You should input this if you have set it before.",
         passphrase_import_notice_2:"If you input a wrong passphrase, the restored wallet won't be the same wallet with the original passphrase.",
+
+        agree_term: "Agree to the ",
     },
     account: {
         // this.$t('account.') {{$t('account.')}} :placeholder="$t('account.')"
@@ -102,6 +104,8 @@ export default {
         // share_address_notice:"You will have chance to get Token airdrop",
         address_exists:"Address already registered",
         register_success:"Address register success",
+
+        edit_account_alias:"Edit Account Alias"
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

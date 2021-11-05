@@ -3,35 +3,37 @@
         <div class="current-account" @click.prevent>
 
             <div class="word ellipsis account-word" v-if="$store.state.account!=null">
-                <div class="account"> {{ $store.getters.alias }} <span class="account-mode">{{ $t(accountMode) }}</span></div>
+                <div class="account">
+                    {{ $store.getters.alias }}
+                    <span class="account-mode">{{ $t(accountMode) }}</span>
+                </div>
                 <div class="address">
                     {{ $store.getters.addressShow }}
                 </div>
-
             </div>
-
             <div class="word ellipsis" v-else-if="$store.state.accountList && $store.state.accountList.length>0">
                 {{ $t("account.choose") }}
-
             </div>
             <DownOutlined style="color:#999;font-size: 22px ;padding-left: 4px"/>
 
         </div>
         <template #overlay>
             <a-menu v-if="$store.state.accountList  && $store.state.accountList .length>0">
-                <a-menu-item v-for="item in $store.state.accountList" @click="choose(item)" class="account-item">
-                    <div class="info" :class="{'has-alias':item.alias}">
+                <a-menu-item v-for="item in $store.state.accountList" @click="choose(item)" class="account-item"
+                :class="{'selected':item.address===$store.getters.address}">
+                    <div class="info" :class="{'has-alias':item.alias}" >
                         <div class="alias ">
-                            <div>
+                            <div class="account">
                                 <div class="alias-word ellipsis">{{ item.alias }}</div>
                                 <span class="account-mode"> {{ $t(item.accountMode) }}</span>
                             </div>
-                            <EditOutlined style="padding: 8px" @click.stop="openEdit(item)"/>
+<!--                            <EditOutlined style="padding: 8px" @click.stop="openEdit(item)"/>-->
                         </div>
                         <div class="address">
                             {{ item.addressShow }}
                         </div>
                     </div>
+                    <CheckOutlined class="arrow"></CheckOutlined>
                 </a-menu-item>
                 <a-menu-divider/>
                 <a-menu-item @click="isShowAddNew=true">
@@ -40,10 +42,7 @@
             </a-menu>
         </template>
     </a-dropdown>
-    <a-modal v-model:visible="isShowEdit" @ok="handleOk">
-        <p>{{ $t("account.alias_input") }}</p>
-        <a-input v-model:value="editAlias" :placeholder="$t('account.alias_input')"/>
-    </a-modal>
+
     <a-modal v-model:visible="isShowAddNew" @ok="AddNew" :closable=false>
         <div class="add-choose-container">
             <label class="item">
@@ -65,20 +64,21 @@
 
 <script>
 import DownOutlined from '@ant-design/icons-vue/lib/icons/DownOutlined'
-import EditOutlined from '@ant-design/icons-vue/lib/icons/EditOutlined'
+// import EditOutlined from '@ant-design/icons-vue/lib/icons/EditOutlined'
+import CheckOutlined from '@ant-design/icons-vue/lib/icons/CheckOutlined'
 
 export default {
     name: "AccountChoose",
     components: {
-        DownOutlined, EditOutlined
+        DownOutlined,CheckOutlined
     },
     data() {
         this.$store.commit('initAccount')
         return {
+            accountMode: walletManager.getAccountMode(),
             showEditItem: null,
             isShowEdit: false,
             editAlias: "",
-            accountMode: walletManager.getAccountMode(),
             isShowAddNew: false,
             addNewUrl: '/create',
         }
@@ -89,31 +89,10 @@ export default {
             walletManager.reload();
             window.location.reload();
         },
-        openEdit(item) {
-            this.showEditItem = item;
-            this.isShowEdit = true;
-        },
-        handleOk() {
-            if (!this.editAlias)
-                return;
-            if (this.editAlias.length > 12)
-                return antMessage.error(this.$t('account.alias_max_limit'))
-            if (this.editAlias.length < 1)
-                return antMessage.error(this.$t('account.alias_min_limit'))
 
-            this.showEditItem.alias = this.editAlias;
-            walletManager.saveAlias(this.showEditItem);
-
-            // console.log(this.$store.state.account, this.showEditItem)
-            if (this.$store.state.account && this.$store.state.account.address === this.showEditItem.address) {
-                this.$store.commit('editAlias', this.editAlias)
-            }
-
-            this.isShowEdit = false;
-            this.showEditItem = null;
-            this.editAlias = "";
-        },
         choose(item) {
+            if(item.address === this.$store.getters.address)
+                return
             walletManager.reload();
             walletManager.chooseAccount(item);
             window.location.reload();
@@ -140,12 +119,12 @@ export default {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     border-radius: 2em;
-    padding: 4px 16px;
+    padding: 4px 24px;
     cursor: pointer;
-    max-width: 375px;
-    min-width: 200px;
+    max-width: 325px;
+    min-width: 240px;
 
     background-color: $main-bg;
     transition: .35s;
@@ -157,6 +136,7 @@ export default {
 
 
     .word {
+        font-size: 16px;
         max-width: 180px;
         color: #333;
     }
@@ -164,8 +144,8 @@ export default {
     .account-word {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        justify-content: space-around;
+        //align-items: center;
+        //justify-content: space-around;
 
         .address {
             font-size: 12px;
@@ -175,38 +155,33 @@ export default {
     }
 }
 
-.account-mode {
-    background-color: #f6f6f6;
-    color: #999;
-    padding: 0 4px;
-    border-radius: 3px;
-}
 
 .account-item {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-
-    border-bottom: 1px #999 solid;
 
     .info {
+        padding: 4px;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        flex-direction: column;
+        //align-items: center;
+        //justify-content: space-between;
         max-width: 325px;
-        min-width: 200px;
+        min-width: 240px;
+
 
 
         .alias {
-            width: 120px;
+            //width: 120px;
             //overflow: scroll;
             display: flex;
             align-items: center;
 
-
+            .account{
+                display: flex;
+                flex-direction: row;
+            }
             .alias-word {
-                width: 90px;
+                max-width: 120px;
+                margin-right: 8px;
             }
 
             &::-webkit-scrollbar {
@@ -215,20 +190,21 @@ export default {
         }
 
         .address {
-            font-family: 'Courier New', Monaco, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            padding-left: 8px;
-            color: #666;
+            //font-family: 'Courier New', Monaco, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            //padding-left: 8px;
+            //font-size: 12px;
+            color: #999;
 
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
+            //display: flex;
+            //flex-direction: column;
+            //align-items: center;
+            //justify-content: space-between;
 
-
-            .account-mode {
-
-            }
         }
+
+    }
+
+    .selected{
 
     }
 }
