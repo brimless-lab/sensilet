@@ -16,17 +16,17 @@
                         {{ $t(accountMode) }}
                     </span>
                 </div>
-                <div class="item btn" @click="uploadAddressConfirm()">
-                    <img v-if="registered" src="../assets/icon-checked.svg" alt="">
-                    <img v-else src="../assets/icon-check.svg" alt="">
-                    <div class="two-line">
-                        <span>{{ $t("setting.register_address") }}</span>
-                        <div>
-                            <a href="https://sensilet.com/privacy-policy.html" target="_blank">Privacy</a>
-                            <span>{{ $store.getters.addressShow }}</span>
-                        </div>
-                    </div>
-                </div>
+<!--                <div class="item btn" @click="uploadAddressConfirm()">-->
+<!--                    <img v-if="registered" src="../assets/icon-checked.svg" alt="">-->
+<!--                    <img v-else src="../assets/icon-check.svg" alt="">-->
+<!--                    <div class="two-line">-->
+<!--                        <span>{{ $t("setting.register_address") }}</span>-->
+<!--                        <div>-->
+<!--                            <a href="https://sensilet.com/privacy-policy.html" target="_blank">Privacy</a>-->
+<!--                            <span>{{ $store.getters.addressShow }}</span>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
 
 
                 <!--                <div class="item btn" v-if="!isSinglePrivateKey" @click="gotoImport">-->
@@ -207,6 +207,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    background-color: $main-bg;
 
 }
 
@@ -216,7 +217,7 @@ export default {
     margin: 16px auto 0;
     padding: 16px;
     background-color: #fafafa;
-    border-radius: 5px;
+    border-radius: 10px;
     box-shadow: 0 1px 2px #ddd;
 
     display: flex;

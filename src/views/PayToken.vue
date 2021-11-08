@@ -96,10 +96,12 @@ export default {
 
         try {
 
-            if (tokenInfo.notDefaultSigners || tokenInfo.name === "MC" || tokenInfo.name === "bsv/MC") {
+            if (tokenInfo.notDefaultSigners
+                || tokenInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
+                || tokenInfo.genesis === "8764ede9fa7bf81ba1eec5e1312cf67117d47930") {
                 signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
             }
-            console.log(signers)
+            // console.log(signers)
 
             let fee = await tokenManager.sensibleFt.getTransferEsitimate(tokenInfo.codehash, tokenInfo.genesis,
                 this.receivers, walletManager.getMainWif(), signers

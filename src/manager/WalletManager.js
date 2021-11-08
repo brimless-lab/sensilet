@@ -280,6 +280,13 @@ walletManager.mergeBsvUtxo = async function (wif) {
 
     return await sleep(2000)
 }
+walletManager.getSendAllInfo = async function(wif){
+    let txComposer = await new Wallet(wif, API_NET.MAIN, 0.5, API_TARGET.SENSIBLE).merge({
+        noBroadcast:true
+    })
+
+    return  {amount: txComposer.getOutput(0).satoshis,fee:txComposer.getUnspentValue()}
+}
 
 walletManager.pay = async function (to, amount, broadcast) {
     let wif = walletManager.getMainWif();
@@ -314,9 +321,8 @@ walletManager.payArray = async function (receivers, broadcast, wif = null) {
         noBroadcast: !broadcast,
     });
 
-    console.log(txComposer)
-
-    return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId(), tx: txComposer.tx};
+    // console.log(txComposer)
+    return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId(), tx: txComposer.tx,isInvalid:txComposer.getFeeRate()<0.5};
 };
 
 walletManager.sendOpReturn = function (op, wif) {

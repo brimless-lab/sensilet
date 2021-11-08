@@ -1,5 +1,5 @@
 <template>
-    <a-dropdown placement="bottomCenter" :trigger="['click']">
+    <a-dropdown placement="bottomCenter" :class="{'hide':!$store.state.account && (!$store.state.accountList || $store.state.accountList.length<=0 )}" :trigger="['click']">
         <div class="current-account" @click.prevent>
 
             <div class="word ellipsis account-word" v-if="$store.state.account!=null">

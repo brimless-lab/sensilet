@@ -472,7 +472,7 @@ tokenManager.addToken = function (tokenInfo) {
 tokenManager.listUserTokens = async function () {
 
     let onlyShowAdded = localManager.getShowTokenType() === 'added';
-    console.log('#1',onlyShowAdded)
+
     let tokenList = [];
 
     let address = walletManager.getMainAddress();
@@ -530,7 +530,7 @@ tokenManager.listUserTokens = async function () {
         })
     }
 
-    console.log(tokenList)
+    // console.log(tokenList)
 
     return tokenList;
 };

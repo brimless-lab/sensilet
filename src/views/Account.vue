@@ -157,12 +157,17 @@
                 <div class="list" v-if="nftGenesisList==null" style="text-align: center">
                     <a-spin/>
                 </div>
-                <div class="nft-list">
+                <div class="nft-list" v-else-if="nftGenesisList.length>0">
                     <div class="item" v-for="item in nftGenesisList">
                         <div class="genesis">
                             Genesis:{{ item.genesis }}
                         </div>
                         <div class="count">{{ item.count }}</div>
+                    </div>
+                </div>
+                <div class="list" v-else>
+                    <div class="empty">
+                        empty
                     </div>
                 </div>
             </div>
@@ -237,11 +242,39 @@
         </div>
     </a-modal>
 
-    <a-modal v-model:visible="showTransPanel" @ok="transfer()" :closable=false>
+    <a-modal v-model:visible="showTransPanel" @ok="transfer()" @cancel="cancelTransfer" :closable=false>
         <div class="trans-info-container">
-            <a-input v-model:value="transAddress" :placeholder="$t('account.input_address')"/>
-            <a-input v-model:value="transAmount" :placeholder="$t('account.input_amount',[transType==='BSV'? 'BSV':(transInfo.unit||transInfo.symbol)])"/>
+            <div class="title">
+                Send {{isTransBSV?"BSV":transInfo.name}}
+            </div>
+            <a-input v-model:value="transAddress" @change="transAddressChange" :placeholder="$t('account.input_address')"/>
+            <a-input v-model:value="transAmount" @change="transAmountChange"
+                     :placeholder="$t('account.input_amount',[transType==='BSV'? 'BSV':(transInfo.unit||transInfo.symbol)])"/>
+
+            <div class="notice">
+                <div class="balance" v-if="transInfo">
+                    <div class="key">
+                        Balance :
+                    </div>
+                    <div class="amount">
+                        {{ transBalance }} {{ transUnit }}
+                    </div>
+                    <div class="action" @click="sendAll">Send All</div>
+                </div>
+                <div class="fee">
+                    <div class="key">
+                        Fee:
+                    </div>
+                    <div class="amount">
+                        <span v-if="!transFeeLoading">{{ transFee }}</span>
+                        <a-spin size="small" v-else/>
+                        BSV
+                    </div>
+                    <div class="action"></div>
+                </div>
+            </div>
         </div>
+
     </a-modal>
     <a-modal v-model:visible="isShowAddCustomTokenPanel" @ok="addCustomToken" :closable=false>
         <div class="custom-token-form">
@@ -250,6 +283,7 @@
         </div>
     </a-modal>
     <a-modal v-model:visible="showQr" :footer="null" :closable=false>
+        <div style="font-size: 18px;text-align: center;margin-bottom: 16px">Receive BSV or Sensible FT</div>
         <div style="display: flex;flex-direction: column;align-items: center">
             <QrcodeVue :value="$store.getters.address" :size="200" level="H"/>
             <p class="copy-address" style="margin-top: 20px;" id="address-copy" :data-clipboard-text="$store.getters.address">
@@ -258,7 +292,7 @@
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M0 0H1H9V1H1V9H0V0ZM2 2H11V11H2V2ZM3 3H10V10H3V3Z" fill="#989a9b"></path>
                 </svg>
             </p>
-            <p style="color: #999">
+            <p style="color: #999;font-size: 12px">
                 The address can only receive BSV or Sensible FT Token
             </p>
         </div>
@@ -313,8 +347,12 @@ export default {
             showTransPanel: false,
             transAddress: "",
             transAmount: null,
-            transInfo: {},
+            transInfo: null,
             transType: "BSV",
+            transUnit: "",
+            transFee: 0,
+            transFeeLoading: false,
+            transBalance: 0,
             isShowAddCustomTokenPanel: false,
             customToken: {},
             accountMode: walletManager.getAccountMode(),
@@ -326,16 +364,22 @@ export default {
             editList: [],
         }
     },
+    computed:{
+        isTransBSV(){
+            return this.transType === "BSV"
+        }
+    },
     beforeCreate() {
 
     },
     async created() {
 
-        this.$store.commit("initSettingChecked")
+        // this.$store.commit("initSettingChecked")
 
         this.initAsset();
 
-        // this.nftGenesisList = await nftManager.listAllNft().catch(e => []);
+        // this.initNfts();
+
         this.initAppList();
 
         await this.refreshToken();
@@ -388,18 +432,21 @@ export default {
 
             this.bsvAsset = assetData
         },
+        async initNfts(){
+            this.nftGenesisList = await nftManager.listAllNft().catch(e => { console.error(e);return []});
+        },
         async initAppList() {
             try {
 
 
-            let temp = localStorage.getItem('appList', data);
-            if (temp)
-                this.appList = JSON.parse(temp);
-            }catch (e){
+                let temp = localStorage.getItem('appList', data);
+                if (temp)
+                    this.appList = JSON.parse(temp);
+            } catch (e) {
                 console.error(e)
             }
             let data = (await httpUtils.get('https://sensilet.com/api/application_list')).data
-            localStorage.setItem('appList',JSON.stringify( data));
+            localStorage.setItem('appList', JSON.stringify(data));
             this.appList = data;
         },
         receive(item) {
@@ -557,15 +604,97 @@ export default {
 
             }
         },
-        sendToken(item) {
+        async sendToken(item) {
             this.transType = 'TOKEN';
             this.transInfo = item;
+            this.transUnit = item.unit || item.symbol;
+            this.transBalance = item.balance / Math.pow(10, item.decimal);
             this.showTransPanel = true;
+
+
         },
-        sendBsv(item) {
+        async sendBsv(item) {
             this.transType = 'BSV';
             this.transInfo = item;
+            this.transUnit = "BSV";
+            this.transBalance = item.balance.total / Math.pow(10, item.decimal);
             this.showTransPanel = true;
+        },
+        async sendAll() {
+            if (this.transType === 'BSV') {
+                let {amount,fee} =await walletManager.getSendAllInfo(walletManager.getMainWif());
+
+                this.transAmount = amount/Math.pow(10, 8);
+                this.transFee = fee/Math.pow(10, 8);
+            } else {
+                this.transAmount = this.transBalance;
+                this.transAmountChange()
+            }
+        },
+        transAddressChange(value) {
+            if (this.transAddress.length >= 26) {
+                if (walletManager.checkBsvAddress(this.transAddress) && this.transAmount > 0) {
+                    this.calcTransFee()
+                }
+            }
+        },
+        transAmountChange(value) {
+            if (this.transAmount > 0 && walletManager.checkBsvAddress(this.transAddress)) {
+                this.calcTransFee();
+            }
+        },
+        async calcTransFee() {
+            if (this.transFeeLoading)
+                return
+            this.transFeeLoading = true;
+            try {
+                let amount = Math.round(parseFloat(this.transAmount) * Math.pow(10, this.transInfo.decimal));
+                // console.log(amount)
+                if (this.transType === 'BSV') {
+                    let {fee, isInvalid} = await walletManager.payArray([{
+                        address: this.transAddress,
+                        amount,
+                    }], false)
+                    console.log(fee)
+                    if (!isInvalid) {
+                        fee = fee / Math.pow(10, 8)
+                        this.transFee = fee;
+                    } else {
+                        this.transFee = "Invalid";
+                    }
+                } else {
+                    let signers = null
+                    let tokenInfo = await tokenManager.getTokenInfo(this.transInfo.genesis, this.transInfo.codehash);
+
+                    if(this.transInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
+                        || this.transInfo.genesis === "8764ede9fa7bf81ba1eec5e1312cf67117d47930") {
+                        signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
+                    }
+                    // console.log(tokenInfo)
+                    // console.log(this.transInfo)
+                    // console.log(signers)
+                    let fee = await tokenManager.sensibleFt.getTransferEsitimate(this.transInfo.codehash, this.transInfo.genesis,
+                        [{
+                            address: this.transAddress,
+                            amount,
+                        }], walletManager.getMainWif(),signers
+                    );
+                    fee = fee / Math.pow(10, 8)
+                    this.transFee = fee;
+                }
+            } catch (e) {
+                console.log(e)
+                this.transFee = "Invalid"
+            } finally {
+
+                this.transFeeLoading = false;
+            }
+        },
+        cancelTransfer() {
+            this.transAddress = "";
+            this.transAmount = null;
+            this.transFeeLoading = false;
+            this.transFee = 0;
         },
         async transfer() {
             //检查信息

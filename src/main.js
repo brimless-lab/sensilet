@@ -1,14 +1,14 @@
 let bg = chrome.extension.getBackgroundPage();
 if (bg) {
     global.bg = bg;
-    console.log(bg);
+    // console.log(bg);
 
     //从background中获取bsv对象
     global.bsv = bg.bsv;
     global.sensibleSdk = bg.sensibleSdk;
     global.walletManager = bg.walletManager.init();
     global.tokenManager = bg.tokenManager;
-    console.log(bg.sensibleSdk,"#####")
+    // console.log(bg.sensibleSdk,"#####")
 
 } else
     window.location.reload();

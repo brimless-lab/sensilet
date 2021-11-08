@@ -1,11 +1,12 @@
 <template>
     <div class="top">
         <div class="title">
-            <div v-if="true" style="overflow: hidden">
+            <img v-if="width<500 && showAccountChoose" style="width: 36px;margin-left: 16px" src="./assets/logo.png" alt="logo">
+
+            <div v-else   style="overflow: hidden">
                 <!--                <img src="./assets/logo_h_white.png" alt="logo">-->
                 <img style="width: 150px" src="./assets/logo_h.svg" alt="logo">
             </div>
-            <img style="width: 36px;margin-left: 16px" v-else src="./assets/logo.png" alt="logo">
         </div>
         <div class="right" v-if="showSetting">
             <div @click="gotoSetting()">
@@ -493,10 +494,36 @@ body {
 }
 
 .trans-info-container {
+    .title{
+        text-align: center;
+        font-size: 18px;
+    }
     input {
         &:not(:first-child) {
             margin-top: 16px;
         }
+    }
+
+    .notice{
+        margin-top: 16px;
+        .balance,.fee{
+            display: grid;
+            grid-template-columns: 80px 1fr 80px;
+            .key{
+            }
+            .amount{
+
+                text-align: right;
+            }
+            .action{
+                cursor: pointer;
+                color: $base-color;
+                text-align: right;
+            }
+
+
+        }
+
     }
 }
 
@@ -539,6 +566,7 @@ body {
 .copy-address {
     padding: 4px 8px;
     border-radius: 5px;
+    font-size: 12px;
 
     &:hover {
         background-color: #F2F3F4;
@@ -603,6 +631,10 @@ body {
     font-size: 14px;
     //display: flex;
     align-items: center;
+}
+
+.hide{
+    display: none !important;
 }
 
 </style>

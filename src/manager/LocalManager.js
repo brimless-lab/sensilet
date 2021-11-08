@@ -3,17 +3,17 @@ let bg = chrome.extension.getBackgroundPage();
 
 
 localManager.refreshLockInfoList = function () {
-    _lockInfoList = localStorage.getItem('lockInfoList');
-    _lockInfoList = _lockInfoList ? JSON.parse(_lockInfoList) : null;
+    // _lockInfoList = localStorage.getItem('lockInfoList');
+    // _lockInfoList = _lockInfoList ? JSON.parse(_lockInfoList) : null;
 }
-localManager.refreshLockInfoList();
+// localManager.refreshLockInfoList();
 
 
 function getIndex() {
     let localInfo = localManager.getCurrentAccount();
-
-    for (let i = 0; i < _lockInfoList.length; i++) {
-        if (localInfo.address === _lockInfoList[i].address)
+    let lockInfoList = localManager.listAccount();
+    for (let i = 0; i < lockInfoList.length; i++) {
+        if (localInfo.address === lockInfoList[i].address)
             return i;
     }
     return -1;
@@ -40,16 +40,21 @@ localManager.getCurrentAccount = function () {
 };
 
 localManager.listAccount = function () {
-    if (!_lockInfoList) {
+
+    let lockInfoList = localStorage.getItem('lockInfoList');
+    lockInfoList = lockInfoList ? JSON.parse(lockInfoList) : null;
+
+    if (!lockInfoList) {
         let lockInfo = localManager.getCurrentAccount();
         if (lockInfo) {
-            _lockInfoList = [lockInfo];
-            localStorage.setItem('lockInfoList', JSON.stringify(_lockInfoList));
-            return _lockInfoList;
+            lockInfoList = [lockInfo];
+            localStorage.setItem('lockInfoList', JSON.stringify(lockInfoList));
+            return lockInfoList;
         }
         return []
     }
-    return _lockInfoList;
+    return lockInfoList;
+
 };
 
 localManager.addAccount = function () {
@@ -64,14 +69,14 @@ localManager.chooseAccount = function (accountInfo) {
 };
 
 localManager.saveAlias = function (accountInfo) {
-
-    for (let i = 0; i < _lockInfoList.length; i++) {
-        if (accountInfo.address === _lockInfoList[i].address) {
-            _lockInfoList[i].alias = accountInfo.alias;
+    let lockInfoList = localManager.listAccount()
+    for (let i = 0; i < lockInfoList.length; i++) {
+        if (accountInfo.address === lockInfoList[i].address) {
+            lockInfoList[i].alias = accountInfo.alias;
             break
         }
     }
-    localStorage.setItem('lockInfoList', JSON.stringify(_lockInfoList));
+    localStorage.setItem('lockInfoList', JSON.stringify(lockInfoList));
 
     let lockInfo = localManager.getCurrentAccount();
 
@@ -94,8 +99,9 @@ localManager.saveGenesis = function (info) {
 
     lockInfo.genesisList ? lockInfo.genesisList.push(info) : lockInfo.genesisList = [info];
     setItem('lockInfo', lockInfo);
-    _lockInfoList[getIndex()] = lockInfo;
-    setItem('lockInfoList', _lockInfoList);
+    let lockInfoList = localManager.listAccount()
+    lockInfoList[getIndex()] = lockInfo;
+    setItem('lockInfoList', lockInfoList);
 };
 
 localManager.setVersionChecked = function (versionCode) {
