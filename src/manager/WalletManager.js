@@ -188,7 +188,7 @@ walletManager.getSeedFromLocked = function () {
     return Buffer.from(seedStr, 'hex')
 };
 
-walletManager.signMessage = function (msg) {
+walletManager.signMessage = function (msg,noNeedAddress) {
     if (typeof msg === 'string')
         msg = Buffer.from(msg);
 
@@ -203,7 +203,7 @@ walletManager.signMessage = function (msg) {
         // console.log(bsv.Bsm.verify(Buffer.from(msg, 'base64'), sig, bsv.Address.fromString(address)))
 
 
-        return {address, sig}
+        return noNeedAddress?sig: {address, sig}
     }
     return {address}
 };

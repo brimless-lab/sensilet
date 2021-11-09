@@ -54,6 +54,7 @@ export default {
         } else {
             data.receivers = request.params.receivers;
             data.broadcast = request.params.broadcast;
+            data.utxo = request.params.utxo;
         }
 
         data.total = data.receivers.reduce((total,item)=>total+item.amount,0)

@@ -90,7 +90,7 @@ export default {
                     temp.decimal = data.decimalNum
                 } else {
                     if(txDetail[j].address === this.userAddress){
-                        temp.type += `(${$t('popup.change')})`
+                        temp.type += `(${this.$t('popup.change')})`
                     }
                     temp.amount = txDetail[j].satoshis;
                     temp.address = showLongString(txDetail[j].address, 20);

@@ -82,9 +82,9 @@ export default {
         return data;
     },
     async mounted() {
-        console.log(this.genesis,this.codehash)
+        console.log(this.genesis, this.codehash)
         signers = null;
-        tokenInfo = await tokenManager.getTokenInfo(this.genesis,this.codehash);
+        tokenInfo = await tokenManager.getTokenInfo(this.genesis, this.codehash);
 
         if (!tokenInfo) {
             antMessage.error(this.$t('popup.unknown_token'));
@@ -142,25 +142,41 @@ export default {
 
             try {
                 this.isPaying = true;
-                let {txid, txHex, routeCheckTxHex} = await tokenManager.transfer(this.receivers, this.broadcast, tokenInfo, this.utxo, signers);
+                let {txid, txHex, routeCheckTxHex,tx} = await tokenManager.transfer(this.receivers, this.broadcast, tokenInfo, this.utxo, signers);
                 // console.log(result);
                 // antMessage.success("支付成功")
 
-                if(this.broadcast){
+                if (this.broadcast) {
                     antMessage.success('Success')
                     await sleep(2000)
                 }
 
                 if (origin) {
                     //外部请求
-                    chrome.runtime.sendMessage({
-                        channel: 'sato_extension_background_channel',
-                        data: {
-                            id: request.id,
-                            result: "success",
-                            data: this.broadcast ? {txid,txHex} : {txHex, routeCheckTxHex},
-                        },
-                    });
+                    if (this.broadcast) {
+                        chrome.runtime.sendMessage({
+                            channel: 'sato_extension_background_channel',
+                            data: {
+                                id: request.id,
+                                result: "success",
+                                data: {txid, txHex},
+                            },
+                        })
+                    } else {
+                        let utxo = {
+                            txId: txid,
+                            outputIndex: tx.outputs.length - 1,
+                            satoshis: tx.outputs[tx.outputs.length - 1].satoshis
+                        }
+                        chrome.runtime.sendMessage({
+                            channel: 'sato_extension_background_channel',
+                            data: {
+                                id: request.id,
+                                result: "success",
+                                data: {txHex, routeCheckTxHex,utxo},
+                            },
+                        })
+                    }
                     window.close();
                 } else {
                     routerManager.gotoHome();

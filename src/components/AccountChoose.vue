@@ -1,14 +1,16 @@
 <template>
     <a-dropdown placement="bottomCenter" :class="{'hide':!$store.state.account && (!$store.state.accountList || $store.state.accountList.length<=0 )}" :trigger="['click']">
         <div class="current-account" @click.prevent>
-
-            <div class="word ellipsis account-word" v-if="$store.state.account!=null">
-                <div class="account">
-                    {{ $store.getters.alias }}
-                    <span class="account-mode">{{ $t(accountMode) }}</span>
-                </div>
-                <div class="address">
-                    {{ $store.getters.addressShow }}
+            <div v-if="$store.state.account!=null" style="display: flex;align-items: center">
+                <HeadPicture :address="$store.getters.address" style="width: 40px;height: 40px;;margin-right: 10px;padding: 8px"/>
+                <div class="word ellipsis account-word">
+                    <div class="account">
+                        {{ $store.getters.alias }}
+                        <span class="account-mode">{{ $t(accountMode) }}</span>
+                    </div>
+                    <div class="address">
+                        {{ $store.getters.addressShow }}
+                    </div>
                 </div>
             </div>
             <div class="word ellipsis" v-else-if="$store.state.accountList && $store.state.accountList.length>0">
@@ -18,20 +20,23 @@
 
         </div>
         <template #overlay>
-            <a-menu v-if="$store.state.accountList  && $store.state.accountList .length>0">
+            <a-menu v-if="$store.state.accountList  && $store.state.accountList .length>0" style="max-height: 60vh;overflow-y: scroll">
                 <a-menu-item v-for="item in $store.state.accountList" @click="choose(item)" class="account-item"
-                :class="{'selected':item.address===$store.getters.address}">
-                    <div class="info" :class="{'has-alias':item.alias}" >
+                             :class="{'selected':item.address===$store.getters.address}">
+                    <div style="display: flex;align-items: center">
+                    <HeadPicture :address="item.address" style="width: 40px;height: 40px; margin-right: 10px;padding: 8px;"/>
+                    <div class="info" :class="{'has-alias':item.alias}">
                         <div class="alias ">
                             <div class="account">
                                 <div class="alias-word ellipsis">{{ item.alias }}</div>
                                 <span class="account-mode"> {{ $t(item.accountMode) }}</span>
                             </div>
-<!--                            <EditOutlined style="padding: 8px" @click.stop="openEdit(item)"/>-->
+                            <!--                            <EditOutlined style="padding: 8px" @click.stop="openEdit(item)"/>-->
                         </div>
                         <div class="address">
                             {{ item.addressShow }}
                         </div>
+                    </div>
                     </div>
                     <CheckOutlined class="arrow"></CheckOutlined>
                 </a-menu-item>
@@ -66,11 +71,13 @@
 import DownOutlined from '@ant-design/icons-vue/lib/icons/DownOutlined'
 // import EditOutlined from '@ant-design/icons-vue/lib/icons/EditOutlined'
 import CheckOutlined from '@ant-design/icons-vue/lib/icons/CheckOutlined'
+import HeadPicture from "@/components/HeadPicture";
 
 export default {
     name: "AccountChoose",
     components: {
-        DownOutlined,CheckOutlined
+        HeadPicture,
+        DownOutlined, CheckOutlined
     },
     data() {
         this.$store.commit('initAccount')
@@ -91,16 +98,16 @@ export default {
         },
 
         choose(item) {
-            if(item.address === this.$store.getters.address)
+            if (item.address === this.$store.getters.address)
                 return
             walletManager.reload();
             walletManager.chooseAccount(item);
             window.location.reload();
         },
         AddNew() {
-            if(this.addNewUrl==='/create'){
+            if (this.addNewUrl === '/create') {
                 this.add()
-            }else
+            } else
                 routerManager.goto(this.addNewUrl)
         }
     }
@@ -124,7 +131,7 @@ export default {
     padding: 4px 24px;
     cursor: pointer;
     max-width: 325px;
-    min-width: 240px;
+    min-width: 270px;
 
     background-color: $main-bg;
     transition: .35s;
@@ -168,17 +175,17 @@ export default {
         min-width: 240px;
 
 
-
         .alias {
             //width: 120px;
             //overflow: scroll;
             display: flex;
             align-items: center;
 
-            .account{
+            .account {
                 display: flex;
                 flex-direction: row;
             }
+
             .alias-word {
                 max-width: 120px;
                 margin-right: 8px;
@@ -204,7 +211,7 @@ export default {
 
     }
 
-    .selected{
+    .selected {
 
     }
 }

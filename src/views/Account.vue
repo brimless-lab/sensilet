@@ -150,12 +150,15 @@
                 </div>
             </div>
 
-            <div class="panel" v-if="false">
+            <div class="panel" v-if="true">
                 <div class="account-top">
                     <div class="title"> NFTs</div>
                 </div>
                 <div class="list" v-if="nftGenesisList==null" style="text-align: center">
-                    <a-spin/>
+                    <a-spin v-if="false"/>
+                    <div v-else class="empty">
+                        Coming Soon
+                    </div>
                 </div>
                 <div class="nft-list" v-else-if="nftGenesisList.length>0">
                     <div class="item" v-for="item in nftGenesisList">
@@ -184,7 +187,7 @@
                             <div class="desc ellipsis">{{ item.desc }}
                             </div>
                         </div>
-                        <a :href="item.url" target="_blank">
+                        <a class="enter" :href="item.url" target="_blank">
                             Enter
                         </a>
                     </div>
@@ -939,7 +942,7 @@ export default {
 
         }
 
-        a {
+        .enter {
             padding: 4px 10px;
             border-radius: 2em;
             background-color: #f1f2f3;
@@ -953,6 +956,7 @@ export default {
     .empty {
         padding: 16px;
         text-align: center;
+        color: #999;
     }
 
     .item {

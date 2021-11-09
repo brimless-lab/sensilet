@@ -494,7 +494,7 @@ tokenManager.listUserTokens = async function () {
 
 
         if (onlyShowAdded) {
-            //追加已添加但余额为空的token
+            //仅显示已添加的
             let localList = getLocalTokenList();
             for (let i = 0; localList && i < localList.length; i++) {
                 let index = tempList.findIndex(item => item.genesis === localList[i].genesis);

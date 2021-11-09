@@ -32,6 +32,7 @@ function action(actionName, params) {
             id: actionName + Date.now() + "" + Math.floor(Math.random() * 1000000),
         }, (result) => {
             if (result.result === 'success') {
+                console.log(result)
                 resolve(result.data)
             } else {
                 // console.log(result)
@@ -58,6 +59,7 @@ window.sensilet.getBsvBalance = (params) => {
 window.sensilet.getSensibleFtBalance = (params) => {
     return action('getTokenBalance', params)
 };
+
 /**
  *
  * @param receivers Array<{address : string,amount : number}>
@@ -107,15 +109,14 @@ window.sensilet.payWithoutBroadcast = ({receivers}, callback) => {
     }, callback)
 };
 
-window.sensilet.issue = (params, callback) => {
-    return action('issue', params, callback)
 
-};
+// 以下是nft部分
 window.sensilet.genesis = (params, callback) => {
     return action('genesis', params, callback)
 };
-
-
+window.sensilet.issue = (params, callback) => {
+    return action('issue', params, callback)
+};
 /**
  *
  * @param params
@@ -132,5 +133,22 @@ window.sensilet.listNft = (params, callback) => {
     return action('listNft', params, callback)
 };
 
+
+// 以下是web3 支持
+window.sensilet.getAddress =()=>{
+    return action('getAddress', {})
+
+}
+window.sensilet.getPublicKey =()=>{
+    return action('getPublicKey', {})
+}
+
+window.sensilet.signTransaction =(txHex,inputInfos)=>{
+    return action('signTransaction', {txHex,inputInfos})
+}
+
+window.sensilet.signMessage =(msg)=>{
+    return action('signMsg', {msg,noNeedAddress:true})
+}
 
 console.log('script loaded #');

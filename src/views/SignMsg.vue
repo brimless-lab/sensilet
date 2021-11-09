@@ -31,6 +31,7 @@ export default {
             isCreating: false,
             origin,
             msg: request.params.msg,
+            noNeedAddress: request.params.noNeedAddress,
         }
     },
     async mounted() {
@@ -58,7 +59,7 @@ export default {
                     data: {
                         id: request.id,
                         result: "success",
-                        data :walletManager.signMessage(this.msg),
+                        data :walletManager.signMessage(this.msg,this.noNeedAddress),
                     },
                 });
                 window.close();

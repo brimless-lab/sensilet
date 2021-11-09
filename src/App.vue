@@ -41,6 +41,7 @@
         <ExportWallet v-else-if="currentPage==='/export'"/>
         <ImportPrivate v-else-if="currentPage==='/importPrivateKey'"/>
         <ExportPrivate v-else-if="currentPage==='/exportPrivateKey'"/>
+        <SignTransaction v-else-if="currentPage==='/signTransaction'"/>
     </div>
 
 </template>
@@ -65,6 +66,7 @@ import SignMsg from "./views/SignMsg";
 import ExportWallet from "./views/ExportWallet";
 import ImportPrivate from "./views/ImportPrivate";
 import ExportPrivate from "./views/ExportPrivate";
+import SignTransaction from "./views/SignTransaction";
 
 import AccountChoose from "./components/AccountChoose";
 
@@ -75,7 +77,9 @@ const request = JSON.parse(urlParams.get('request'));
 export default {
     components: {
         CreateWallet,
-        Account,
+        Account ,
+        // Account : resolve => {require(['@/views/Account'],resolve)},     //todo 实现组件懒加载
+        // Account :()=> import('./views/Account'),
         Unlock,
         Connect,
         Issue,
@@ -92,6 +96,7 @@ export default {
         AccountChoose,
         ImportPrivate,
         ExportPrivate,
+        SignTransaction,
     },
     data() {
         return {
@@ -144,8 +149,12 @@ export default {
             routerManager.goto('/transferNft')
         }
         if (request && request.method === 'signTx') {
-            console.log('签名交易');
+            console.log('签名交易 for tswap');
             routerManager.goto('/signTx')
+        }
+        if (request && request.method === 'signTransaction') {
+            console.log('签名交易 for web3');
+            routerManager.goto('/signTransaction')
         }
         if (request && request.method === 'checkTokenUtxoCount') {
             console.log('合并Utxo');

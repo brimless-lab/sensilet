@@ -65,7 +65,9 @@ export default createStore({
             state.tokenList = null;
             await sleep(500);
             state.tokenList = await tokenManager.listUserTokens().catch(e => {
-                console.log(e);return []})
+                console.log(e);
+                return []
+            })
         }
     },
     modules: {}

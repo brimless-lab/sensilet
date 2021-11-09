@@ -211,6 +211,40 @@ async function handleCheckTokenUtxo(message, sender, sendResponse) {
     }
 }
 
+
+async function handleGetAddress(message, sender, sendResponse) {
+    if (!await checkConnect(sender)) {
+        sendResponse({
+            result: "denied",
+            id: message.data.id,
+            msg: "Permission denied, connect first"
+        });
+    }
+    let {} = message.data.params;
+    sendResponse({
+        id: message.data.id,
+        data: walletManager.getMainAddress(),
+        result: "success"
+    })
+}
+
+async function handleGetPublicKey(message, sender, sendResponse) {
+    if (!await checkConnect(sender)) {
+        sendResponse({
+            result: "denied",
+            id: message.data.id,
+            msg: "Permission denied, connect first"
+        });
+    }
+
+    let {} = message.data.params;
+    sendResponse({
+        id: message.data.id,
+        data: walletManager.getMainPubKey(),
+        result: "success"
+    })
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(message, "onMessage");
 
@@ -231,6 +265,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             handleGetTokenBalance(message, sender, sendResponse);
         } else if (message.data.method === 'checkTokenUtxoCount') {
             handleCheckTokenUtxo(message, sender, sendResponse);
+        } else if (message.data.method === 'getAddress') {
+            handleGetAddress(message, sender, sendResponse);
+        } else if (message.data.method === 'getPublicKey') {
+            handleGetPublicKey(message, sender, sendResponse);
         } else {
             launchPopup(message, sender, sendResponse);
         }
