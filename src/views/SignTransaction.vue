@@ -1,25 +1,28 @@
 <template>
     <div class="panel">
-        <div class="title" v-if="origin">{{$t('popup.sign_tx_request')}}</div>
+        <div class="title" v-if="origin">{{ $t('popup.sign_tx_request') }}</div>
         <div class="pay-info" v-if="origin">
             <div class="origin">{{ origin }}</div>
         </div>
         <div class="tx-list">
             <div class="item" v-for="item in txDetailList">
                 <div class="info">
-                    <span>{{$t('popup.tx_type')}}</span>
+                    <span>{{ $t('popup.tx_type') }}</span>
                     <span>{{ item.type }}
                     </span>
 
                 </div>
                 <div class="info">
-                    <span>{{$t('popup.receive_address')}}</span>
+                    <span>{{ $t('popup.receive_address') }}</span>
                     <span style="font-size: 12px">{{ item.address }}</span>
                 </div>
                 <div class="info">
-                    <span class="tag" v-if="item.isChange">{{$t("popup.change")}}:</span>
-                    <span v-else class="tag red">
-                        {{$t('popup.amount')}}
+                    <!--                    <span class="tag" v-if="item.isChange">{{$t("popup.change")}}:</span>-->
+                    <!--                    <span v-else class="tag red">-->
+                    <!--                        {{$t('popup.amount')}}-->
+                    <!--                    </span>-->
+                    <span>
+                        {{ $t('popup.amount') }}
                     </span>
 
                     <CoinShow style="font-weight: bold;" :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
@@ -27,8 +30,8 @@
             </div>
         </div>
         <div class="action-container" v-if="!isCreating">
-            <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
-            <a-button type="primary" @click="commit">{{$t('popup.commit')}}</a-button>
+            <a-button @click="cancel">{{ $t('popup.cancel') }}</a-button>
+            <a-button type="primary" @click="commit">{{ $t('popup.commit') }}</a-button>
         </div>
         <a-spin v-else/>
     </div>
@@ -53,7 +56,7 @@ export default {
             origin,
             fee: null,
             txHex: request.params.txHex,
-            inputInfos: request.params. inputInfos,
+            inputInfos: request.params.inputInfos,
             txDetailList: [],
             userAddress: walletManager.getMainAddress(),
             txTypeWord: txUtils.txTypeWord,
@@ -61,49 +64,49 @@ export default {
     },
     async mounted() {
 
-            let txDetail = txUtils.getTxInfo(this.txHex).outputs;
-            // console.log(txDetail)
+        let txDetail = txUtils.getTxInfo(this.txHex).outputs;
+        // console.log(txDetail)
 
-            let arr = [];
+        let arr = [];
 
-            for (let j = 0; j < txDetail.length; j++) {
-                let temp = {};
-                temp.type = txUtils.txTypeWord[ txDetail[j].type];
+        for (let j = 0; j < txDetail.length; j++) {
+            let temp = {};
+            temp.type = txUtils.txTypeWord[txDetail[j].type];
 
 
-                if (txDetail[j].type === txUtils.txType.SENSIBLE_FT) {
+            if (txDetail[j].type === txUtils.txType.SENSIBLE_FT) {
 
-                    let data = txDetail[j].data
+                let data = txDetail[j].data
 
-                    if (typeof data === 'string')
-                        data = JSON.parse(data)
-                    if (typeof data.tokenAmount === 'string')
-                        data.tokenAmount = parseInt(data.tokenAmount);
-                    temp.type += `(${data.tokenName.replaceAll('\u0000','')})`;
-                        temp.amount = data.decimalNum > 0 ? (data.tokenAmount / Math.pow(10, data.decimalNum)).toFixed(data.decimalNum) : data.tokenAmount;
-                    temp.address = showLongString(data.tokenAddress, 20);
-                    temp.symbol = data.tokenSymbol.replaceAll('\u0000','');
-                    temp.decimal = data.decimalNum
+                if (typeof data === 'string')
+                    data = JSON.parse(data)
+                if (typeof data.tokenAmount === 'string')
+                    data.tokenAmount = parseInt(data.tokenAmount);
+                temp.type += `(${data.tokenName.replaceAll('\u0000', '')})`;
+                temp.amount = data.decimalNum > 0 ? (data.tokenAmount / Math.pow(10, data.decimalNum)).toFixed(data.decimalNum) : data.tokenAmount;
+                temp.address = showLongString(data.tokenAddress, 20);
+                temp.symbol = data.tokenSymbol.replaceAll('\u0000', '');
+                temp.decimal = data.decimalNum
 
-                    temp.isChange = data.tokenAddress === this.userAddress;
+                temp.isChange = data.tokenAddress === this.userAddress;
 
-                } else {
-                    // if(txDetail[j].address === this.userAddress){
-                    //     temp.type += `(${this.$t('popup.change')})`
-                    // }
-                    temp.isChange = txDetail[j].address === this.userAddress;
+            } else {
+                // if(txDetail[j].address === this.userAddress){
+                //     temp.type += `(${this.$t('popup.change')})`
+                // }
+                temp.isChange = txDetail[j].address === this.userAddress;
 
-                    temp.amount = txDetail[j].satoshis;
-                    temp.address = showLongString(txDetail[j].address, 20);
-                    temp.symbol = "BSV";
-                    temp.decimal = 8;
-                }
-                console.log(txDetail[j])
-                console.log(temp)
-                arr.push(temp)
+                temp.amount = txDetail[j].satoshis;
+                temp.address = showLongString(txDetail[j].address, 20);
+                temp.symbol = "BSV";
+                temp.decimal = 8;
             }
+            // console.log(txDetail[j])
+            // console.log(temp)
+            arr.push(temp)
+        }
 
-            this.txDetailList=arr
+        this.txDetailList = arr
 
     },
     methods: {
@@ -125,7 +128,7 @@ export default {
                     data: {
                         id: request.id,
                         result: "success",
-                        data: txUtils.signTransaction(walletManager.getMainWif(),this.txHex,this.inputInfos),
+                        data: txUtils.signTransaction(walletManager.getMainWif(), this.txHex, this.inputInfos),
                     },
                 });
                 window.close();
@@ -183,12 +186,13 @@ export default {
             display: flex;
             justify-content: space-between;
 
-            .tag{
+            .tag {
                 border-radius: 4px;
                 //color: white;
                 color: green;
                 font-weight: bold;
-                &.red{
+
+                &.red {
                     color: red;
                 }
             }

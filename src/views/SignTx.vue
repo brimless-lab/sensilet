@@ -12,7 +12,7 @@
                 </div>
                 <div class="info">
                     <span>{{$t('popup.receive_address')}}</span>
-                    <span>{{ item.address }}</span>
+                    <span style="font-size: 12px">{{ item.address }}</span>
                 </div>
                 <div class="info">
                     <span>{{$t('popup.amount')}}</span>
@@ -89,9 +89,9 @@ export default {
                     temp.symbol = data.tokenSymbol.replaceAll('/u000','');
                     temp.decimal = data.decimalNum
                 } else {
-                    if(txDetail[j].address === this.userAddress){
-                        temp.type += `(${this.$t('popup.change')})`
-                    }
+                    // if(txDetail[j].address === this.userAddress){
+                    //     temp.type += `(${$t('popup.change')})`
+                    // }
                     temp.amount = txDetail[j].satoshis;
                     temp.address = showLongString(txDetail[j].address, 20);
                     temp.symbol = "BSV";
