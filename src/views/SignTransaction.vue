@@ -8,15 +8,21 @@
             <div class="item" v-for="item in txDetailList">
                 <div class="info">
                     <span>{{$t('popup.tx_type')}}</span>
-                    <span>{{ item.type }}</span>
+                    <span>{{ item.type }}
+                    </span>
+
                 </div>
                 <div class="info">
                     <span>{{$t('popup.receive_address')}}</span>
-                    <span>{{ item.address }}</span>
+                    <span style="font-size: 12px">{{ item.address }}</span>
                 </div>
                 <div class="info">
-                    <span>{{$t('popup.amount')}}</span>
-                    <CoinShow :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
+                    <span class="tag" v-if="item.isChange">{{$t("popup.change")}}:</span>
+                    <span v-else class="tag red">
+                        {{$t('popup.amount')}}
+                    </span>
+
+                    <CoinShow style="font-weight: bold;" :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
                 </div>
             </div>
         </div>
@@ -63,6 +69,8 @@ export default {
             for (let j = 0; j < txDetail.length; j++) {
                 let temp = {};
                 temp.type = txUtils.txTypeWord[ txDetail[j].type];
+
+
                 if (txDetail[j].type === txUtils.txType.SENSIBLE_FT) {
 
                     let data = txDetail[j].data
@@ -71,20 +79,27 @@ export default {
                         data = JSON.parse(data)
                     if (typeof data.tokenAmount === 'string')
                         data.tokenAmount = parseInt(data.tokenAmount);
-                    temp.type += `(${data.tokenName.replaceAll('/u000','')})`;
+                    temp.type += `(${data.tokenName.replaceAll('\u0000','')})`;
                         temp.amount = data.decimalNum > 0 ? (data.tokenAmount / Math.pow(10, data.decimalNum)).toFixed(data.decimalNum) : data.tokenAmount;
                     temp.address = showLongString(data.tokenAddress, 20);
-                    temp.symbol = data.tokenSymbol.replaceAll('/u000','');
+                    temp.symbol = data.tokenSymbol.replaceAll('\u0000','');
                     temp.decimal = data.decimalNum
+
+                    temp.isChange = data.tokenAddress === this.userAddress;
+
                 } else {
-                    if(txDetail[j].address === this.userAddress){
-                        temp.type += `(${this.$t('popup.change')})`
-                    }
+                    // if(txDetail[j].address === this.userAddress){
+                    //     temp.type += `(${this.$t('popup.change')})`
+                    // }
+                    temp.isChange = txDetail[j].address === this.userAddress;
+
                     temp.amount = txDetail[j].satoshis;
                     temp.address = showLongString(txDetail[j].address, 20);
                     temp.symbol = "BSV";
                     temp.decimal = 8;
                 }
+                console.log(txDetail[j])
+                console.log(temp)
                 arr.push(temp)
             }
 
@@ -167,6 +182,16 @@ export default {
         .info {
             display: flex;
             justify-content: space-between;
+
+            .tag{
+                border-radius: 4px;
+                //color: white;
+                color: green;
+                font-weight: bold;
+                &.red{
+                    color: red;
+                }
+            }
 
             .address {
                 font-size: 12px;

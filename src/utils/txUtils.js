@@ -10,8 +10,8 @@ const API_NET = bg.sensibleSdk.API_NET;
 const bsv156 = bg.sensibleSdk.bsv;
 
 txUtils.txTypeWord = {
-    0: "SENSIBLE_NFT",
-    1: "SENSIBLE_FT",
+    0: "NFT",
+    1: "TOKEN",
     2: "BSV",
     3: "OP_RETURN",
     4: "UNKNOWN",
