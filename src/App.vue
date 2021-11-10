@@ -49,26 +49,32 @@
 //1. 判断是否创建了私钥 否则进入创建私钥页面 Create
 //2. 判断是否解锁了私钥 否则进入解锁页面 Unlock
 //3. 进入正常钱包页面  Wallet
-import CreateWallet from './views/CreateWallet.vue'
-import Account from './views/Account'
-import Unlock from './views/Unlock'
-import Connect from './views/Connect'
-import Issue from './views/Issue'
-import Genesis from "./views/Genesis";
-import Pay from "./views/Pay";
-import TransferNft from "./views/TransferNft";
-import PayToken from "./views/PayToken";
-import ImportWallet from "./views/ImportWallet";
-import Merge from "./views/Merge";
-import Setting from "./views/Setting";
-import SignTx from "./views/SignTx";
-import SignMsg from "./views/SignMsg";
-import ExportWallet from "./views/ExportWallet";
-import ImportPrivate from "./views/ImportPrivate";
-import ExportPrivate from "./views/ExportPrivate";
-import SignTransaction from "./views/SignTransaction";
+import { defineComponent, defineAsyncComponent } from 'vue'
 
-import AccountChoose from "./components/AccountChoose";
+import CreateWallet from './views/CreateWallet.vue'
+
+// import Account from './views/Account'
+const Account = defineAsyncComponent(() => import('./views/Account'))
+// const Account = ()=> import('./views/Account.vue')
+
+const Unlock = defineAsyncComponent(()=> import( './views/Unlock'))
+const Connect =  defineAsyncComponent(()=> import( './views/Connect'));
+const Issue =  defineAsyncComponent(()=> import( './views/Issue'));
+const Genesis =  defineAsyncComponent(()=> import( "./views/Genesis"));
+const Pay =  defineAsyncComponent(()=> import( "./views/Pay"));
+const TransferNft =  defineAsyncComponent(()=> import( "./views/TransferNft"));
+const PayToken =  defineAsyncComponent(()=> import( "./views/PayToken"));
+const ImportWallet =  defineAsyncComponent(()=> import( "./views/ImportWallet"));
+const Merge =  defineAsyncComponent(()=> import( "./views/Merge"));
+const Setting =  defineAsyncComponent(()=> import( "./views/Setting"));
+const SignTx =  defineAsyncComponent(()=> import( "./views/SignTx"));
+const SignMsg =  defineAsyncComponent(()=> import( "./views/SignMsg"));
+const ExportWallet =  defineAsyncComponent(()=> import( "./views/ExportWallet"));
+const ImportPrivate =  defineAsyncComponent(()=> import( "./views/ImportPrivate"));
+const ExportPrivate =  defineAsyncComponent(()=> import( "./views/ExportPrivate"));
+const SignTransaction =  defineAsyncComponent(()=> import( "./views/SignTransaction"));
+
+const AccountChoose =  defineAsyncComponent(()=> import( "./components/AccountChoose"));
 
 
 const urlParams = new URLSearchParams(window.location.hash.slice(1));
@@ -78,8 +84,8 @@ export default {
     components: {
         CreateWallet,
         Account ,
-        // Account : resolve => {require(['@/views/Account'],resolve)},     //todo 实现组件懒加载
-        // Account :()=> import('./views/Account'),
+        // Account : resolve => {require(['./views/Account'],resolve)},     // 实现组件懒加载
+        // Account : ()=> import('./views/Account.vue'),
         Unlock,
         Connect,
         Issue,
@@ -118,6 +124,7 @@ export default {
     },
     beforeCreate() {
         routerManager.addListener((url) => {
+            console.log(url)
             this.currentPage = url;
         });
 
