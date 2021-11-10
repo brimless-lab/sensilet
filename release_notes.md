@@ -1,6 +1,15 @@
 
 # Release Notes
 
+### v0.1.4 (2021-11-09)
+
+- clean UI design (new!)
+- automatically generated pixel portrait for accounts
+- token display optimization and customization
+- privacy policy and terms of usage
+- web3 integration support
+- bugfix
+
 ### v0.1.3 (2021-10-27)
 
 - Support Single Private Key 
