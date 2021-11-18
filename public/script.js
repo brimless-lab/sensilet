@@ -20,6 +20,41 @@ window.sensilet.postMessage = (message, callback) => {
         new CustomEvent('sato_injected_script_message', {detail: message}),
     );
 };
+window.sensilet.on =  (eventName,callback)=>{
+    let id = eventName+ Date.now() + "" + Math.floor(Math.random() * 1000000);
+
+    //注册事件响应
+    window.addEventListener('sato_contentscript_message', (event)=>{
+        console.log(event.detail)
+        if (event.detail.id === id) {
+            if (callback && typeof callback === "function") {
+                callback(event.detail)
+            }
+        }
+    },{once:false});
+
+    //向bg注册事件
+    window.dispatchEvent(
+        new CustomEvent('sato_injected_script_message', {detail:{
+            id,
+            method:"addEvent",
+            detail: eventName
+        }}),
+    );
+
+    //页面刷新、关闭时移除事件
+    window.addEventListener("unload",(event)=>{
+        console.log("on unload, remove event listener")
+        window.dispatchEvent(
+            new CustomEvent('sato_injected_script_message', {detail:{
+                    id,
+                    method:"removeEvent",
+                    detail: eventName
+                }}),
+        );
+    })
+
+}
 
 function action(actionName, params) {
     return new Promise((resolve, reject) => {

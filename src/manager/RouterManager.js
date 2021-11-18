@@ -8,7 +8,7 @@ let current = "/";
 let last = "/";
 
 const pageConfigs = {
-    '/': {
+    '/create': {
         needCreate: false,
         needUnlock: false,
     },
@@ -75,12 +75,14 @@ routerManager.addListener = function (event) {
 };
 routerManager.data = null;
 routerManager.goto = function (url, data) {
+    if(config.debug)
+        console.log('goto',url)
     //修改链接上的参数显示
     let needGoto = url;
     let pageConfig = pageConfigs[url];
     if (pageConfig) {
         if (pageConfig.needCreate && !walletManager.isMnemonicCreate()) {
-            needGoto = '/'
+            needGoto = '/create'
         } else if (pageConfig.needUnlock && walletManager.isNeedUnlock()) {
             needGoto = '/unlock'
         }

@@ -1,7 +1,7 @@
 <template>
     <a-dropdown placement="bottomCenter" :class="{'hide':!$store.state.account && (!$store.state.accountList || $store.state.accountList.length<=0 )}" :trigger="['click']">
         <div class="current-account" @click.prevent>
-            <div v-if="$store.state.account!=null" style="display: flex;align-items: center">
+            <div v-if="$store.state.account!=null && current!=='/create' " style="display: flex;align-items: center">
                 <HeadPicture :address="$store.getters.address" style="width: 40px;height: 40px;;margin-right: 10px;padding: 8px"/>
                 <div class="word ellipsis account-word">
                     <div class="account">
@@ -22,7 +22,7 @@
         <template #overlay>
             <a-menu v-if="$store.state.accountList  && $store.state.accountList .length>0" style="max-height: 60vh;overflow-y: scroll">
                 <a-menu-item v-for="item in $store.state.accountList" @click="choose(item)" class="account-item"
-                             :class="{'selected':item.address===$store.getters.address}">
+                             :class="{'selected':item.address===$store.getters.address && current!=='/create' }">
                     <div style="display: flex;align-items: center">
                     <HeadPicture :address="item.address" style="width: 40px;height: 40px; margin-right: 10px;padding: 8px;"/>
                     <div class="info" :class="{'has-alias':item.alias}">
@@ -80,7 +80,6 @@ export default {
         DownOutlined, CheckOutlined
     },
     data() {
-        this.$store.commit('initAccount')
         return {
             accountMode: walletManager.getAccountMode(),
             showEditItem: null,
@@ -88,6 +87,7 @@ export default {
             editAlias: "",
             isShowAddNew: false,
             addNewUrl: '/create',
+            current:routerManager.getCurrentPage()
         }
     },
     methods: {
@@ -98,16 +98,20 @@ export default {
         },
 
         choose(item) {
-            if (item.address === this.$store.getters.address)
+            if (item.address === this.$store.getters.address) {
+                if(this.current==='/create')
+                    routerManager.gotoHome()
                 return
+            }
             walletManager.reload();
             walletManager.chooseAccount(item);
+            eventManager.dispatchAccountChange();
             window.location.reload();
         },
         AddNew() {
-            if (this.addNewUrl === '/create') {
-                this.add()
-            } else
+            // if (this.addNewUrl === '/create') {
+            //     this.add()
+            // } else
                 routerManager.goto(this.addNewUrl)
         }
     }

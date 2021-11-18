@@ -3,7 +3,7 @@
         <div class="title">
             <img v-if="width<500 && showAccountChoose" style="width: 36px;margin-left: 16px" src="./assets/logo.png" alt="logo">
 
-            <div v-else   style="overflow: hidden">
+            <div v-else style="overflow: hidden">
                 <!--                <img src="./assets/logo_h_white.png" alt="logo">-->
                 <img style="width: 150px" src="./assets/logo_h.svg" alt="logo">
             </div>
@@ -17,6 +17,7 @@
         <AccountChoose v-else-if="showAccountChoose"/>
 
         <span class="version" :class="{'right-little':showSetting,'has-new':$store.getters.hasNewVersion}" @click="newVersion()">
+            <span v-if="debug">{{ currentPage }}</span>
             {{ version }}
             <div class="red-point"></div>
         </span>
@@ -24,7 +25,7 @@
     <!--        <router-view/>-->
     <!--        因为插件的特殊性，这里需要自己维护路由-->
     <div class="main">
-        <CreateWallet v-if="currentPage==='/'"/>
+        <CreateWallet v-if="currentPage==='/create'"/>
         <Unlock v-else-if="currentPage==='/unlock'"/>
         <Account v-else-if="currentPage==='/account'"/>
         <Connect v-else-if="currentPage==='/connect'"/>
@@ -49,7 +50,7 @@
 //1. 判断是否创建了私钥 否则进入创建私钥页面 Create
 //2. 判断是否解锁了私钥 否则进入解锁页面 Unlock
 //3. 进入正常钱包页面  Wallet
-import { defineComponent, defineAsyncComponent } from 'vue'
+import {defineComponent, defineAsyncComponent} from 'vue'
 
 import CreateWallet from './views/CreateWallet.vue'
 
@@ -57,24 +58,24 @@ import CreateWallet from './views/CreateWallet.vue'
 const Account = defineAsyncComponent(() => import('./views/Account'))
 // const Account = ()=> import('./views/Account.vue')
 
-const Unlock = defineAsyncComponent(()=> import( './views/Unlock'))
-const Connect =  defineAsyncComponent(()=> import( './views/Connect'));
-const Issue =  defineAsyncComponent(()=> import( './views/Issue'));
-const Genesis =  defineAsyncComponent(()=> import( "./views/Genesis"));
-const Pay =  defineAsyncComponent(()=> import( "./views/Pay"));
-const TransferNft =  defineAsyncComponent(()=> import( "./views/TransferNft"));
-const PayToken =  defineAsyncComponent(()=> import( "./views/PayToken"));
-const ImportWallet =  defineAsyncComponent(()=> import( "./views/ImportWallet"));
-const Merge =  defineAsyncComponent(()=> import( "./views/Merge"));
-const Setting =  defineAsyncComponent(()=> import( "./views/Setting"));
-const SignTx =  defineAsyncComponent(()=> import( "./views/SignTx"));
-const SignMsg =  defineAsyncComponent(()=> import( "./views/SignMsg"));
-const ExportWallet =  defineAsyncComponent(()=> import( "./views/ExportWallet"));
-const ImportPrivate =  defineAsyncComponent(()=> import( "./views/ImportPrivate"));
-const ExportPrivate =  defineAsyncComponent(()=> import( "./views/ExportPrivate"));
-const SignTransaction =  defineAsyncComponent(()=> import( "./views/SignTransaction"));
+const Unlock = defineAsyncComponent(() => import( './views/Unlock'))
+const Connect = defineAsyncComponent(() => import( './views/Connect'));
+const Issue = defineAsyncComponent(() => import( './views/Issue'));
+const Genesis = defineAsyncComponent(() => import( "./views/Genesis"));
+const Pay = defineAsyncComponent(() => import( "./views/Pay"));
+const TransferNft = defineAsyncComponent(() => import( "./views/TransferNft"));
+const PayToken = defineAsyncComponent(() => import( "./views/PayToken"));
+const ImportWallet = defineAsyncComponent(() => import( "./views/ImportWallet"));
+const Merge = defineAsyncComponent(() => import( "./views/Merge"));
+const Setting = defineAsyncComponent(() => import( "./views/Setting"));
+const SignTx = defineAsyncComponent(() => import( "./views/SignTx"));
+const SignMsg = defineAsyncComponent(() => import( "./views/SignMsg"));
+const ExportWallet = defineAsyncComponent(() => import( "./views/ExportWallet"));
+const ImportPrivate = defineAsyncComponent(() => import( "./views/ImportPrivate"));
+const ExportPrivate = defineAsyncComponent(() => import( "./views/ExportPrivate"));
+const SignTransaction = defineAsyncComponent(() => import( "./views/SignTransaction"));
 
-const AccountChoose =  defineAsyncComponent(()=> import( "./components/AccountChoose"));
+const AccountChoose = defineAsyncComponent(() => import( "./components/AccountChoose"));
 
 
 const urlParams = new URLSearchParams(window.location.hash.slice(1));
@@ -83,7 +84,7 @@ const request = JSON.parse(urlParams.get('request'));
 export default {
     components: {
         CreateWallet,
-        Account ,
+        Account,
         // Account : resolve => {require(['./views/Account'],resolve)},     // 实现组件懒加载
         // Account : ()=> import('./views/Account.vue'),
         Unlock,
@@ -105,12 +106,15 @@ export default {
         SignTransaction,
     },
     data() {
+        this.$store.commit('initAccount')
+
         return {
             width: document.body.clientWidth,
             walletName: config.walletName,
             currentPage: routerManager.getCurrentPage(),
             count: global.bg.count,
             version: config.version,
+            debug: config.debug,
             // showSetting: true
         }
     },
@@ -119,7 +123,7 @@ export default {
             return this.currentPage === '/account'
         },
         showAccountChoose() {
-            return this.currentPage === '/'
+            return this.currentPage === '/create'
         }
     },
     beforeCreate() {
@@ -128,19 +132,18 @@ export default {
             this.currentPage = url;
         });
 
-
         if (request && request.method === 'connect') {
             console.log('链接钱包');
-            routerManager.goto('/connect')
+            return routerManager.goto('/connect')
         }
 
         if (request && request.method === 'genesis') {
             console.log('genesis NFT');
-            routerManager.goto('/genesis')
+            return routerManager.goto('/genesis')
         }
         if (request && request.method === 'issue') {
             console.log('issue NFT');
-            routerManager.goto('/issue')
+            return routerManager.goto('/issue')
         }
 
         if (request && request.method === 'pay') {
@@ -157,20 +160,26 @@ export default {
         }
         if (request && request.method === 'signTx') {
             console.log('签名交易 for tswap');
-            routerManager.goto('/signTx')
+            return routerManager.goto('/signTx')
         }
         if (request && request.method === 'signTransaction') {
             console.log('签名交易 for web3');
-            routerManager.goto('/signTransaction')
+            return routerManager.goto('/signTransaction')
         }
         if (request && request.method === 'checkTokenUtxoCount') {
             console.log('合并Utxo');
-            routerManager.goto('/merge')
+            return routerManager.goto('/merge')
         }
         if (request && request.method === 'signMsg') {
             console.log('签名消息');
-            routerManager.goto('/signMsg')
+            return routerManager.goto('/signMsg')
         }
+
+
+        if (routerManager.getCurrentPage() === '/') {
+            routerManager.goto('/account')
+        }
+
     },
 
 
@@ -510,28 +519,33 @@ body {
 }
 
 .trans-info-container {
-    .title{
+    .title {
         text-align: center;
         font-size: 18px;
     }
+
     input {
         &:not(:first-child) {
             margin-top: 16px;
         }
     }
 
-    .notice{
+    .notice {
         margin-top: 16px;
-        .balance,.fee{
+
+        .balance, .fee {
             display: grid;
             grid-template-columns: 80px 1fr 80px;
-            .key{
+
+            .key {
             }
-            .amount{
+
+            .amount {
 
                 text-align: right;
             }
-            .action{
+
+            .action {
                 cursor: pointer;
                 color: $base-color;
                 text-align: right;
@@ -612,12 +626,12 @@ body {
     color: #888;
 }
 
-.account-item{
+.account-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    .arrow{
+    .arrow {
 
         display: none;
         color: $base-color;
@@ -625,13 +639,14 @@ body {
         font-size: 22px;
     }
 
-    &.selected{
+    &.selected {
         cursor: default;
-        &:hover{
+
+        &:hover {
             background-color: white;
         }
 
-        .arrow{
+        .arrow {
             display: block;
         }
     }
@@ -649,7 +664,7 @@ body {
     align-items: center;
 }
 
-.hide{
+.hide {
     display: none !important;
 }
 

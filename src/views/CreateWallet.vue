@@ -10,7 +10,7 @@
             Nice to meet you.
         </div>
         <a-checkbox class="keep" v-model:checked="agreeTerm">
-            <span>{{$t('wallet.agree_term')}}</span>
+            <span>{{ $t('wallet.agree_term') }}</span>
             <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank">
                 Terms of Service
             </a>
@@ -103,7 +103,7 @@ export default {
         let isFirstEnter = localStorage.getItem('firstEnterTimestamp') === null
         return {
             step: isFirstEnter ? -1 : 0,
-            agreeTerm:false,
+            agreeTerm: false,
             // isMnemonicSaved: false,
             // btnCanClick: false,
             password: "",
@@ -123,38 +123,15 @@ export default {
     beforeCreate() {
         // routerManager.goto('/import')
 
-        if (walletManager.isMnemonicCreate()) {
-            if (walletManager.isNeedUnlock()) {
-                //    需要解锁
-                routerManager.goto('/unlock')
-            } else {
-                routerManager.goto('/account')
-            }
-        }
+        // if (walletManager.isMnemonicCreate()) {
+        //     if (walletManager.isNeedUnlock()) {
+        //         //    需要解锁
+        //         routerManager.goto('/unlock')
+        //     } else {
+        //         routerManager.goto('/account')
+        //     }
+        // }
     },
-    // watch: {
-    //     isMnemonicSaved: (newVal) => {
-
-    // _this.btnCanClick = newVal
-    // _this.clickCount ++;
-    // //在弹出窗口中，点击checkbox 后 组件未刷新(原因未知)。这里通过v-if 触发强制刷新 (chrome更新后无效了，尔平那又可以...)
-    // _this.showCheckContainer = false;
-    // setTimeout(() => {
-    //     _this.showCheckContainer = true;
-    // }, 10)
-    //
-    //
-    // if(_this.clickCount>3){
-    //     antModal.confirm({
-    //         content:"在网页中打开",
-    //         onOk(){
-    //             window.open("/popup.html")
-    //
-    //         }
-    //     })
-    // }
-    // }
-    // },
 
     created() {
         _this = this;
@@ -167,7 +144,6 @@ export default {
     },
     mounted() {
         // document.getElementById('mnemonicCheckbox').onclick = this.toggleSaveCheckbox
-
     },
     methods: {
         showCustomPanel() {
@@ -218,6 +194,11 @@ export default {
 
                     //解锁钱包，并跳转到账户页面
                     walletManager.unlock(this.password, false);
+
+                    if(this.$store.state.accountList && this.$store.state.accountList.length>0){
+                        eventManager.dispatchAccountChange();
+                    }
+
                     goNextPage();
                 }
             } else

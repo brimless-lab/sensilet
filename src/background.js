@@ -1,4 +1,5 @@
 const responseHandlers = new Map();
+const eventHandlers = {};
 const sensibleSdk = require("sensible-sdk");
 
 require('./utils/globalUtils')
@@ -119,13 +120,13 @@ async function handleIsConnect(message, sender, sendResponse) {
         sendResponse({
             result: "success",
             id: message.data.id,
-            data:false
+            data: false
         });
-    }else
+    } else
         sendResponse({
             result: "success",
             id: message.data.id,
-            data:true
+            data: true
         });
 }
 
@@ -249,7 +250,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(message, "onMessage");
 
     if (message.channel === 'sato_contentscript_background_channel') {
-        if (message.data.method === 'connect') {
+        if (message.data.method === 'addEvent') {
+            let eventName = message.data.detail;
+            if (!eventHandlers[eventName])
+                eventHandlers[eventName] = [];
+            console.log(message.data.id,eventName, '###')
+            eventHandlers[eventName].push({
+                id: message.data.id,
+                tabId:sender.tab.id
+            })
+
+        } else if (message.data.method === 'removeEvent') {
+            let eventName = message.data.detail;
+            if (!eventHandlers[eventName])
+                return false
+            eventHandlers[eventName] = eventHandlers[eventName].filter(item=>item.id!==message.data.id)
+        } else if (message.data.method === 'connect') {
             handleConnect(message, sender, sendResponse);
         } else if (message.data.method === 'listGenesis') {
             handleListGenesis(message, sender, sendResponse);
@@ -280,5 +296,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             responseHandlers.delete(message.data.id);
             responseHandler(message.data);
         }
+    } else if (message.channel === 'sato_extension_background_event_channel') {
+        //    事件通道
+        let eventName = message.eventName;
+        console.log(eventHandlers[eventName])
+        if (eventHandlers[eventName]) {
+            for (let i = 0; i < eventHandlers[eventName].length; i++) {
+                let {tabId, id} = eventHandlers[eventName][i]
+                chrome.tabs.sendMessage(tabId,{
+                    channel:"sato_background_event_channel",
+                    id,
+                    data:message.data
+                })
+            }
+        }
+
     }
-});
+})
+;

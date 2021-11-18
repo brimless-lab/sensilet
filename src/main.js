@@ -62,6 +62,8 @@ import bsvUtils from './utils/bsvUtils'
 global.bsvUtils = bsvUtils;
 import routerManager from './manager/RouterManager'
 global.routerManager = routerManager;
+import eventManager from './manager/EventManager'
+global.eventManager = eventManager;
 
 
 global.antMessage = antMessage;

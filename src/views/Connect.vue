@@ -10,8 +10,8 @@
                     p-id="2686" data-spm-anchor-id="a313x.7781069.0.i4" class="selected"></path>
             </svg>
             <div class="account-info">
-                <div class="account">{{ $store.state.alias }}</div>
-                <div class="address">{{ address }}</div>
+                <div class="account">{{ $store.getters.alias }}</div>
+                <div class="address">{{  $store.getters.addressShow }}</div>
             </div>
         </div>
         <div class="notice">{{$t('popup.connect_notice')}}</div>
@@ -97,10 +97,16 @@ export default {
     }
 
     .account-info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
         .account {
+
         }
 
         .address {
+            margin-left: 20px;
             color: #666;
             font-size: 12px
         }
