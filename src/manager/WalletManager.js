@@ -62,7 +62,6 @@ walletManager.reload = function () {
     mRootKey = "";
     mMainAddress = "";
     mPassword = "";
-    bg.passwordAes = "";
 }
 walletManager.isSinglePrivateKey = function () {
     let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
@@ -104,7 +103,7 @@ walletManager.isNeedUnlock = function () {
         return false
     }
 //    从bg的对象中查询
-    return !bg.passwordAes && !mPassword;
+    return !bg.passwordAesTable[lockInfo.address] && !mPassword;
 };
 walletManager.isDefaultPassword = function () {
     let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
@@ -134,13 +133,11 @@ walletManager.unlock = function (password, keep) {
     password = bsv.Hash.sha256(Buffer.from(password)).toString('hex');
     let passwordHash = bsv.Hash.sha256(Buffer.from(password + 'SatoWallet')).toString('hex');
 
-    bg.passwordAes = "";
-
     if (passwordHash === lockInfo.passwordHash) {
         //加密保存密码到内存中
         mPassword = password;
         if (keep)
-            bg.passwordAes = aesUtils.AESEncrypto(password, passwordAesKey);
+            bg.passwordAesTable[lockInfo.address] = aesUtils.AESEncrypto(password, passwordAesKey);
 
         return true;
     }
@@ -153,10 +150,10 @@ walletManager.getMnemonic = function () {
     }
 
     if (!mPassword) {
-        if (!bg.passwordAes)
+        if (!bg.passwordAesTable[lockInfo.address])
             throw new Error('Unlock Wallet First');
 
-        mPassword = aesUtils.AESDecrypto(bg.passwordAes, passwordAesKey)
+        mPassword = aesUtils.AESDecrypto(bg.passwordAesTable[lockInfo.address], passwordAesKey)
     }
     return aesUtils.AESDecrypto(lockInfo.locked, mPassword)
 };
@@ -177,10 +174,10 @@ walletManager.getSeedFromLocked = function () {
     }
 
     if (!mPassword) {
-        if (!bg.passwordAes)
+        if (!bg.passwordAesTable[lockInfo.address])
             throw new Error('Unlock Wallet First');
 
-        mPassword = aesUtils.AESDecrypto(bg.passwordAes, passwordAesKey)
+        mPassword = aesUtils.AESDecrypto(bg.passwordAesTable[lockInfo.address], passwordAesKey)
     }
 
     let seedStr = aesUtils.AESDecrypto(lockInfo.seedLocked, mPassword);

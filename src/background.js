@@ -12,6 +12,9 @@ window.bsv = bsv;
 window.sensibleSdk = sensibleSdk;
 window.walletManager = walletManager;
 window.tokenManager = tokenManager;
+
+window.passwordAesTable = {};
+
 const SensibleNFTObj = new sensibleSdk.SensibleNFT({
     network: "mainnet", //mainnet or testnet
     feeb: 0.5,
@@ -25,6 +28,7 @@ browser.runtime.onInstalled.addListener(details => {
     if (details.reason === 'update') {
         // 更新事件
         // alert("已更新")
+
     }
 });
 
