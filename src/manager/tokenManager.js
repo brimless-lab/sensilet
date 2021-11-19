@@ -429,9 +429,9 @@ tokenManager.getTokenListNet = async function () {
 
     return data
 }
-tokenManager.reSaveToken = function (tokenList=[]){
+tokenManager.reSaveToken = function (tokenList = []) {
     localStorage.setItem('tokenList', JSON.stringify(tokenList))
-},
+}
 tokenManager.addToken = function (tokenInfo) {
     for (let key in infoLimit) {
         if (infoLimit[key].required) {
@@ -500,15 +500,15 @@ tokenManager.listUserTokens = async function () {
                 let index = tempList.findIndex(item => item.genesis === localList[i].genesis);
                 if (index < 0) {
                     localList[i].balance = 0;
-                }else
+                } else
                     localList[i].balance = tempList[index].balance
 
-                if(!localList[i].logo && tokenTable[localList[i].genesis]){
+                if (!localList[i].logo && tokenTable[localList[i].genesis]) {
                     localList[i].logo = tokenTable[localList[i].genesis].logo
                 }
             }
             tokenList = localList;
-        }else
+        } else
             tokenList = tempList;
 
     } else {
@@ -518,15 +518,15 @@ tokenManager.listUserTokens = async function () {
             tokenList[i].balance = await sensibleFtUtils.getBalance(tokenList[i].genesis, tokenList[i].codehash, address).catch(e => 0)
         }
     }
-    if(tokenList && tokenList.length>0){
-        tokenList.sort((a,b)=>{
-            if(a.sort>0 && b.sort===undefined){
+    if (tokenList && tokenList.length > 0) {
+        tokenList.sort((a, b) => {
+            if (a.sort > 0 && b.sort === undefined) {
                 return -1;
             }
-            if(b.sort>0 && a.sort===undefined){
+            if (b.sort > 0 && a.sort === undefined) {
                 return 1;
             }
-            return b -a
+            return b - a
         })
     }
 
@@ -590,7 +590,18 @@ tokenManager.transfer = async function (receivers, broadcast, {genesis, codehash
     return sensibleFtUtils.transfer(genesis, codehash, wif, wif, receivers, utxoCount, broadcast, utxo, signers);
 };
 
-
+tokenManager.fixPic = function () {
+    let list = getLocalTokenList()
+    for (let i = 0; list && i < list.length; i++) {
+        if (list[i].genesis === "5d15eedd93c90d91e0d76de5cc932c833baf8336") {
+            if (list[i].logo !== '/img/tsc.png') {
+                list[i].logo = '/img/tsc.png'
+                tokenManager.reSaveToken(list)
+            }
+            break;
+        }
+    }
+}
 
 
 module.exports = tokenManager;

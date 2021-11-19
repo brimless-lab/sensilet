@@ -27,8 +27,8 @@ browser.runtime.onInstalled.addListener(details => {
     }
     if (details.reason === 'update') {
         // 更新事件
-        // alert("已更新")
-
+        //处理一个图片错误
+        tokenManager.fixPic();
     }
 });
 
@@ -258,17 +258,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             let eventName = message.data.detail;
             if (!eventHandlers[eventName])
                 eventHandlers[eventName] = [];
-            console.log(message.data.id,eventName, '###')
+            console.log(message.data.id, eventName, '###')
             eventHandlers[eventName].push({
                 id: message.data.id,
-                tabId:sender.tab.id
+                tabId: sender.tab.id
             })
 
         } else if (message.data.method === 'removeEvent') {
             let eventName = message.data.detail;
             if (!eventHandlers[eventName])
                 return false
-            eventHandlers[eventName] = eventHandlers[eventName].filter(item=>item.id!==message.data.id)
+            eventHandlers[eventName] = eventHandlers[eventName].filter(item => item.id !== message.data.id)
         } else if (message.data.method === 'connect') {
             handleConnect(message, sender, sendResponse);
         } else if (message.data.method === 'listGenesis') {
@@ -307,10 +307,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         if (eventHandlers[eventName]) {
             for (let i = 0; i < eventHandlers[eventName].length; i++) {
                 let {tabId, id} = eventHandlers[eventName][i]
-                chrome.tabs.sendMessage(tabId,{
-                    channel:"sato_background_event_channel",
+                chrome.tabs.sendMessage(tabId, {
+                    channel: "sato_background_event_channel",
                     id,
-                    data:message.data
+                    data: message.data
                 })
             }
         }
