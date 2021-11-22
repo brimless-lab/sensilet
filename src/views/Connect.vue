@@ -56,8 +56,8 @@ export default {
             this.isConnecting = true;
 
             await new Promise(resolve => setTimeout(resolve, 100))
-
-            let data = await connectManager.connect(origin).catch(e => e);
+            let address = walletManager.getMainAddress();
+            let data = await connectManager.connect(address,origin).catch(e => e);
 
             chrome.runtime.sendMessage({
                 channel: 'sato_extension_background_channel',

@@ -6,6 +6,7 @@ require('./utils/globalUtils')
 require('./config/errorCode')
 const walletManager = require("./manager/WalletManager");
 const tokenManager = require("./manager/tokenManager");
+const connectManager = require('./manager/ContentManager');
 
 const bsv = require('bsv');
 window.bsv = bsv;
@@ -64,41 +65,30 @@ async function launchPopup(message, sender, sendResponse, checkConnected = true)
     responseHandlers.set(message.data.id, sendResponse);
 }
 
-function checkConnect(sender) {
-    return new Promise((resolve => {
-        chrome.storage.local.get('connectedWallets', (result) => {
-            const connectedWallet = (result.connectedWallets || {})[sender.origin];
-            resolve(connectedWallet !== undefined && connectedWallet != null)
+async function checkConnect(sender) {
+    let address = walletManager.getMainAddress();
+    return connectManager.isConnected(address, sender.origin)
+}
+
+async function handleConnect(message, sender, sendResponse) {
+    let address = walletManager.getMainAddress();
+    if (await connectManager.isConnected(address, sender.origin)) {
+        sendResponse({
+            result: "success",
+            id: message.data.id,
+            data: address
         });
-    }))
+
+    } else
+        return launchPopup(message, sender, sendResponse, false);
+
 }
 
-function handleConnect(message, sender, sendResponse) {
-    // launchPopup(message, sender, sendResponse);
-    chrome.storage.local.get('connectedWallets', (result) => {
-        const connectedWallet = (result.connectedWallets || {})[sender.origin];
-        if (!connectedWallet) {
-            launchPopup(message, sender, sendResponse, false);
-        } else {
-            // 对于已经连接过的， 直接返回
-            console.log(message.data);
-            sendResponse({
-                result: "success",
-                id: message.data.id,
-                data: walletManager.getMainAddress()
-            });
-        }
-    });
-}
+async function handleDisconnect(message, sender, sendResponse) {
+    let address = walletManager.getMainAddress();
 
-function handleDisconnect(message, sender, sendResponse) {
-    chrome.storage.local.get('connectedWallets', (result) => {
-        delete result.connectedWallets[sender.origin];
-        chrome.storage.local.set(
-            {connectedWallets: result.connectedWallets},
-            () => sendResponse({result: "success", id: message.data.id}),
-        );
-    });
+    await connectManager.disconnect(address, sender.origin)
+    sendResponse({result: "success", id: message.data.id})
 }
 
 async function handleListGenesis(message, sender, sendResponse) {

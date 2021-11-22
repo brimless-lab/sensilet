@@ -189,6 +189,7 @@ export default {
 
                     this.isGoingToNext = true;
 
+                    walletManager.reload();
                     walletManager.refreshLockInfoList();
                     this.$store.commit('initAccount')
 
