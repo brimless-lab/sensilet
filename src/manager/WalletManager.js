@@ -49,7 +49,7 @@ walletManager.init = function () {
     walletManager.getCurrentAccount = localManager.getCurrentAccount;
     walletManager.listAccount = localManager.listAccount;
 
-    walletManager.addAccount = localManager.addAccount;
+    walletManager.removeAccount = localManager.removeAccount;
     walletManager.chooseAccount = localManager.chooseAccount;
     walletManager.saveAlias = localManager.saveAlias;
     walletManager.refreshLockInfoList = localManager.refreshLockInfoList;
@@ -185,7 +185,7 @@ walletManager.getSeedFromLocked = function () {
     return Buffer.from(seedStr, 'hex')
 };
 
-walletManager.signMessage = function (msg,noNeedAddress) {
+walletManager.signMessage = function (msg, noNeedAddress) {
     if (typeof msg === 'string')
         msg = Buffer.from(msg);
 
@@ -200,7 +200,7 @@ walletManager.signMessage = function (msg,noNeedAddress) {
         // console.log(bsv.Bsm.verify(Buffer.from(msg, 'base64'), sig, bsv.Address.fromString(address)))
 
 
-        return noNeedAddress?sig: {address, sig}
+        return noNeedAddress ? sig : {address, sig}
     }
     return {address}
 };
@@ -277,12 +277,12 @@ walletManager.mergeBsvUtxo = async function (wif) {
 
     return await sleep(2000)
 }
-walletManager.getSendAllInfo = async function(wif){
+walletManager.getSendAllInfo = async function (wif) {
     let txComposer = await new Wallet(wif, API_NET.MAIN, 0.5, API_TARGET.SENSIBLE).merge({
-        noBroadcast:true
+        noBroadcast: true
     })
 
-    return  {amount: txComposer.getOutput(0).satoshis,fee:txComposer.getUnspentValue()}
+    return {amount: txComposer.getOutput(0).satoshis, fee: txComposer.getUnspentValue()}
 }
 
 walletManager.pay = async function (to, amount, broadcast) {
@@ -319,7 +319,7 @@ walletManager.payArray = async function (receivers, broadcast, wif = null) {
     });
 
     // console.log(txComposer)
-    return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId(), tx: txComposer.tx,isInvalid:txComposer.getFeeRate()<0.5};
+    return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId(), tx: txComposer.tx, isInvalid: txComposer.getFeeRate() < 0.5};
 };
 
 walletManager.sendOpReturn = function (op, wif) {
@@ -347,6 +347,27 @@ walletManager.saveMnemonic = mnemonicUtils.saveMnemonic;
  */
 walletManager.getAddressFromWif = function (wif) {
     return bsv.Address.fromPrivKey(bsv.PrivKey.fromWif(wif)).toString()
+}
+
+walletManager.deleteCurrent = function () {
+    let lockInfo = localManager.getCurrentAccount()
+    if (!lockInfo)
+        return
+
+    let lockInfoList = localManager.listAccount()
+
+    // 删除
+    if (lockInfoList) {
+        lockInfoList = lockInfoList.filter((item) => item.address !== lockInfo.address)
+    }
+
+    if(bg.passwordAesTable[lockInfo.address]){
+        delete bg.passwordAesTable[lockInfo.address]
+    }
+
+    localManager.saveAccountList(lockInfoList)
+    localManager.removeAccount();
+    walletManager.reload();
 }
 
 module.exports = walletManager;

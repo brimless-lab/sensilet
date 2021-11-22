@@ -235,11 +235,14 @@ tokenManager.listUserTokens = async function () {
         let priceTable = (await apiUtils.getTokenPrice()).data;
 
         tokenList.forEach(item=>{
-            if(item.balance > 0 && priceTable[item.genesis] && priceTable[item.genesis].USDT){
-                console.log(item.balance)
-                item.usd = (item.balance / Math.pow(10,item.decimal) * priceTable[item.genesis].USDT).toFixed(2);
-
-            }
+            if(priceTable[item.genesis] && priceTable[item.genesis].USDT){
+                if(item.balance > 0 ) {
+                    console.log(item.balance)
+                    item.usd = (item.balance / Math.pow(10, item.decimal) * priceTable[item.genesis].USDT).toFixed(2);
+                }else
+                    item.usd = "0.00"
+            }else
+                item.usd = "";
         })
     }
 

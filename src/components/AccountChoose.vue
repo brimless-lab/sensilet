@@ -92,7 +92,7 @@ export default {
     },
     methods: {
         add() {
-            walletManager.addAccount();
+            walletManager.removeAccount();
             walletManager.reload();
             window.location.reload();
         },

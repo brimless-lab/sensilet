@@ -791,8 +791,8 @@ export default {
 
         .refresh-icon {
             position: absolute;
-            top: 16px;
-            right: 16px;
+            top: 12px;
+            right: 12px;
             z-index: 1;
 
         }

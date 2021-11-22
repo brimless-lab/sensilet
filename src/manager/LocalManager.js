@@ -44,28 +44,19 @@ localManager.listAccount = function () {
     let lockInfoList = localStorage.getItem('lockInfoList');
     lockInfoList = lockInfoList ? JSON.parse(lockInfoList) : null;
 
-    if (!lockInfoList) {
-        let lockInfo = localManager.getCurrentAccount();
-        if (lockInfo) {
-            lockInfoList = [lockInfo];
-            localStorage.setItem('lockInfoList', JSON.stringify(lockInfoList));
-            return lockInfoList;
-        }
-        return []
-    }
     return lockInfoList;
-
 };
 
-localManager.addAccount = function () {
-    localStorage.removeItem("lockInfo");
-    bg.passwordAes = "";
+localManager.saveAccountList = function (lockInfoList) {
+    localStorage.setItem('lockInfoList',JSON.stringify(lockInfoList));
+};
 
+localManager.removeAccount = function () {
+    localStorage.removeItem("lockInfo");
 };
 localManager.chooseAccount = function (accountInfo) {
 
     localStorage.setItem('lockInfo', JSON.stringify(accountInfo));
-    bg.passwordAes = "";
 };
 
 localManager.saveAlias = function (accountInfo) {

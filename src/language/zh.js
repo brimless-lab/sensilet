@@ -96,6 +96,10 @@ export default {
         notice_1:"DO NOT share the mnemonic with anyone!",
         notice_2:"Your funds will be transfered unexpectedly if the mnemonic is unintentionally revealed.",
 
+
+        edit_account_alias:"编辑账户别称",
+        delete_current_account: "删除当前账户",
+        delete_confirm:"Input 'DELETE' to confirm."
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

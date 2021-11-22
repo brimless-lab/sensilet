@@ -16,24 +16,24 @@
                         {{ $t(accountMode) }}
                     </span>
                 </div>
-<!--                <div class="item btn" @click="uploadAddressConfirm()">-->
-<!--                    <img v-if="registered" src="../assets/icon-checked.svg" alt="">-->
-<!--                    <img v-else src="../assets/icon-check.svg" alt="">-->
-<!--                    <div class="two-line">-->
-<!--                        <span>{{ $t("setting.register_address") }}</span>-->
-<!--                        <div>-->
-<!--                            <a href="https://sensilet.com/privacy-policy.html" target="_blank">Privacy</a>-->
-<!--                            <span>{{ $store.getters.addressShow }}</span>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <!--                <div class="item btn" @click="uploadAddressConfirm()">-->
+                <!--                    <img v-if="registered" src="../assets/icon-checked.svg" alt="">-->
+                <!--                    <img v-else src="../assets/icon-check.svg" alt="">-->
+                <!--                    <div class="two-line">-->
+                <!--                        <span>{{ $t("setting.register_address") }}</span>-->
+                <!--                        <div>-->
+                <!--                            <a href="https://sensilet.com/privacy-policy.html" target="_blank">Privacy</a>-->
+                <!--                            <span>{{ $store.getters.addressShow }}</span>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                </div>-->
 
 
                 <!--                <div class="item btn" v-if="!isSinglePrivateKey" @click="gotoImport">-->
                 <!--                    <img src="../assets/icon-import.svg" alt="">-->
                 <!--                    <span>{{ $t("setting.import_mnemonic") }}</span>-->
                 <!--                </div>-->
-                <div class="item btn warning" v-if="!isSinglePrivateKey" @click="gotoExport">
+                <div class="item btn" v-if="!isSinglePrivateKey" @click="gotoExport">
                     <KeyOutlined class="item-icon"/>
                     <span>{{ $t("setting.export_mnemonic") }}</span>
                 </div>
@@ -41,7 +41,7 @@
                 <!--                    <img src="../assets/icon-import.svg" alt="">-->
                 <!--                    <span>{{ $t("setting.import_private_key") }}</span>-->
                 <!--                </div>-->
-                <div class="item btn warning" @click="gotoExportPrivateKey">
+                <div class="item btn" @click="gotoExportPrivateKey">
                     <KeyOutlined class="item-icon"/>
                     <span>{{ $t("setting.export_private_key") }}</span>
                 </div>
@@ -51,6 +51,10 @@
                         <span>{{ $t("setting.edit_account_alias") }}:</span>
                         <span class="value">{{ $store.getters.alias }}</span>
                     </div>
+                </div>
+                <div class="item btn warning" @click="deleteCurrentAccountConfirm">
+                    <DeleteOutlined class="item-icon"/>
+                    <span>{{ $t("setting.delete_current_account") }}</span>
                 </div>
             </div>
             <div class="bottom">
@@ -76,15 +80,19 @@
         <p>{{ $t("account.alias_input") }}</p>
         <a-input v-model:value="editAlias" :placeholder="$t('account.alias_input')"/>
     </a-modal>
+    <a-modal v-model:visible="isShowDelete" @ok="deleteCurrentAccount">
+        <p>{{ $t("setting.delete_confirm") }}</p>
+        <a-input v-model:value="inputDelete" :placeholder="$t('setting.delete_confirm')"/>
+    </a-modal>
 </template>
 
 <script>
-import httpUtils from '../utils/httpUtils';
 import Footer from "../components/Footer";
 
 import KeyOutlined from '@ant-design/icons-vue/lib/icons/KeyOutlined'
 import FullscreenOutlined from '@ant-design/icons-vue/lib/icons/FullscreenOutlined'
 import EditOutlined from '@ant-design/icons-vue/lib/icons/EditOutlined'
+import DeleteOutlined from '@ant-design/icons-vue/lib/icons/DeleteOutlined'
 
 
 import {h} from 'vue'
@@ -94,7 +102,7 @@ export default {
     components: {
         Footer,
         KeyOutlined,
-        FullscreenOutlined, EditOutlined
+        FullscreenOutlined, EditOutlined, DeleteOutlined
     },
     data() {
         return {
@@ -102,8 +110,10 @@ export default {
             accountMode: walletManager.getAccountMode(),
             editAlias: "",
             isShowEdit: false,
+            isShowDelete: false,
             registered: localManager.isAddressRegistered(walletManager.getMainAddress()),
             isSinglePrivateKey: walletManager.isSinglePrivateKey(),
+            inputDelete: "",
         }
     },
     methods: {
@@ -165,34 +175,19 @@ export default {
 
             })
         },
-        uploadAddressConfirm() {
-            let _this = this;
-            antModal.confirm({
-                title: this.$t('setting.register_address'),
-                content: h("div", {style: {display: "flex", "justify-content": "space-between"},},
-                    [
-                        h('a', {href: "https://sensilet.com/privacy-policy.html", target: "_blank"}, "Privacy"),
-                        h('span', {style: {color: "#999"}}, this.$store.getters.addressShow)
-                    ]
-                ),
-                onOk() {
-                    httpUtils.post('https://sensilet.com/api/register_address', {
-                        address: walletManager.getMainAddress()
-                    }).then((data) => {
-                        if (data.code === 200) {
-                            localManager.setAddressRegistered(walletManager.getMainAddress())
-                            _this.registered = true;
-                            if (data.data)
-                                antMessage.success(_this.$t("setting.address_exists"))
-                            else
-                                antMessage.success(_this.$t("setting.register_success"))
-                        } else
-                            antMessage.success('Fail:' + data.msg)
-                    })
-                }
+        deleteCurrentAccountConfirm() {
+            this.isShowDelete = true;
+        },
+        deleteCurrentAccount() {
+            if (this.inputDelete.toUpperCase() !== "DELETE") {
+                return antMessage.warn(this.$t('setting.delete_confirm'))
+            }
 
-            })
-        }
+            walletManager.deleteCurrent();
+            eventManager.dispatchAccountChange();
+            window.location.reload();
+        },
+
     }
 }
 </script>
@@ -330,7 +325,7 @@ export default {
             }
 
             &.warning {
-                //color: #ee0000;
+                color: #ee0000;
             }
 
             .red-point {

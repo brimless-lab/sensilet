@@ -100,12 +100,11 @@ export default {
         notice_1:"DO NOT share the mnemonic with anyone!",
         notice_2:"Your funds will be transfered unexpectedly if the mnemonic is unintentionally revealed.",
 
-        register_address:"Register my address for future airdrops",
-        // share_address_notice:"You will have chance to get Token airdrop",
-        address_exists:"Address already registered",
-        register_success:"Address register success",
+        edit_account_alias:"Edit Account Alias",
+        delete_current_account: "Delete Current Account",
+        delete_confirm:"Input DELETE to confirm."
 
-        edit_account_alias:"Edit Account Alias"
+
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"
