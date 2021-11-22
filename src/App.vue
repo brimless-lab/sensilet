@@ -668,4 +668,22 @@ body {
     display: none !important;
 }
 
+@keyframes rotate360 {
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
+.refresh-icon{
+    img{
+        height: 24px;
+        width: 24px;
+    }
+    &.refreshing{
+        animation: 1s rotate360 infinite linear;
+    }
+}
+
 </style>

@@ -1,310 +1,12 @@
 let tokenManager = {};
 const httpUtils = require('../utils/httpUtils');
+const apiUtils = require('../utils/apiUtils');
 
 const sensibleFtUtils = require('../utils/sensibleFTUtils');
 tokenManager.sensibleFt = sensibleFtUtils;
 
 const localManager = require('./LocalManager')
-// const baseList = [
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '5d15eedd93c90d91e0d76de5cc932c833baf8336',
-//         network: 'mainnet',
-//         name: 'TSC',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'TSC',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ],
-//         logo: '/img/tsc.png'
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: 'c52b5ee305834e3ceb97ee931ed5e453543ba2d8',
-//         network: 'mainnet',
-//         name: 'bsv/TSC',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'bsv/TSC',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ]
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '67cfb6b1b163946a738cb0c2bed781d57d8099a7',
-//         network: 'mainnet',
-//         name: 'USDT',
-//         decimal: 6,
-//         fixed: 6,
-//         unit: 'USDT',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ],
-//         logo: '/img/usdt.png'
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '47a928f6abc1c93582729fe62fccb54e7548fe98',
-//         network: 'mainnet',
-//         name: 'bsv/USDT',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'bsv/USDT',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ]
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3',
-//         network: 'mainnet',
-//         name: 'MC',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'MC',
-//         signers: [
-//             'https://satotx.showpay.top',
-//             'https://satotx2.showpay.top',
-//             'https://satotx3.showpay.top',
-//             'https://s1.satoplay.com',
-//             'https://satotx.metasv.com'
-//         ],
-//         logo: '/img/mc.png'
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '8764ede9fa7bf81ba1eec5e1312cf67117d47930',
-//         network: 'mainnet',
-//         name: 'bsv/MC',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'bsv/MC',
-//         signers: [
-//             'https://satotx.showpay.top',
-//             'https://satotx2.showpay.top',
-//             'https://satotx3.showpay.top',
-//             'https://s1.satoplay.com',
-//             'https://satotx.metasv.com'
-//         ]
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '341476e63af470912dbd166b19cfb21429c32566',
-//         network: 'mainnet',
-//         name: 'BOEX',
-//         decimal: 0,
-//         fixed: 0,
-//         unit: 'BOEX',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ],
-//         logo: '/img/boex.jpeg'
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: 'fd1d84f1c60592878b000f4e53b0de31117f772f',
-//         network: 'mainnet',
-//         name: 'bsv/BOEX',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'bsv/BOEX',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ]
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '8e9c53e1a38ff28772db99ee34a23bb305062a1a',
-//         network: 'mainnet',
-//         name: 'OVTS',
-//         decimal: 3,
-//         fixed: 3,
-//         unit: 'OVTS',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ],
-//         logo: '/img/OVTS.png'
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '1c5c53b9f6209a85266ccd8fccfb5790101dd11c',
-//         network: 'mainnet',
-//         name: 'bsv/OVTS',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'bsv/OVTS',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ]
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: 'ac42d90b83291e9c83d25bfe654cf83e0042b5a7',
-//         network: 'mainnet',
-//         name: 'BART',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'BART',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ]
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '7b674d5fa1b60da14aae43e61842a290a172e16a',
-//         network: 'mainnet',
-//         name: 'bsv/BART',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'bsv/BART',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ]
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '525d000031b3d45303cf96f3c38a890012d93040',
-//         network: 'mainnet',
-//         name: 'WHST',
-//         decimal: 6,
-//         fixed: 6,
-//         unit: 'WHST',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ],
-//         logo: '/img/whst.jpg'
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '121e946a8b1ea87dae4484cd00d5ef94112d3b43',
-//         network: 'mainnet',
-//         name: 'bsv/WHST',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'bsv/WHST',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ]
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: 'ba85ed5e6f4492e2789f92d8c66cbe211943bdfc',
-//         network: 'mainnet',
-//         name: 'ASC',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'ASC',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ],
-//         logo: '/img/asc.png'
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: 'b9a582fe1df1f6f9e052b6972c590b409d39fe78',
-//         network: 'mainnet',
-//         name: 'bsv/ASC',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'bsv/ASC',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ]
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: 'f460d392aea8ee18a0e315588ff22ab8ca1c84b6',
-//         network: 'mainnet',
-//         name: 'CEO',
-//         decimal: 0,
-//         fixed: 0,
-//         unit: 'CEO',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ],
-//         logo: '/img/ceo.jpg'
-//     },
-//     {
-//         codehash: '777e4dd291059c9f7a0fd563f7204576dcceb791',
-//         genesis: '0b75d5dfabfeff2b1d989bc692a199f1ef094209',
-//         network: 'mainnet',
-//         name: 'bsv/CEO',
-//         decimal: 8,
-//         fixed: 8,
-//         unit: 'bsv/CEO',
-//         signers: [
-//             'https://s1.satoplay.com',
-//             'https://satotx.showpay.top',
-//             'https://satotx.volt.id',
-//             'https://satotx.metasv.com',
-//             'https://satotx.tswap.io'
-//         ]
-//     }
-// ]
 
-// tokenManager.baseTokenList = baseList;
 
 const infoLimit = {
     codehash: {
@@ -488,7 +190,7 @@ tokenManager.listUserTokens = async function () {
                 tempList[i].logo = tokenTable[tempList[i].genesis].logo;        // 给数据加上logo
 
             tempList[i].balance += tempList[i].pendingBalance;
-
+            tempList[i].name = tempList[i].symbol
 
         }
 
@@ -526,7 +228,18 @@ tokenManager.listUserTokens = async function () {
             if (b.sort > 0 && a.sort === undefined) {
                 return 1;
             }
-            return b - a
+            return b.sort - a.sort
+        })
+
+        // 获取一下币价
+        let priceTable = (await apiUtils.getTokenPrice()).data;
+
+        tokenList.forEach(item=>{
+            if(item.balance > 0 && priceTable[item.genesis] && priceTable[item.genesis].USDT){
+                console.log(item.balance)
+                item.usd = (item.balance / Math.pow(10,item.decimal) * priceTable[item.genesis].USDT).toFixed(2);
+
+            }
         })
     }
 

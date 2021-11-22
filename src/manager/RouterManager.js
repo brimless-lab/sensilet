@@ -102,7 +102,7 @@ routerManager.goto = function (url, data) {
         listener[i](current);
     }
 };
-let goForUrl = '/'
+let goForUrl = '/account'
 let goForData = null
 routerManager.goFor = function (url, forUrl, data) {
     goForUrl = forUrl;
@@ -110,7 +110,7 @@ routerManager.goFor = function (url, forUrl, data) {
     routerManager.goto(url, data)
 }
 routerManager.goNext = function () {
-    if (goForUrl !== '/') {
+    if (goForUrl !== '/account') {
         routerManager.goto(goForUrl, goForData)
     } else
         routerManager.gotoHome();
@@ -118,9 +118,9 @@ routerManager.goNext = function () {
 
 routerManager.gotoHome = function () {
     history.pushState(null, null, location.pathname);
-    goForUrl = '/'
+    goForUrl = '/account'
     goForData = null
-    routerManager.goto('/')
+    routerManager.goto('/account')
 }
 
 routerManager.goBack = function () {

@@ -11,6 +11,9 @@
                 </div>
                 <div class="list" v-else>
                     <div class="bsv-item">
+                        <div class="refresh-icon" :class="{'refreshing':isRefreshBsv}" @click="refreshBsv()">
+                            <img src="../assets/icon-refresh.svg" alt="">
+                        </div>
                         <div class="info">
                             <div class="balance">
                                 <img src="../assets/bsv-icon.svg" alt="">
@@ -22,6 +25,7 @@
                                     <span style="margin-left: 4px;font-size: .85em">{{ bsvAsset.name }}</span>
                                 </span>
                             </div>
+                            <div class="price" v-if="bsvAsset.usd">$ {{bsvAsset.usd}} USD</div>
                             <div class="address" id="icon-copy" :data-clipboard-text="$store.getters.address">
                                 {{ bsvAsset.addressShow }}
                                 <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -52,104 +56,8 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-            <div class="panel">
-                <div class="account-top">
-                    <div class="title"> Tokens</div>
-                    <div v-if="!editTokenMode" class="type-choose">
-                        <a-radio-group v-model:value="showTokenType" button-style="solid" size="small" @change="showTokenTypeChanged">
-                            <a-radio-button value="added">Selected</a-radio-button>
-                            <a-radio-button value="all">All</a-radio-button>
-                        </a-radio-group>
-                    </div>
-                    <div v-if="!editTokenMode" class="action-container" :class="{'disable':showTokenType==='all'}">
-                        <div class="add" @click="openTokenList">
-                            <img src="../assets/icon-add.svg" alt="">
-                        </div>
-                        <div class="add" @click="enterEditTokenListMode">
-                            <img src="../assets/icon-sort.svg" alt="">
-                        </div>
-                    </div>
-                    <div v-else class="action-container">
-                        <div class="add" @click="cancelEdit">
-                            <CloseOutlined/>
-                        </div>
-                        <div class="add" @click="commitEdit">
-                            <CheckOutlined/>
-                        </div>
-                    </div>
-                </div>
-                <div class="list" v-if="$store.state.tokenList==null" style="padding:16px;text-align: center">
-                    <a-spin/>
-                </div>
-                <div class="list" v-else-if="$store.state.tokenList.length>0">
-                    <div class="item" v-for="(item,index) in editTokenMode? editList:$store.state.tokenList" :class="{'open':item.open&&!editTokenMode }">
-                        <div class="info" @click="toggleItem(item)">
-                            <div class="left" @click="seeTokenDetail(item)">
-
-                                <img style="width: 24px;height: 24px;border-radius: 50%" :src="item.logo || '/img/empty-token.png'" alt="">
-                            </div>
-                            <div class="mid">
-                                <div class="balance">
-                                    <a-spin v-if="item.isRefreshingAmount"/>
-                                    <div v-else>
-                                        <span>{{ item.name }}</span>
-
-                                        <span v-if="!editTokenMode" style="font-weight: bold">{{ item.balance / Math.pow(10, item.decimal) }} </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="right" v-if="!editTokenMode">
-                                <DownOutlined style="color: #999"/>
-                            </div>
-                            <div class="right actions" v-else>
-                                <div class="action" @click="editActionAdd(index)">
-                                    <ArrowUpOutlined/>
-                                </div>
-                                <div class="action" @click="editActionSub(index)">
-                                    <ArrowDownOutlined/>
-                                </div>
-                                <div class="action" :class="{'checked':item.topped}" @click="editActionTop(index)">
-                                    <VerticalAlignTopOutlined/>
-                                </div>
-
-                                <a-popconfirm
-                                    title="Are you sure remove this?"
-                                    @confirm="editActionRemove(index)"
-                                    :arrowPointAtCenter="true"
-                                    placement="topRight"
-                                >
-                                    <div class="action">
-                                        <DeleteOutlined/>
-                                    </div>
-                                </a-popconfirm>
-
-                            </div>
-                        </div>
-                        <div class="action-container">
-                            <a-button shape="round" @click="receive(item)">
-                                <template #icon>
-                                    <img src="../assets/icon-qrcode.svg" alt="">
-                                </template>
-                                {{ $t('account.receive') }}
-                            </a-button>
-                            <a-button shape="round" @click="sendToken(item)" :loading="btnLoading">
-                                <template #icon>
-                                    <img src="../assets/icon-transfer.svg" alt="">
-                                </template>
-                                {{ $t('account.send') }}
-                            </a-button>
-                        </div>
-                    </div>
-                </div>
-                <div class="list" v-else>
-                    <div class="empty">
-                        empty
-                    </div>
-                </div>
-            </div>
-
+            <TokenPanel v-model:showQr="showQr"></TokenPanel>
             <div class="panel" v-if="true">
                 <div class="account-top">
                     <div class="title"> NFTs</div>
@@ -201,54 +109,11 @@
 
         <Footer></Footer>
     </div>
-    <a-modal v-model:visible="showAddTokenPanel" :footer="null" :closable=false>
-        <div class="base-token-list" v-if="baseTokenList">
-            <!--            <div class="title-container">-->
-            <!--                <div class="title">{{ $t('account.hot') }}</div>-->
-            <!--                <div class="action" @click="showAddCustomTokenPanel">{{ $t('account.add_custom_token') }}</div>-->
-            <!--            </div>-->
-            <!--            <div class="item " v-for="item in baseTokenList.hot" @click="addToken(item)">-->
-            <!--                <img :src="item.logo||'/img/empty-token.png'" alt="">-->
-            <!--                <div class="info">-->
-            <!--                    <div class="name">{{ item.name }}</div>-->
-            <!--                    <div class="genesis ellipsis">Genesis: {{ item.genesis }}</div>-->
-            <!--                </div>-->
-            <!--                <svg v-if="item.added" t="1634030847866" class="icon added" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1814" width="48"-->
-            <!--                     height="48">-->
-            <!--                    <path-->
-            <!--                        d="M768 85.333333a85.333333 85.333333 0 0 1 85.333333 85.333334v727.978666a42.666667 42.666667 0 0 1-62.677333 37.717334l-258.688-137.301334a42.666667 42.666667 0 0 0-40.021333 0L233.386667 936.32A42.666667 42.666667 0 0 1 170.666667 898.645333V170.666667a85.333333 85.333333 0 0 1 85.333333-85.333334h512z m-83.498667 223.317334a42.666667 42.666667 0 0 0-60.117333 5.248l-164.394667 195.669333-58.965333-66.730667-3.754667-3.754666a42.666667 42.666667 0 0 0-60.16 60.245333l91.733334 103.893333 3.626666 3.626667a42.666667 42.666667 0 0 0 61.013334-4.437333l196.266666-233.642667 3.2-4.266667a42.666667 42.666667 0 0 0-8.448-55.850666z"-->
-            <!--                        p-id="1815" fill="#1afa29"></path>-->
-            <!--                </svg>-->
-            <!--            </div>-->
-
-            <div class="title-container">
-                <div class="title">{{ $t('account.token_list') }}</div>
-                <div class="action" @click="showAddCustomTokenPanel">{{ $t('account.add_custom_token') }}</div>
-            </div>
-            <div class="item" v-for="item in baseTokenList.list" @click="addToken(item)">
-                <img :src="item.logo||'/img/empty-token.png'" alt="">
-                <div class="info">
-                    <div class="name">{{ item.name }}</div>
-                    <div class="genesis ellipsis">Genesis: {{ item.genesis }}</div>
-                </div>
-                <svg v-if="item.added" t="1634030847866" class="icon added" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1814" width="48"
-                     height="48">
-                    <path
-                        d="M768 85.333333a85.333333 85.333333 0 0 1 85.333333 85.333334v727.978666a42.666667 42.666667 0 0 1-62.677333 37.717334l-258.688-137.301334a42.666667 42.666667 0 0 0-40.021333 0L233.386667 936.32A42.666667 42.666667 0 0 1 170.666667 898.645333V170.666667a85.333333 85.333333 0 0 1 85.333333-85.333334h512z m-83.498667 223.317334a42.666667 42.666667 0 0 0-60.117333 5.248l-164.394667 195.669333-58.965333-66.730667-3.754667-3.754666a42.666667 42.666667 0 0 0-60.16 60.245333l91.733334 103.893333 3.626666 3.626667a42.666667 42.666667 0 0 0 61.013334-4.437333l196.266666-233.642667 3.2-4.266667a42.666667 42.666667 0 0 0-8.448-55.850666z"
-                        p-id="1815" fill="#1afa29"></path>
-                </svg>
-
-            </div>
-        </div>
-        <div v-else style="display:flex;justify-content:center;align-items: center">
-            <a-spin/>
-        </div>
-    </a-modal>
 
     <a-modal v-model:visible="showTransPanel" @ok="transfer()" @cancel="cancelTransfer" :closable=false>
         <div class="trans-info-container">
             <div class="title">
-                Send {{isTransBSV?"BSV":transInfo.name}}
+                Send {{ isTransBSV ? "BSV" : transInfo.name }}
             </div>
             <a-input v-model:value="transAddress" @change="transAddressChange" :placeholder="$t('account.input_address')"/>
             <a-input v-model:value="transAmount" @change="transAmountChange"
@@ -277,14 +142,8 @@
                 </div>
             </div>
         </div>
+    </a-modal>
 
-    </a-modal>
-    <a-modal v-model:visible="isShowAddCustomTokenPanel" @ok="addCustomToken" :closable=false>
-        <div class="custom-token-form">
-            <a-input class="input" v-model:value="customToken.genesis" placeholder="genesis"/>
-            <a-input class="input" v-model:value="customToken.codehash" placeholder="codehash"/>
-        </div>
-    </a-modal>
     <a-modal v-model:visible="showQr" :footer="null" :closable=false>
         <div style="font-size: 18px;text-align: center;margin-bottom: 16px">Receive BSV or Sensible FT</div>
         <div style="display: flex;flex-direction: column;align-items: center">
@@ -304,20 +163,14 @@
 
 <script>
 import PlusOutlined from '@ant-design/icons-vue/lib/icons/PlusOutlined'
-import DownOutlined from '@ant-design/icons-vue/lib/icons/DownOutlined'
-import ArrowUpOutlined from '@ant-design/icons-vue/lib/icons/ArrowUpOutlined'
-import ArrowDownOutlined from '@ant-design/icons-vue/lib/icons/ArrowDownOutlined'
-import VerticalAlignTopOutlined from '@ant-design/icons-vue/lib/icons/VerticalAlignTopOutlined'
-import CheckOutlined from '@ant-design/icons-vue/lib/icons/CheckOutlined'
-import CloseOutlined from '@ant-design/icons-vue/lib/icons/CloseOutlined'
-import DeleteOutlined from '@ant-design/icons-vue/lib/icons/DeleteOutlined'
 
 import QrcodeVue from 'qrcode.vue'
 
 import AccountChoose from "../components/AccountChoose";
 import Footer from "../components/Footer";
 import Clipboard from "clipboard";
-import httpUtils from '../utils/httpUtils';
+import apiUtils from '../utils/apiUtils';
+import TokenPanel from "@/components/TokenPanel";
 
 let clip = null;
 let clip2 = null;
@@ -325,27 +178,20 @@ let clip2 = null;
 export default {
     name: "Account",
     components: {
+        TokenPanel,
         AccountChoose,
         Footer,
         QrcodeVue, PlusOutlined,
-        DownOutlined,
-        ArrowUpOutlined,
-        ArrowDownOutlined,
-        VerticalAlignTopOutlined,
-        CheckOutlined,
-        CloseOutlined,
-        DeleteOutlined,
+
+
     },
     data() {
         return {
             // extName: chrome.i18n.getMessage("extName"),
             asset: [],
-            bsvAsset: null,
             appList: null,
             nftGenesisList: null,
             tokenList: null,
-            showAddTokenPanel: false,
-            baseTokenList: null,
             mainAddress: walletManager.getMainAddress(),
             showTransPanel: false,
             transAddress: "",
@@ -356,19 +202,24 @@ export default {
             transFee: 0,
             transFeeLoading: false,
             transBalance: 0,
-            isShowAddCustomTokenPanel: false,
-            customToken: {},
             accountMode: walletManager.getAccountMode(),
             btnLoading: false,
             showQr: false,
             showRedPoint: false,
-            showTokenType: localManager.getShowTokenType(),
-            editTokenMode: false,
-            editList: [],
+
+            isRefreshBsv: false,
+            bsvAsset: {
+                name: 'BSV',
+                balance: {},
+                decimal: 8,
+                isRefreshingAmount: true,
+                address: walletManager.getMainAddress(),
+            },
+
         }
     },
-    computed:{
-        isTransBSV(){
+    computed: {
+        isTransBSV() {
             return this.transType === "BSV"
         }
     },
@@ -385,7 +236,7 @@ export default {
 
         this.initAppList();
 
-        await this.refreshToken();
+
     },
     mounted() {
         clip = new Clipboard('#icon-copy');
@@ -410,212 +261,66 @@ export default {
     methods: {
 
         async initAsset() {
-            let assetData = {
-                name: 'BSV',
-                balance: {},
-                decimal: 8,
-                isRefreshingAmount: true,
-                address: walletManager.getMainAddress(),
-                open: false,
-            };
 
-            assetData.addressShow = showLongString(assetData.address, 10)
+            this.bsvAsset.addressShow = showLongString(this.bsvAsset.address, 10)
 
-            let balance = await walletManager.getBsvBalance();
+            await this.refreshBsv()
 
-            assetData.balance = {
-                total: balance.confirmed + balance.unconfirmed,
-                confirmed: balance.confirmed,
-                unconfirmed: balance.unconfirmed,
-            };
-            assetData.isRefreshingAmount = false;
+            this.bsvAsset.isRefreshingAmount = false;
 
-            assetData.showBalance = showDecimal(assetData.balance.total, 8, 8)
-            console.log(assetData.showBalance)
-
-            this.bsvAsset = assetData
         },
-        async initNfts(){
-            this.nftGenesisList = await nftManager.listAllNft().catch(e => { console.error(e);return []});
+        async refreshBsv() {
+            if (this.isRefreshBsv)
+                return
+
+            this.isRefreshBsv = true
+
+            try {
+                //获取余额
+                let balance = await walletManager.getBsvBalance();
+
+                this.bsvAsset.balance = {
+                    total: balance.confirmed + balance.unconfirmed,
+                    confirmed: balance.confirmed,
+                    unconfirmed: balance.unconfirmed,
+                };
+                await sleep(500)
+
+                this.bsvAsset.showBalance = showDecimal(this.bsvAsset.balance.total, 8, 8)
+
+                //    获取一下币价
+                let bsvPrice = (await apiUtils.getBsvPrice()).data
+                this.bsvAsset.usd = (this.bsvAsset.balance.total / Math.pow(10,this.bsvAsset.decimal) * bsvPrice).toFixed(2);
+
+
+            } catch (e) {
+                console.error(e)
+            }
+            this.isRefreshBsv = false
+
+        },
+        async initNfts() {
+            this.nftGenesisList = await nftManager.listAllNft().catch(e => {
+                console.error(e);
+                return []
+            });
         },
         async initAppList() {
             try {
-
-
                 let temp = localStorage.getItem('appList', data);
                 if (temp)
                     this.appList = JSON.parse(temp);
             } catch (e) {
                 console.error(e)
             }
-            let data = (await httpUtils.get('https://sensilet.com/api/application_list')).data
+            let data = (await apiUtils.getApplicationList()).data;
             localStorage.setItem('appList', JSON.stringify(data));
             this.appList = data;
         },
         receive(item) {
             this.showQr = true
         },
-        async refreshToken() {
-            this.$store.dispatch('refreshAllToken')
-        },
-        toggleItem(item) {
-            if (!this.editTokenMode)
-                item.open = !item.open
-        },
-        showTokenTypeChanged() {
-            localManager.setShowTokenType(this.showTokenType)
-            this.$store.dispatch('refreshAllToken')
-        },
-        async openTokenList() {
-            if (this.showTokenType === 'all')
-                return
-            this.showAddTokenPanel = true;
-            this.baseTokenList = null;
 
-            this.baseTokenList = await tokenManager.getTokenListNet();
-
-        },
-        enterEditTokenListMode() {
-            if (this.showTokenType === 'all')
-                return
-            //拷贝一份token数据用于临时编辑
-            let tempList = JSON.parse(JSON.stringify(this.$store.state.tokenList))
-            // 遍历，给上基础排序信息
-            for (let i = 0; i < tempList.length; i++) {
-                if (!tempList[i].addTime) {
-                    //    非置顶
-                    tempList[i].addTime = 0;
-                }
-            }
-            this.editList = tempList;
-            this.editTokenMode = true
-        },
-        commitEdit() {
-            tokenManager.reSaveToken(this.editList)
-            this.$store.dispatch('refreshAllToken')
-
-            this.editTokenMode = false;
-            this.editList = [];
-        },
-        cancelEdit() {
-            this.editTokenMode = false;
-            this.editList = [];
-        },
-        editActionAdd(index) {
-            if (!this.editTokenMode || !this.editList || this.editList.length < 1)
-                return
-            if (index <= 0)
-                return;
-
-            if (!this.editList[index] || !this.editList[index - 1])
-                return;
-
-            if (this.editList[index - 1].topped && !this.editList[index].topped)
-                return;
-
-
-            let temp = this.editList[index - 1]
-            this.editList[index - 1] = this.editList[index]
-            this.editList[index] = temp;
-
-        },
-        editActionSub(index) {
-            if (!this.editTokenMode || !this.editList || this.editList.length < 1)
-                return
-            if (index >= this.editList.length - 1)
-                return;
-            if (!this.editList[index] || !this.editList[index + 1])
-                return;
-            if (this.editList[index].topped && !this.editList[index + 1].topped)
-                return;
-
-            let temp = this.editList[index + 1];
-            this.editList[index + 1] = this.editList[index];
-            this.editList[index] = temp;
-
-        },
-        editActionTop(index) {
-            if (!this.editTokenMode || !this.editList || this.editList.length < 1)
-                return
-
-            if (!this.editList[index])
-                return;
-
-            let temp = this.editList[index];
-            if (temp.topped) {
-                temp.topped = false;
-                //    取消置顶的元素应该放哪呢
-                //    暂时策略，移到非置顶的第一个
-                this.editList.splice(index, 1);
-
-                let i = this.editList.findIndex(item => !item.topped)
-
-                if (i >= 0)
-                    this.editList.splice(i, 0, temp);
-                else
-                    this.editList.push(temp)
-
-            } else {
-                temp.topped = true;
-                this.editList.splice(index, 1);
-                this.editList.unshift(temp)
-            }
-        },
-        editActionRemove(index) {
-            if (!this.editTokenMode || !this.editList || this.editList.length < 1)
-                return
-
-            this.editList.splice(index, 1);
-        },
-        showAddCustomTokenPanel() {
-            this.showAddTokenPanel = false;
-            this.isShowAddCustomTokenPanel = true;
-        },
-
-        async addCustomToken() {
-            if (!this.customToken.genesis || !this.customToken.codehash)
-                return;
-
-            let result = await httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${this.customToken.codehash}/${this.customToken.genesis}`)
-            if (!result || result.code !== 0)
-                return antMessage.error(this.$t("account.token_error"))
-
-            let tokenInfo = result.data;
-
-            this.customToken.decimal = parseInt(this.customToken.decimal)
-            return this.addToken({
-                codehash: this.customToken.codehash,
-                genesis: this.customToken.genesis,
-                network: 'mainnet',
-                name: tokenInfo.name,
-                decimal: tokenInfo.decimal,
-                fixed: tokenInfo.fixed || tokenInfo.decimal,
-                unit: tokenInfo.symbol,
-                logo: tokenInfo.icon,
-            })
-        },
-        async addToken(item) {
-            let err = tokenManager.addToken(item);
-            if (!err) {
-                this.showAddTokenPanel = false;
-                this.isShowAddCustomTokenPanel = false;
-                this.customToken = {};
-                await this.refreshToken()
-            } else {
-                antMessage.error(err.message)
-                console.error(err)
-
-            }
-        },
-        async sendToken(item) {
-            this.transType = 'TOKEN';
-            this.transInfo = item;
-            this.transUnit = item.unit || item.symbol;
-            this.transBalance = item.balance / Math.pow(10, item.decimal);
-            this.showTransPanel = true;
-
-
-        },
         async sendBsv(item) {
             this.transType = 'BSV';
             this.transInfo = item;
@@ -625,10 +330,10 @@ export default {
         },
         async sendAll() {
             if (this.transType === 'BSV') {
-                let {amount,fee} =await walletManager.getSendAllInfo(walletManager.getMainWif());
+                let {amount, fee} = await walletManager.getSendAllInfo(walletManager.getMainWif());
 
-                this.transAmount = amount/Math.pow(10, 8);
-                this.transFee = fee/Math.pow(10, 8);
+                this.transAmount = amount / Math.pow(10, 8);
+                this.transFee = fee / Math.pow(10, 8);
             } else {
                 this.transAmount = this.transBalance;
                 this.transAmountChange()
@@ -669,7 +374,7 @@ export default {
                     let signers = null
                     let tokenInfo = await tokenManager.getTokenInfo(this.transInfo.genesis, this.transInfo.codehash);
 
-                    if(this.transInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
+                    if (this.transInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
                         || this.transInfo.genesis === "8764ede9fa7bf81ba1eec5e1312cf67117d47930") {
                         signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
                     }
@@ -680,7 +385,7 @@ export default {
                         [{
                             address: this.transAddress,
                             amount,
-                        }], walletManager.getMainWif(),signers
+                        }], walletManager.getMainWif(), signers
                     );
                     fee = fee / Math.pow(10, 8)
                     this.transFee = fee;
@@ -764,7 +469,7 @@ export default {
             window.open(`https://blockcheck.info/address/${address}`)
         },
         async initVersionAndNotice() {
-            let result = await httpUtils.get('https://sensilet.com/api/version_and_notice')
+            let result = await apiUtils.getVersion();
             if (result && result.code === 200) {
                 if (result.data.version) {
                     //    版本信息
@@ -1080,8 +785,17 @@ export default {
     }
 
     .bsv-item {
-        margin-top: 16px;
         padding: 16px;
+        padding-top: 24px;
+        position: relative;
+
+        .refresh-icon {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 1;
+
+        }
 
         .info {
             //margin-top: 16px;
@@ -1095,6 +809,10 @@ export default {
                 //height: 26px;
                 border-radius: 50%;
                 margin-bottom: 3px;
+            }
+
+            .price{
+                color: #999;
             }
 
             .balance {
