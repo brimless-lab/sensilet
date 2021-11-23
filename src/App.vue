@@ -9,6 +9,7 @@
             </div>
         </div>
         <div class="right" v-if="showSetting">
+            <LinkOutlined class="icon" @click="gotoConnectManagement()" style="font-size: 28px;padding: 2px;margin-right: 4px"></LinkOutlined>
             <div @click="gotoSetting()">
                 <img class="icon" src="./assets/icon-setting.svg" alt="">
                 <div class="red-point" :class="{'show':!$store.state.isSettingChecked}"></div>
@@ -19,7 +20,7 @@
         <span class="version" :class="{'right-little':showSetting,'has-new':$store.getters.hasNewVersion}" @click="newVersion()">
             <span v-if="debug">{{ currentPage }}</span>
             {{ version }}
-            <div class="red-point"></div>
+            <div class="red-point"/>
         </span>
     </div>
     <!--        <router-view/>-->
@@ -43,6 +44,7 @@
         <ImportPrivate v-else-if="currentPage==='/importPrivateKey'"/>
         <ExportPrivate v-else-if="currentPage==='/exportPrivateKey'"/>
         <SignTransaction v-else-if="currentPage==='/signTransaction'"/>
+        <ConnectManagement v-else-if="currentPage==='/connectManagement'"/>
     </div>
 
 </template>
@@ -50,14 +52,13 @@
 //1. 判断是否创建了私钥 否则进入创建私钥页面 Create
 //2. 判断是否解锁了私钥 否则进入解锁页面 Unlock
 //3. 进入正常钱包页面  Wallet
-import {defineComponent, defineAsyncComponent} from 'vue'
+import LinkOutlined from '@ant-design/icons-vue/lib/icons/LinkOutlined'
 
-import CreateWallet from './views/CreateWallet.vue'
+import {defineAsyncComponent} from 'vue'
 
+const CreateWallet = defineAsyncComponent(() => import( './views/CreateWallet.vue'))
 // import Account from './views/Account'
 const Account = defineAsyncComponent(() => import('./views/Account'))
-// const Account = ()=> import('./views/Account.vue')
-
 const Unlock = defineAsyncComponent(() => import( './views/Unlock'))
 const Connect = defineAsyncComponent(() => import( './views/Connect'));
 const Issue = defineAsyncComponent(() => import( './views/Issue'));
@@ -74,6 +75,7 @@ const ExportWallet = defineAsyncComponent(() => import( "./views/ExportWallet"))
 const ImportPrivate = defineAsyncComponent(() => import( "./views/ImportPrivate"));
 const ExportPrivate = defineAsyncComponent(() => import( "./views/ExportPrivate"));
 const SignTransaction = defineAsyncComponent(() => import( "./views/SignTransaction"));
+const ConnectManagement = defineAsyncComponent(() => import( "./views/ConnectManagement"));
 
 const AccountChoose = defineAsyncComponent(() => import( "./components/AccountChoose"));
 
@@ -83,6 +85,8 @@ const request = JSON.parse(urlParams.get('request'));
 
 export default {
     components: {
+        LinkOutlined,
+
         CreateWallet,
         Account,
         // Account : resolve => {require(['./views/Account'],resolve)},     // 实现组件懒加载
@@ -104,6 +108,7 @@ export default {
         ImportPrivate,
         ExportPrivate,
         SignTransaction,
+        ConnectManagement,
     },
     data() {
         this.$store.commit('initAccount')
@@ -177,6 +182,8 @@ export default {
 
 
         if (routerManager.getCurrentPage() === '/') {
+            // if(config.debug)
+            //     return routerManager.goto('/connectManagement')
             routerManager.goto('/account')
         }
 
@@ -234,7 +241,10 @@ export default {
             this.$store.commit("initSettingChecked")
 
             routerManager.goto('/setting')
-        }
+        },
+        gotoConnectManagement() {
+            routerManager.goto('/connectManagement')
+        },
     }
 }
 
@@ -323,7 +333,7 @@ body {
         margin-right: 4px;
 
         &.right-little {
-            right: 50px;
+            right: 90px;
         }
 
         &.has-new {
@@ -669,19 +679,21 @@ body {
 }
 
 @keyframes rotate360 {
-    from{
+    from {
         transform: rotate(0deg);
     }
-    to{
+    to {
         transform: rotate(360deg);
     }
 }
-.refresh-icon{
-    img{
+
+.refresh-icon {
+    img {
         height: 24px;
         width: 24px;
     }
-    &.refreshing{
+
+    &.refreshing {
         animation: 1s rotate360 infinite linear;
     }
 }

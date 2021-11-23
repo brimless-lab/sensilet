@@ -102,8 +102,10 @@ export default {
 
         edit_account_alias:"Edit Account Alias",
         delete_current_account: "Delete Current Account",
-        delete_confirm:"Input DELETE to confirm."
+        delete_confirm:"Input DELETE to confirm.",
 
+        "disconnect":"Disconnect",
+        "disconnect_notice":"Are you sure to disconnect?",
 
     },
     popup: {

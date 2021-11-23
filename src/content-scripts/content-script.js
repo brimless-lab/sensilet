@@ -35,13 +35,12 @@ window.addEventListener('sato_injected_script_message', (event) => {
 
 
 chrome.runtime.onMessage.addListener((message) => {
-    console.log(message.channel, "content script onMessage")
     if (message.channel === 'sato_background_event_channel') {
         window.dispatchEvent(
-            new CustomEvent('sato_contentscript_event', {
-                id: message.id,
-                data:message.data,
-            }),
+            new CustomEvent('sato_contentscript_event', {detail: {
+                    id: message.id,
+                    data: message.data,
+                }}),
         );
 
     }

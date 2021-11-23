@@ -24,8 +24,7 @@ window.sensilet.on =  (eventName,callback)=>{
     let id = eventName+ Date.now() + "" + Math.floor(Math.random() * 1000000);
 
     //注册事件响应
-    window.addEventListener('sato_contentscript_message', (event)=>{
-        console.log(event.detail)
+    window.addEventListener('sato_contentscript_event', (event)=>{
         if (event.detail.id === id) {
             if (callback && typeof callback === "function") {
                 callback(event.detail)

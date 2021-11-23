@@ -6,7 +6,7 @@ require('./utils/globalUtils')
 require('./config/errorCode')
 const walletManager = require("./manager/WalletManager");
 const tokenManager = require("./manager/tokenManager");
-const connectManager = require('./manager/ContentManager');
+const connectManager = require('./manager/ConnectManager');
 
 const bsv = require('bsv');
 window.bsv = bsv;
@@ -248,10 +248,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             let eventName = message.data.detail;
             if (!eventHandlers[eventName])
                 eventHandlers[eventName] = [];
-            console.log(message.data.id, eventName, '###')
+            // console.log(message.data.id, eventName, '###')
             eventHandlers[eventName].push({
                 id: message.data.id,
-                tabId: sender.tab.id
+                tabId: sender.tab.id,
+                origin: sender.origin,
             })
 
         } else if (message.data.method === 'removeEvent') {
@@ -293,15 +294,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } else if (message.channel === 'sato_extension_background_event_channel') {
         //    事件通道
         let eventName = message.eventName;
-        console.log(eventHandlers[eventName])
+        // console.log(eventHandlers[eventName],'###')
         if (eventHandlers[eventName]) {
             for (let i = 0; i < eventHandlers[eventName].length; i++) {
-                let {tabId, id} = eventHandlers[eventName][i]
-                chrome.tabs.sendMessage(tabId, {
-                    channel: "sato_background_event_channel",
-                    id,
-                    data: message.data
-                })
+                let {tabId, id, origin} = eventHandlers[eventName][i]
+                if (!message.data || !message.data.origin || origin === message.data.origin) { //如果传了origin，则需要相等
+                    // console.log('aaa')
+                    chrome.tabs.sendMessage(tabId, {
+                        channel: "sato_background_event_channel",
+                        id,
+                        data: message.data
+                    })
+                }
             }
         }
 

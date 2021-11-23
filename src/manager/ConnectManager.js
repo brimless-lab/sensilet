@@ -40,7 +40,7 @@ connectManager.isConnected = function(address,origin){
 }
 
 
-connectManager.disconnect = function (address,origin) {
+connectManager.disconnect = function (address,origin,notify=false) {
     return new Promise(resolve => {
 
         chrome.storage.local.get(key, (result) => {
@@ -54,6 +54,8 @@ connectManager.disconnect = function (address,origin) {
                 setData[key] = connectedWallets;
                 chrome.storage.local.set(setData);
             }
+            if(notify)
+                eventManager.dispatchDisconnect({address,origin})
             resolve();
         });
     })

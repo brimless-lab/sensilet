@@ -40,6 +40,8 @@ export default createStore({
                 return item
             });
             state.account = walletManager.getCurrentAccount();
+            if(state.account)
+                state.account.addressShow = showLongString(state.account.address)
         },
         editAlias(state, alias) {
             if (state.account) {

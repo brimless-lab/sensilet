@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import connectManager from '../manager/ContentManager'
+import connectManager from '../manager/ConnectManager'
 
 const urlParams = new URLSearchParams(window.location.hash.slice(1));
 const origin = urlParams.get('origin');

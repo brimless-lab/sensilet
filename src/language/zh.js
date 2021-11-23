@@ -99,7 +99,11 @@ export default {
 
         edit_account_alias:"编辑账户别称",
         delete_current_account: "删除当前账户",
-        delete_confirm:"Input 'DELETE' to confirm."
+        delete_confirm:"Input 'DELETE' to confirm.",
+
+        "disconnect":"断开链接",
+        "disconnect_notice":"你确定要断开链接吗？",
+
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"
