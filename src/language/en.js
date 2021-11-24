@@ -90,6 +90,10 @@ export default {
 
         alias_max_limit:"alias need less than 12 char",
         alias_min_limit:"alias need more than 0 char",
+
+        connected:"Connected",
+        not_connected:"Not Connected",
+        open:"Open",
     },
     setting: {
         expand_view: "Expand View",

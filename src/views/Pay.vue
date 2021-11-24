@@ -161,7 +161,8 @@ export default {
 }
 
 .notice {
-    margin: 10px;
+    margin:4px 10px;
+    font-size: 12px;
     &.main-word {
         color: #222;
         font-weight: bold;

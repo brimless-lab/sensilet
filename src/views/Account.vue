@@ -1,6 +1,14 @@
 <template>
     <div class="account-container">
         <div>
+            <div class="connect-container-line">
+                <div class="connect-container" :class="{'connected':$store.state.isConnected}" @click="gotoConnectManagement">
+                    <div class="connect-point">
+                        <span></span>
+                    </div>
+                    <div class="word">{{ $t($store.state.isConnected ? "account.connected" : "account.not_connected") }}</div>
+                </div>
+            </div>
             <div class="account-top account">
                 <AccountChoose/>
             </div>
@@ -18,14 +26,16 @@
                             <div class="balance">
                                 <img src="../assets/bsv-icon.svg" alt="">
                                 <a-spin v-if="bsvAsset.isRefreshingAmount"/>
-                                <span v-else>
-                                    <span class="integer">{{ bsvAsset.showBalance.integer }}</span>
-                                    <span class="decimal" v-if="bsvAsset.showBalance.decimal.length>0">.{{ bsvAsset.showBalance.decimal }}</span>
-                                    <!--                                    {{ bsvAsset.balance.total / Math.pow(10, bsvAsset.decimal) }} -->
-                                    <span style="margin-left: 4px;font-size: .85em">{{ bsvAsset.name }}</span>
-                                </span>
+                                <div v-else class="balance-container">
+                                    <span>
+                                        <span class="integer">{{ bsvAsset.showBalance.integer }}</span>
+                                        <span class="decimal" v-if="bsvAsset.showBalance.decimal.length>0">.{{ bsvAsset.showBalance.decimal }}</span>
+                                        <!--                                    {{ bsvAsset.balance.total / Math.pow(10, bsvAsset.decimal) }} -->
+                                        <span style="margin-left: 4px;font-size: .85em">{{ bsvAsset.name }}</span>
+                                    </span>
+                                    <div class="price" v-if="bsvAsset.usd">$ {{ bsvAsset.usd }} USD</div>
+                                </div>
                             </div>
-                            <div class="price" v-if="bsvAsset.usd">$ {{bsvAsset.usd}} USD</div>
                             <div class="address" id="icon-copy" :data-clipboard-text="$store.getters.address">
                                 {{ bsvAsset.addressShow }}
                                 <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -91,12 +101,15 @@
                     <div class="item" v-for="item in appList">
                         <img :src="item.logo" alt="">
                         <div class="info">
-                            <div class="title">{{ item.name }}</div>
-                            <div class="desc ellipsis">{{ item.desc }}
+                            <div class="title">
+                                {{ item.name }}
+                                <img class="tag" v-if="item.tag==='NEW'" src="../assets/icon-new.svg"/>
+                            </div>
+                            <div class="desc ellipsis" :title="item.desc">{{ item.desc }}
                             </div>
                         </div>
                         <a class="enter" :href="item.url" target="_blank">
-                            Enter
+                            {{ $t('account.open') }}
                         </a>
                     </div>
                     <!--                    <div class="item">-->
@@ -163,14 +176,16 @@
 
 <script>
 import PlusOutlined from '@ant-design/icons-vue/lib/icons/PlusOutlined'
+import LinkOutlined from '@ant-design/icons-vue/lib/icons/LinkOutlined'
 
 import QrcodeVue from 'qrcode.vue'
+import Clipboard from "clipboard";
 
 import AccountChoose from "../components/AccountChoose";
 import Footer from "../components/Footer";
-import Clipboard from "clipboard";
-import apiUtils from '../utils/apiUtils';
 import TokenPanel from "@/components/TokenPanel";
+
+import apiUtils from '../utils/apiUtils';
 
 let clip = null;
 let clip2 = null;
@@ -181,9 +196,7 @@ export default {
         TokenPanel,
         AccountChoose,
         Footer,
-        QrcodeVue, PlusOutlined,
-
-
+        QrcodeVue, PlusOutlined, LinkOutlined
     },
     data() {
         return {
@@ -290,7 +303,7 @@ export default {
 
                 //    获取一下币价
                 let bsvPrice = (await apiUtils.getBsvPrice()).data
-                this.bsvAsset.usd = (this.bsvAsset.balance.total / Math.pow(10,this.bsvAsset.decimal) * bsvPrice).toFixed(2);
+                this.bsvAsset.usd = (this.bsvAsset.balance.total / Math.pow(10, this.bsvAsset.decimal) * bsvPrice).toFixed(2);
 
 
             } catch (e) {
@@ -481,7 +494,10 @@ export default {
 
                 }
             }
-        }
+        },
+        gotoConnectManagement() {
+            routerManager.goto('/connectManagement')
+        },
     }
 }
 </script>
@@ -510,10 +526,75 @@ export default {
     }
 }
 
+.connect-container-line {
+    max-width: 375px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    padding-left: 16px;
+}
+
+.connect-container {
+    z-index: 1;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    color: #999;
+    padding: 6px 12px;
+    margin: 8px 0 0 -4px;
+    border-radius: 2em;
+
+    &:hover {
+        background-color: white;
+        box-shadow: 0 2px 4px #ddd;
+    }
+
+    &:active {
+        background-color: white;
+        box-shadow: 0 1px 1px #ddd;
+    }
+
+    .word {
+        font-size: 12px;
+    }
+
+    .connect-point {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        border: 1px solid #999;
+        margin-right: 10px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        span {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: #4cd964;
+
+            display: none;
+        }
+    }
+
+    &.connected {
+        .connect-point {
+            border: 1px solid #4cd964;
+
+            span {
+                display: inline-block;
+            }
+        }
+    }
+}
+
 .account-top {
-    height: 36px;
     width: 100%;
-    padding: 0 8px 0 16px;
+    padding: 4px 16px;
 
     display: flex;
     justify-content: space-between;
@@ -522,9 +603,11 @@ export default {
     background-color: $base-color;
     color: white;
     position: relative;
+    max-width: 375px;
 
     &.account {
-        margin-top: 24px;
+        margin: 12px auto;
+        padding: 0 16px;
 
         background-color: $main-bg;
         justify-content: center;
@@ -635,8 +718,14 @@ export default {
             flex-direction: column;
 
             .title {
-                font-size: 14px;
+                font-size: 16px;
                 font-weight: bold;
+
+                .tag {
+                    height: 28px;
+                    margin: -2px;
+                    margin-top: -12px;
+                }
             }
 
             .desc {
@@ -648,7 +737,7 @@ export default {
         }
 
         .enter {
-            padding: 4px 10px;
+            padding: 4px 16px;
             border-radius: 2em;
             background-color: #f1f2f3;
             font-weight: 700;
@@ -805,15 +894,12 @@ export default {
             transform: scale(1.05);
 
             img {
-                width: 26px;
-                //height: 26px;
+                width: 32px;
+                height: 32px;
                 border-radius: 50%;
                 margin-bottom: 3px;
             }
 
-            .price{
-                color: #999;
-            }
 
             .balance {
                 display: flex;
@@ -822,11 +908,34 @@ export default {
                 font-size: 24px;
                 color: #333;
 
+                background-color: #f6f8fa;
+                border-radius: 10px;
+                padding: 12px 20px;
+
+                margin-top: 12px;
+                width: calc(100% - 56px);
+
+                //@media(max-width: 375px){
+                //    margin-top: 16px;
+                //    width: calc(100% - 32px);
+                //}
+
                 img {
                     margin-right: 20px;
                 }
 
-                //font-weight: bold;
+                .balance-container {
+                    flex-grow: 2;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: end;
+
+                }
+
+                .price {
+                    color: #999;
+                    font-size: 14px;
+                }
             }
 
             .address {

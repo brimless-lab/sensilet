@@ -54,7 +54,7 @@ async function launchPopup(message, sender, sendResponse, checkConnected = true)
         chrome.windows.create({
             url: 'popup.html#' + searchParams.toString(),
             type: 'popup',
-            width: 375,
+            width: 425,
             height: 625,
             top: focusedWindow.top,
             left: focusedWindow.left + (focusedWindow.width - 375),
@@ -241,7 +241,7 @@ async function handleGetPublicKey(message, sender, sendResponse) {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message, "onMessage");
+    console.log(message,sender.origin, "onMessage");
 
     if (message.channel === 'sato_contentscript_background_channel') {
         if (message.data.method === 'addEvent') {

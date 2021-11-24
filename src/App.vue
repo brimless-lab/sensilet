@@ -9,7 +9,6 @@
             </div>
         </div>
         <div class="right" v-if="showSetting">
-            <LinkOutlined class="icon" @click="gotoConnectManagement()" style="font-size: 28px;padding: 2px;margin-right: 4px"></LinkOutlined>
             <div @click="gotoSetting()">
                 <img class="icon" src="./assets/icon-setting.svg" alt="">
                 <div class="red-point" :class="{'show':!$store.state.isSettingChecked}"></div>
@@ -18,7 +17,7 @@
         <AccountChoose v-else-if="showAccountChoose"/>
 
         <span class="version" :class="{'right-little':showSetting,'has-new':$store.getters.hasNewVersion}" @click="newVersion()">
-            <span v-if="debug">{{ currentPage }}</span>
+<!--            <span v-if="debug">{{ currentPage }}</span>-->
             {{ version }}
             <div class="red-point"/>
         </span>
@@ -52,7 +51,6 @@
 //1. 判断是否创建了私钥 否则进入创建私钥页面 Create
 //2. 判断是否解锁了私钥 否则进入解锁页面 Unlock
 //3. 进入正常钱包页面  Wallet
-import LinkOutlined from '@ant-design/icons-vue/lib/icons/LinkOutlined'
 
 import {defineAsyncComponent} from 'vue'
 
@@ -79,13 +77,14 @@ const ConnectManagement = defineAsyncComponent(() => import( "./views/ConnectMan
 
 const AccountChoose = defineAsyncComponent(() => import( "./components/AccountChoose"));
 
+import apiUtils from './utils/apiUtils';
+
 
 const urlParams = new URLSearchParams(window.location.hash.slice(1));
 const request = JSON.parse(urlParams.get('request'));
 
 export default {
     components: {
-        LinkOutlined,
 
         CreateWallet,
         Account,
@@ -112,6 +111,8 @@ export default {
     },
     data() {
         this.$store.commit('initAccount')
+        this.$store.dispatch('initActiveTab')
+
 
         return {
             width: document.body.clientWidth,
@@ -208,11 +209,27 @@ export default {
 
     },
     mounted() {
-        //    版本检查 ， 热门检查
+        //获取当前激活的网站链接
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            const [activeTab] = tabs;
+            const {id, title, url} = activeTab;
+            const {origin, protocol} = url ? new URL(url) : {};
 
+            console.log('active tab ' + origin)
+        });
 
+        //    版本检查 ， 热门检查 //不等同步
+        this.checkTokenVersion()
     },
     methods: {
+        async checkTokenVersion() {
+            let {data} = await apiUtils.getTokenListVersion()
+            let version = localManager.getTokenTableVersion();
+            if (data > version) {
+                console.log("refresh token data")
+                await tokenManager.getTokenListNet();
+            }
+        },
         newVersion() {
             if (this.$store.getters.hasNewVersion) {
 
@@ -242,9 +259,7 @@ export default {
 
             routerManager.goto('/setting')
         },
-        gotoConnectManagement() {
-            routerManager.goto('/connectManagement')
-        },
+
     }
 }
 
@@ -259,6 +274,10 @@ body {
     height: 600px;
     min-height: 600px;
     font-size: 14px;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
 
     //background-color: whitesmoke;
 
@@ -333,7 +352,7 @@ body {
         margin-right: 4px;
 
         &.right-little {
-            right: 90px;
+            right: 50px;
         }
 
         &.has-new {
@@ -425,7 +444,7 @@ body {
     width: calc(100vw - 32px);
     max-width: 375px;
     box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
-    padding: 20px;
+    padding: 16px;
     border-radius: 4px;
     //line-height: 1.43;
     letter-spacing: 0.01071em;

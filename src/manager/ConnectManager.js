@@ -33,7 +33,7 @@ connectManager.isConnected = function(address,origin){
         chrome.storage.local.get(key, (result) => {
 
             let connectedWallet = ((result[key] || {})[address] || {})[origin];
-
+            // console.log(connectedWallet,address,origin,'###')
             resolve(connectedWallet !== undefined && connectedWallet != null)
         });
     })

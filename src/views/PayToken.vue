@@ -95,7 +95,7 @@ export default {
         this.tokenInfo = tokenInfo;
 
         try {
-
+            // console.log(tokenInfo,tokenInfo.notDefaultSigners)
             if (tokenInfo.notDefaultSigners
                 || tokenInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
                 || tokenInfo.genesis === "8764ede9fa7bf81ba1eec5e1312cf67117d47930") {
@@ -218,7 +218,8 @@ export default {
 }
 
 .notice {
-    margin: 10px;
+    margin:4px 10px;
+    //font-size: 12px;
 
     &.main-word {
         color: #222;

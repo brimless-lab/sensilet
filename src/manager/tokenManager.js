@@ -63,11 +63,12 @@ function getLocalTokenTable() {
 }
 
 async function getAllTokenTable() {
-    let tokenTable = localStorage.getItem('allTokenTable');
+    let tokenTable = localManager.getAllTokenTable();
     if (!tokenTable) {
         //    通过网络获取全部token信息
         tokenTable = {};
-        let data = (await httpUtils.get('https://sensilet.com/api/token_list')).data
+        let {data,version} =  await apiUtils.getTokenList()
+
 
         if (data) {
             if (data.hot)
@@ -82,16 +83,16 @@ async function getAllTokenTable() {
                 })
 
 
-            localStorage.setItem('allTokenTable', JSON.stringify(tokenTable));
+            localManager.setAllTokenTable(tokenTable,version)
+            // localStorage.setItem('allTokenTable', JSON.stringify(tokenTable));
         }
-    } else
-        tokenTable = JSON.parse(tokenTable)
+    }
 
     return tokenTable
 }
 
 tokenManager.getTokenListNet = async function () {
-    let data = (await httpUtils.get('https://sensilet.com/api/token_list')).data
+    let {data,version} = await apiUtils.getTokenList()
 
     let local = getLocalTokenList();
     if (data) {
@@ -126,7 +127,8 @@ tokenManager.getTokenListNet = async function () {
                 return !temp[item.genesis]
             })
 
-        localStorage.setItem('allTokenTable', JSON.stringify(allTokenTable));
+        // localStorage.setItem('allTokenTable', JSON.stringify(allTokenTable));
+        localManager.setAllTokenTable(allTokenTable,version)
     }
 
     return data
@@ -237,7 +239,7 @@ tokenManager.listUserTokens = async function () {
         tokenList.forEach(item=>{
             if(priceTable[item.genesis] && priceTable[item.genesis].USDT){
                 if(item.balance > 0 ) {
-                    console.log(item.balance)
+                    // console.log(item.balance)
                     item.usd = (item.balance / Math.pow(10, item.decimal) * priceTable[item.genesis].USDT).toFixed(2);
                 }else
                     item.usd = "0.00"

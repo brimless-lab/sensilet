@@ -1,4 +1,6 @@
 import {createStore} from 'vuex'
+import extensionUtils from '../utils/extensionUtils';
+import connectManager from '../manager/ConnectManager';
 
 export default createStore({
     state: {
@@ -10,6 +12,8 @@ export default createStore({
         version: {},
         versionChecked: 0,
         isSettingChecked: true,
+        activeTab:{},
+        isConnected:false,
     },
     getters: {
         address(state) {
@@ -34,14 +38,16 @@ export default createStore({
     mutations: {
         initAccount(state) {
             let account = walletManager.listAccount();
-            state.accountList = account.map(item => {
-                item.addressShow = showLongString(item.address, 10);
-                item.accountMode = walletManager.getAccountMode(item)
-                return item
-            });
-            state.account = walletManager.getCurrentAccount();
-            if(state.account)
-                state.account.addressShow = showLongString(state.account.address)
+            if (account) {
+                state.accountList = account.map(item => {
+                    item.addressShow = showLongString(item.address, 10);
+                    item.accountMode = walletManager.getAccountMode(item)
+                    return item
+                });
+                state.account = walletManager.getCurrentAccount();
+                if (state.account)
+                    state.account.addressShow = showLongString(state.account.address)
+            }
         },
         editAlias(state, alias) {
             if (state.account) {
@@ -58,9 +64,15 @@ export default createStore({
         initSettingChecked(state) {
             state.isSettingChecked = localManager.isSettingChecked();
         },
+
     },
     actions: {
-
+        async initActiveTab({commit,state}){
+            state.activeTab =await extensionUtils.queryCurrentActiveTab();
+            if(state.account) {
+                state.isConnected =await connectManager.isConnected(state.account.address, state.activeTab.origin)
+            }
+        },
         async refreshAsset({commit, state}) {
 
         },
@@ -72,9 +84,9 @@ export default createStore({
                 console.log(e);
                 return []
             })
-            state.totalTokenValue =(state.tokenList.reduce((value, item) => {
+            state.totalTokenValue = (state.tokenList.reduce((value, item) => {
                 if (item.usd)
-                    return value + parseFloat( item.usd)
+                    return value + parseFloat(item.usd)
                 return value
             }, 0)).toFixed(2)
             console.log(state.totalTokenValue)

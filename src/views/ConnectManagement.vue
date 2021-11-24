@@ -52,7 +52,6 @@
             <div class="action-list">
                 <div class="divider">
                     Connected Website
-                    <span style="color: #999;font-size: 12px">click to disconnect</span>
                 </div>
                 <div v-if="list == null ">
                     <a-spin></a-spin>
@@ -61,8 +60,14 @@
                     Empty
                 </div>
                 <div v-else>
-                    <div class="item btn" v-for="(item,key) in list" @click="disconnect(key)">
-                        {{ key }}
+                    <div class="item" v-for="(item,index) in list">
+                        <div>
+                            <img src="../assets/icon-checked.svg" alt="" style="width: 22px;height: 22px">
+                            {{ item.originShow }}
+                        </div>
+                        <div class="delete-btn" @click="disconnect(item.origin)">
+                            Disconnect
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,13 +80,15 @@ import connectManager from '../manager/ConnectManager'
 
 import DownOutlined from '@ant-design/icons-vue/lib/icons/DownOutlined'
 import CheckOutlined from '@ant-design/icons-vue/lib/icons/CheckOutlined'
+import DeleteOutlined from '@ant-design/icons-vue/lib/icons/DeleteOutlined'
+
 import HeadPicture from "@/components/HeadPicture";
 
 export default {
     name: "ConnectManagement",
     components: {
         HeadPicture,
-        DownOutlined, CheckOutlined
+        DownOutlined, CheckOutlined, DeleteOutlined
     },
     data() {
         console.log(this.$store.state.account)
@@ -97,8 +104,29 @@ export default {
     },
     methods: {
         async refreshConnected() {
+            let origin = this.$store.state.activeTab.origin;
+
             this.list = null;
-            this.list = await connectManager.list(this.account.address)
+            let temp = await connectManager.list(this.account.address);
+            let list = [];
+            console.log(temp)
+            if (temp && Object.keys(temp).length > 0) {
+                for (let key in temp) {
+                    temp[key].origin = key;
+                    temp[key].originShow = key.replace("https://", "").replace("http://", "")
+
+                    if(key===origin){
+                        temp[key].isActive = true;
+                        list.unshift(temp[key])
+                    }else {
+                        list.push(temp[key])
+                    }
+                }
+            }
+            if (origin) {
+
+            }
+            this.list = list
         },
         goBack() {
             routerManager.gotoHome();
@@ -108,12 +136,12 @@ export default {
             await this.refreshConnected();
         },
         disconnect(origin) {
-            let _this=this;
+            let _this = this;
             antModal.confirm({
-                title: this.$t('setting.disconnect') +" "+ origin,
+                title: this.$t('setting.disconnect') + " " + origin,
                 content: this.$t('setting.disconnect_notice'),
                 async onOk() {
-                    await connectManager.disconnect(_this.account.address, origin,true);
+                    await connectManager.disconnect(_this.account.address, origin, true);
                     //这个不等同步
                     _this.refreshConnected();
                 }
@@ -345,6 +373,15 @@ export default {
     .selected {
 
     }
+}
+
+.delete-btn {
+    padding: 4px 16px;
+    border-radius: 2em;
+    background-color: #f1f2f3;
+    font-weight: 700;
+    color: #527195;
+    cursor: pointer;
 }
 
 </style>

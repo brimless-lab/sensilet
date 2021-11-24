@@ -132,10 +132,10 @@ export default {
     align-items: center;
     justify-content: space-between;
     border-radius: 2em;
-    padding: 4px 24px;
+    padding: 4px 12px;
     cursor: pointer;
-    max-width: 325px;
-    min-width: 270px;
+
+    width: 224px;
 
     background-color: $main-bg;
     transition: .35s;

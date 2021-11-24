@@ -101,6 +101,9 @@
         <div class="list" v-else>
             <div class="empty">
                 empty
+                <div class="refresh-icon" @click="refreshToken()">
+                    <img src="../assets/icon-refresh.svg" alt="">
+                </div>
             </div>
         </div>
     </div>
@@ -417,8 +420,8 @@ export default {
 
                 let signers = null
                 let tokenInfo = await tokenManager.getTokenInfo(this.transInfo.genesis, this.transInfo.codehash);
-
-                if (this.transInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
+                console.log(tokenInfo)
+                if (tokenInfo.notDefaultSigners ||this.transInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
                     || this.transInfo.genesis === "8764ede9fa7bf81ba1eec5e1312cf67117d47930") {
                     signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
                 }
@@ -606,6 +609,15 @@ export default {
         padding: 16px;
         text-align: center;
         color: #999;
+        position: relative;
+
+        .refresh-icon{
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 4px;
+        }
     }
 
     .item {
@@ -749,75 +761,6 @@ export default {
             font-weight: bold;
             margin-right: 16px;
             color: #999;
-        }
-    }
-
-    .bsv-item {
-        padding: 16px;
-        padding-top: 24px;
-        position: relative;
-
-        .refresh-icon {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            z-index: 1;
-
-        }
-
-        .info {
-            //margin-top: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transform: scale(1.05);
-
-            img {
-                width: 26px;
-                //height: 26px;
-                border-radius: 50%;
-                margin-bottom: 3px;
-            }
-
-            .price {
-                color: #999;
-            }
-
-            .balance {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 24px;
-                color: #333;
-
-                img {
-                    margin-right: 20px;
-                }
-
-                //font-weight: bold;
-            }
-
-            .address {
-                margin: 8px;
-                padding: 4px 8px;
-                border-radius: 5px;
-                color: $font-weaken;
-
-                &:hover {
-                    background-color: #F2F3F4;
-                }
-
-                &:active {
-                    background-color: #e2e3e4;
-                }
-            }
-        }
-
-        .action-container {
-            padding: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
         }
     }
 }

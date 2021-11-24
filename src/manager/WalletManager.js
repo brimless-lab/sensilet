@@ -223,12 +223,16 @@ walletManager.getMainAddress = function () {
         //通过私钥衍生
         // let rootKey = getRootKey();
         // let privateKey = rootKey.derive("/0/0").privKey;
+        try {
+            let privateKey = getPrivateKeyObj("/0/0")
+            let address = bsv.Address.fromPrivKey(privateKey);
+            mMainAddress = address.toString();
 
-        let privateKey = getPrivateKeyObj("/0/0")
-        let address = bsv.Address.fromPrivKey(privateKey);
-        mMainAddress = address.toString();
+            return mMainAddress;
+        } catch (e) {
+            return ""
+        }
 
-        return mMainAddress;
     }
 };
 
@@ -361,7 +365,7 @@ walletManager.deleteCurrent = function () {
         lockInfoList = lockInfoList.filter((item) => item.address !== lockInfo.address)
     }
 
-    if(bg.passwordAesTable[lockInfo.address]){
+    if (bg.passwordAesTable[lockInfo.address]) {
         delete bg.passwordAesTable[lockInfo.address]
     }
 

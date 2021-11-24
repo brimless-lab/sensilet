@@ -6,6 +6,7 @@ localManager.refreshLockInfoList = function () {
     // _lockInfoList = localStorage.getItem('lockInfoList');
     // _lockInfoList = _lockInfoList ? JSON.parse(_lockInfoList) : null;
 }
+
 // localManager.refreshLockInfoList();
 
 
@@ -48,7 +49,7 @@ localManager.listAccount = function () {
 };
 
 localManager.saveAccountList = function (lockInfoList) {
-    localStorage.setItem('lockInfoList',JSON.stringify(lockInfoList));
+    localStorage.setItem('lockInfoList', JSON.stringify(lockInfoList));
 };
 
 localManager.removeAccount = function () {
@@ -140,6 +141,19 @@ localManager.getShowTokenType = function () {
 }
 localManager.setShowTokenType = function (type) {
     localStorage.setItem('showTokenType', type)
+}
+
+localManager.setAllTokenTable = function (data, version) {
+    setItem('allTokenTable', data)
+    setItem('tokenVersion', version)
+}
+
+localManager.getAllTokenTable = function () {
+    return getObjItem("allTokenTable")
+}
+localManager.getTokenTableVersion = function () {
+    let temp = localStorage.getItem("tokenVersion");
+    return temp ? (isNaN(temp) ? 0 : parseInt(temp)) : 0;
 }
 
 function getObjItem(key) {
