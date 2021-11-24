@@ -613,7 +613,7 @@ export default {
 
         .refresh-icon{
             position: absolute;
-            right: 16px;
+            right: 12px;
             top: 50%;
             transform: translateY(-50%);
             padding: 4px;
@@ -759,7 +759,7 @@ export default {
         justify-content: end;
         span{
             font-weight: bold;
-            margin-right: 16px;
+            margin-right: 12px;
             color: #999;
         }
     }

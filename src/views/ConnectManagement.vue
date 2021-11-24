@@ -157,7 +157,7 @@ export default {
 @import "../style/color";
 
 .setting-container {
-    height: calc(100vh - 56px);
+    height: calc(100vh - 48px);
     display: flex;
     flex-direction: column;
     justify-content: space-between;

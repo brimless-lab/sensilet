@@ -117,6 +117,34 @@ tokenManager.getTokenListNet = async function () {
 
     return data
 }
+//
+tokenManager.refreshLocalTokenData =async function () {
+    let localList = getLocalTokenList();
+    let allTokenTable =await getAllTokenTable();
+    console.log(localList,'#2')
+    for (let i = 0; localList && i < localList.length; i++) {
+        console.log(allTokenTable[localList[i].genesis])
+        if (allTokenTable[localList[i].genesis]) {
+            let tokenInfo = allTokenTable[localList[i].genesis];
+
+            if (!tokenInfo.fixed)
+                tokenInfo.fixed = tokenInfo.decimal;
+            if (!tokenInfo.unit)
+                tokenInfo.unit = tokenInfo.name;
+            if (!tokenInfo.logo)
+                tokenInfo.logo = '/img/empty-token.png';
+            if (!tokenInfo.network)
+                tokenInfo.network = 'mainnet';
+
+            tokenInfo.topped = localList[i].topped;
+
+            localList[i] = tokenInfo;
+        }
+    }
+    tokenManager.reSaveToken(localList)
+}
+
+
 tokenManager.reSaveToken = function (tokenList = []) {
     localStorage.setItem('tokenList', JSON.stringify(tokenList))
 }

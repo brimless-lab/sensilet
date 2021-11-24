@@ -508,7 +508,7 @@ export default {
 @import "../style/color";
 
 .account-container {
-    min-height: calc(100vh - 56px);
+    min-height: calc(100vh - 48px);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -543,7 +543,7 @@ export default {
     align-items: center;
 
     color: #999;
-    padding: 6px 12px;
+    padding: 2px 12px;
     margin: 8px 0 0 -4px;
     border-radius: 2em;
 
@@ -607,7 +607,7 @@ export default {
     max-width: 375px;
 
     &.account {
-        margin: 12px auto;
+        margin: 4px auto;
         padding: 0 16px;
 
         background-color: $main-bg;

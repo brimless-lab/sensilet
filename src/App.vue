@@ -5,7 +5,7 @@
 
             <div v-else style="overflow: hidden">
                 <!--                <img src="./assets/logo_h_white.png" alt="logo">-->
-                <img style="width: 150px" src="./assets/logo_h.svg" alt="logo">
+                <img style="width: 128px" src="./assets/logo_h.svg" alt="logo">
             </div>
         </div>
         <div class="right" v-if="showSetting">
@@ -218,7 +218,7 @@ export default {
             console.log('active tab ' + origin)
         });
 
-        //    版本检查 ， 热门检查 //不等同步
+        //    检查已保存的数据版本 //不等同步
         this.checkTokenVersion()
     },
     methods: {
@@ -228,6 +228,8 @@ export default {
             if (data > version) {
                 console.log("refresh token data")
                 await tokenManager.getTokenListNet();
+            //    修复已添加的
+                await tokenManager.refreshLocalTokenData();
             }
         },
         newVersion() {
@@ -305,7 +307,7 @@ body {
 
 .top {
     width: 100%;
-    height: 56px;
+    height: 48px;
     box-sizing: border-box;
     background-color: $base-color;
     color: #fff;
@@ -401,7 +403,7 @@ body {
 }
 
 .main {
-    height: calc(100vh - 56px);
+    height: calc(100vh - 48px);
     overflow-y: scroll;
 
     &::-webkit-scrollbar {
@@ -450,7 +452,7 @@ body {
     letter-spacing: 0.01071em;
 
     //@media (min-width: 450px) {
-    margin: 24px auto 0;
+    margin: 20px auto 0;
     //}
 
     overflow: hidden;
