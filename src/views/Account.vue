@@ -279,7 +279,6 @@ export default {
 
             await this.refreshBsv()
 
-            this.bsvAsset.isRefreshingAmount = false;
 
         },
         async refreshBsv() {
@@ -300,6 +299,8 @@ export default {
                 await sleep(500)
 
                 this.bsvAsset.showBalance = showDecimal(this.bsvAsset.balance.total, 8, 8)
+
+                this.bsvAsset.isRefreshingAmount = false;
 
                 //    获取一下币价
                 let bsvPrice = (await apiUtils.getBsvPrice()).data

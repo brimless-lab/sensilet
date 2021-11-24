@@ -4,7 +4,7 @@ let config = {
     version:"0.1.5",
     versionCode:6,
     path:"m/44'/0'/0'",
-    debug:true,
+    debug:false,
 };
 console.log('init config');
 

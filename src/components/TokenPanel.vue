@@ -153,7 +153,7 @@
                 <div class="title">{{ $t('account.token_list') }}</div>
                 <div class="action" @click="showAddCustomTokenPanel">{{ $t('account.add_custom_token') }}</div>
             </div>
-            <div class="item" v-for="item in baseTokenList.list" @click="addToken(item)">
+            <div class="item" v-for="item in baseTokenList" @click="addToken(item)">
                 <img :src="item.logo||'/img/empty-token.png'" alt="">
                 <div class="info">
                     <div class="name">{{ item.name }}</div>

@@ -67,7 +67,7 @@ async function getAllTokenTable() {
     if (!tokenTable) {
         //    通过网络获取全部token信息
         tokenTable = {};
-        let {data,version} =  await apiUtils.getTokenList()
+        let {data, version} = await apiUtils.getTokenList()
 
 
         if (data) {
@@ -83,7 +83,7 @@ async function getAllTokenTable() {
                 })
 
 
-            localManager.setAllTokenTable(tokenTable,version)
+            localManager.setAllTokenTable(tokenTable, version)
             // localStorage.setItem('allTokenTable', JSON.stringify(tokenTable));
         }
     }
@@ -92,7 +92,7 @@ async function getAllTokenTable() {
 }
 
 tokenManager.getTokenListNet = async function () {
-    let {data,version} = await apiUtils.getTokenList()
+    let {data, version} = await apiUtils.getTokenList()
 
     let local = getLocalTokenList();
     if (data) {
@@ -104,32 +104,16 @@ tokenManager.getTokenListNet = async function () {
             })
 
         let allTokenTable = {};
-        if (data.hot)
-            //标记 为已添加
-            // data.hot.map(item => {
-            //     item.added = temp[item.genesis] || false;
-            //     return item
-            // })
-            //
-            //直接过滤掉
-            data.hot = data.hot.filter(item => {
-                allTokenTable[item.genesis] = item
-                return !temp[item.genesis]
-            })
-        if (data.list)
-            // data.list.map(item => {
-            //     item.added = temp[item.genesis]|| false;
-            //     return item
-            // })
-            //直接过滤掉
-            data.list = data.list.filter(item => {
-                allTokenTable[item.genesis] = item
-                return !temp[item.genesis]
-            })
 
-        // localStorage.setItem('allTokenTable', JSON.stringify(allTokenTable));
-        localManager.setAllTokenTable(allTokenTable,version)
+        //过滤掉已经添加的token
+        data = data.filter(item => {
+            allTokenTable[item.genesis] = item
+            return !temp[item.genesis]
+        })
+
+        localManager.setAllTokenTable(allTokenTable, version)
     }
+    console.log(data)
 
     return data
 }
@@ -236,14 +220,14 @@ tokenManager.listUserTokens = async function () {
         // 获取一下币价
         let priceTable = (await apiUtils.getTokenPrice()).data;
 
-        tokenList.forEach(item=>{
-            if(priceTable[item.genesis] && priceTable[item.genesis].USDT){
-                if(item.balance > 0 ) {
+        tokenList.forEach(item => {
+            if (priceTable[item.genesis] && priceTable[item.genesis].USDT) {
+                if (item.balance > 0) {
                     // console.log(item.balance)
                     item.usd = (item.balance / Math.pow(10, item.decimal) * priceTable[item.genesis].USDT).toFixed(2);
-                }else
+                } else
                     item.usd = "0.00"
-            }else
+            } else
                 item.usd = "";
         })
     }
