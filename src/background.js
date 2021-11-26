@@ -172,7 +172,7 @@ async function handleGetTokenBalance(message, sender, sendResponse) {
         });
     }
     let {} = message.data.params;
-    let tokenList = await tokenManager.listUserTokens();
+    let tokenList = await tokenManager.listUserTokens(true);
     sendResponse({
         id: message.data.id,
         data: tokenList,

@@ -4,7 +4,7 @@ const sensibleNftUtils = require('../utils/sensibleNftUtils');
 const metaIdUtils = require('../utils/metaIdUtils');
 nftManager.sensibleNft = sensibleNftUtils;
 
-let bg = chrome.extension.getBackgroundPage();
+let bg =chrome.extension && chrome.extension.getBackgroundPage();
 if (!bg)
     window.location.reload();
 const {API_NET, API_TARGET, Wallet, SensibleApi} = bg.sensibleSdk;

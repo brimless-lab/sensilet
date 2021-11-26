@@ -1,5 +1,4 @@
 let localManager = {};
-let bg = chrome.extension.getBackgroundPage();
 
 
 localManager.refreshLockInfoList = function () {

@@ -185,9 +185,11 @@ tokenManager.addToken = function (tokenInfo) {
 };
 
 
-tokenManager.listUserTokens = async function () {
+tokenManager.listUserTokens = async function (showAll = false) {
 
     let onlyShowAdded = localManager.getShowTokenType() === 'added';
+    if(showAll)
+        onlyShowAdded = false;
 
     let tokenList = [];
 

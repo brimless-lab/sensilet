@@ -5,7 +5,7 @@
             <div class="origin">{{ origin }}</div>
         </div>
         <div v-if="tokenInfo" style="margin-top: 20px">
-            <img class="logo" :src="tokenInfo.logo" alt="">
+            <img class="logo" :src="tokenInfo.logo||'/img/empty-token.png'" alt="">
             <div class="notice">{{ tokenInfo.name }}</div>
             <div class="notice">Genesis: {{ tokenInfo.genesis }}</div>
 
@@ -173,7 +173,7 @@ export default {
                             data: {
                                 id: request.id,
                                 result: "success",
-                                data: {txHex, routeCheckTxHex,utxo},
+                                data: {txHex, routeCheckTxHex,utxo,txid},
                             },
                         })
                     }

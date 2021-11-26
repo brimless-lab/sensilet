@@ -1,6 +1,6 @@
 const txUtils = {};
 
-let bg = chrome.extension.getBackgroundPage();
+let bg = chrome.extension && chrome.extension.getBackgroundPage();
 if (!bg)
     window.location.reload();
 

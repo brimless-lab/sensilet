@@ -106,10 +106,10 @@ window.sensilet.transferBsv = ({receivers, broadcast}) => {
 };
 
 
-window.sensilet.transferSensibleFt = ({genesis, rabinApis, broadcast, receivers}) => {
+window.sensilet.transferSensibleFt = ({genesis,codehash, rabinApis, broadcast, receivers}) => {
     if (broadcast === undefined || broadcast == null)
         broadcast = true
-    return action('payToken', {broadcast, genesis, rabinApis, receivers})
+    return action('payToken', {broadcast, genesis,codehash, rabinApis, receivers})
 };
 
 window.sensilet.signTx = ({list}) => {

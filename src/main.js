@@ -1,4 +1,4 @@
-let bg = chrome.extension.getBackgroundPage();
+let bg = chrome.extension && chrome.extension.getBackgroundPage();
 if (bg) {
     global.bg = bg;
     // console.log(bg);

@@ -1,5 +1,5 @@
 let sensibleUtils = {};
-let bg = chrome.extension.getBackgroundPage();
+let bg = chrome.extension && chrome.extension.getBackgroundPage();
 if(!bg)
     window.location.reload();
 const SensibleNFT = bg.sensibleSdk.SensibleNFT;
