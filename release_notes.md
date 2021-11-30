@@ -1,6 +1,15 @@
 
 # Release Notes
 
+### v0.1.5 (2021-11-24)
+
+- new: show connection status to the application website
+- new: show all connected sites and disconnect manually from each one of them
+- new: support delete account in settings page
+- fix: better account isolation
+- fix: 'Keep unlocked' status refreshing
+- fix: TSC icon displaying issue
+
 ### v0.1.4 (2021-11-09)
 
 - clean UI design (new!)
