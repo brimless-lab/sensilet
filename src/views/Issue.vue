@@ -1,8 +1,8 @@
 <template>
     <div class="panel">
-        <div class="title">您确定要创建一个NFT吗？</div>
+        <div class="title">{{$t('popup.issue_title')}}</div>
         <div class="genesis-container">
-            <div class="info">请选择 Genesis :</div>
+            <div class="info">{{$t('popup.choose_genesis')}}:</div>
             <a-select v-if="genesisList.length>0" v-model:value="genesisIndex" style="width: 280px" >
                 <a-select-option  v-for="(item,index) in genesisList" :value="index" >
                         {{item.genesis}}
@@ -10,10 +10,10 @@
             </a-select>
             <a-spin v-else/>
         </div>
-        <div class="notice">这大概需要花费 {{fee}} Sat.</div>
+        <div class="notice">{{$t('popup.fee')}}: {{fee}} Sat.</div>
         <div class="action-container" v-if="!isCreating">
-            <a-button @click="cancel">取消</a-button>
-            <a-button type="primary" @click="issue">创建</a-button>
+            <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
+            <a-button type="primary" @click="issue">{{$t('popup.issue')}}</a-button>
         </div>
         <a-spin v-else/>
     </div>

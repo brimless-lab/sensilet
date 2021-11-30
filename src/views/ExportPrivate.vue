@@ -34,7 +34,7 @@
         </div>
         <div class="button-container">
             <div>
-                Path:{{path}}
+                {{ $t('wallet.der_path') }}:{{path}}
             </div>
 
             <a-button type="primary" @click="goBack">{{ $t('wallet.pre') }}</a-button>

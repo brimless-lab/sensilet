@@ -51,13 +51,13 @@
 
             <div class="action-list">
                 <div class="divider">
-                    Connected Website
+                    {{$t('setting.connected_web')}}
                 </div>
                 <div v-if="list == null ">
                     <a-spin></a-spin>
                 </div>
                 <div v-else-if="Object.keys(list).length<=0" style="text-align: center">
-                    Empty
+                    {{$t('setting.empty')}}
                 </div>
                 <div v-else>
                     <div class="item" v-for="(item,index) in list">
@@ -66,7 +66,7 @@
                             {{ item.originShow }}
                         </div>
                         <div class="delete-btn" @click="disconnect(item.origin)">
-                            Disconnect
+                            {{$t('setting.disconnect')}}
                         </div>
                     </div>
                 </div>

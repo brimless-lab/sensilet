@@ -2,13 +2,13 @@
 
     <div class="footer">
         <a href="https://sensilet.com" class="copyright" target="_blank">
-            Copyright © 2021 Sensilet.com
+            {{$t('setting.copyright')}}
         </a>
         <a href="https://sensilet.com/privacy-policy.html" class="term" target="_blank">
-            Privacy Policy
+            {{$t('setting.privacy')}}
         </a>
         <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank">
-            Terms of Service
+            {{$t('setting.term')}}
         </a>
         <!--        <a href="https://sensilet.com" target="_blank">-->
         <!--            <img src="../assets/logo.png" alt="">-->

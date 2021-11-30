@@ -11,7 +11,7 @@
                 </div>
 
                 <div class="divider">
-                    Account Management
+                    {{$t('setting.account_management')}}
                     <span class="account-mode">
                         {{ $t(accountMode) }}
                     </span>
@@ -65,10 +65,10 @@
                 </div>
                 <div class="term-container">
                     <a href="https://sensilet.com/privacy-policy.html" class="term" target="_blank">
-                        Privacy Policy
+                        {{$t('setting.privacy')}}
                     </a>
                     <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank">
-                        Terms of Service
+                        {{$t('setting.term')}}
                     </a>
                 </div>
             </div>

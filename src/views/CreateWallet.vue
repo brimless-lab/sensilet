@@ -1,18 +1,18 @@
 <template>
     <div class="panel" v-if="step===-1">
         <div class="title">
-            Welcome to Sensilet
+            {{$t('wallet.welcome')}}
         </div>
         <div class="desc">
-            Sensilet will help you connect to the blockchain.
+            {{$t('wallet.welcome_2')}}
         </div>
         <div class="desc">
-            Nice to meet you.
+            {{$t('wallet.welcome_3')}}
         </div>
         <a-checkbox class="keep" v-model:checked="agreeTerm">
             <span>{{ $t('wallet.agree_term') }}</span>
             <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank">
-                Terms of Service
+                {{$t('wallet.term')}}
             </a>
         </a-checkbox>
         <div class="button-container">

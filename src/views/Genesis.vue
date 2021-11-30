@@ -1,20 +1,20 @@
 <template>
     <div class="panel">
-        <div class="title">您确定要 Genesis 一类NFT吗？</div>
-        <div class="notice">这大概需要花费 {{fee}} Sat.</div>
-        <div class="notice" v-if="name">名称：
+        <div class="title">{{$t('popup.genesis_title')}}</div>
+        <div class="notice">{{$t('popup.fee')}}: {{fee}} Sat.</div>
+        <div class="notice" v-if="name">{{$t('popup.name')}}:
             <div class="ellipsis">{{name}}</div>
         </div>
-        <div class="notice" v-if="desc">描述：
+        <div class="notice" v-if="desc">{{$t('popup.desc')}}:
             <div class="ellipsis">{{desc}}</div>
         </div>
-        <div class="notice" v-if="icon">icon：<img :src="icon" alt=""></div>
+        <div class="notice" v-if="icon">{{$t('popup.icon')}}: <img :src="icon" alt=""></div>
 
         <div class="notice" v-if="isCreating && progressMsg">{{progressMsg}}</div>
 
         <div class="action-container" v-if="!isCreating">
-            <a-button @click="cancel">取消</a-button>
-            <a-button type="primary" @click="genesis">创建</a-button>
+            <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
+            <a-button type="primary" @click="genesis">{{$t('popup.genesis')}}</a-button>
         </div>
         <a-spin v-else/>
     </div>
@@ -72,7 +72,7 @@
                         }
                     });
 
-                    _this.progressMsg = "MetaId创建完成，准备genesis";
+                    _this.progressMsg = this.$t('popup.progress_notice_1');
 
                     let result = await nftManager.genesis(index, metaIdInfo);
 
@@ -82,7 +82,7 @@
                     if (result instanceof Error)
                         return;
 
-                    antMessage.success("创建成功");
+                    antMessage.success(this.$t('popup.success'));
 
                     if (request && request.method === 'genesis') {
                         chrome.runtime.sendMessage({
@@ -101,7 +101,7 @@
                     }
                 } catch (e) {
                     console.log(e)
-                    antMessage.error('创建失败' + e.message);
+                    antMessage.error(this.$t('popup.fail') + e.message);
                     this.isCreating = false;
                     this.progressMsg = ''
                 }

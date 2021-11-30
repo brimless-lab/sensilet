@@ -1,20 +1,20 @@
 <template>
     <div class="panel">
-        <div class="title">此网站申请转移NFT</div>
+        <div class="title">{{$t('popup.trans_nft_title')}}</div>
         <div class="pay-info">
             <div class="origin">{{origin}}</div>
         </div>
-        <div class="notice">Genesis：<br> {{genesis}}</div>
-        <div class="notice">CodeHash：<br> {{codehash}}</div>
-        <div class="notice">TokenIndex： {{tokenIndex}}</div>
-        <div class="notice">NFT接收地址： {{address}}</div>
-        <div class="notice">NFT手续费约： {{fee}} Sat.</div>
+        <div class="notice">Genesis: <br> {{genesis}}</div>
+        <div class="notice">CodeHash: <br> {{codehash}}</div>
+        <div class="notice">TokenIndex: {{tokenIndex}}</div>
+        <div class="notice">{{$t('popup.nft_receive')}}: {{address}}</div>
+        <div class="notice">{{$t('popup.fee')}}: {{fee}} Sat.</div>
 
 
 
         <div class="action-container" v-if="!isCreating">
-            <a-button @click="cancel">取消</a-button>
-            <a-button v-if="!isCommit" type="primary" @click="commit">确定</a-button>
+            <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
+            <a-button v-if="!isCommit" type="primary" @click="commit">{{$t('popup.commit')}}</a-button>
             <a-spin v-else/>
         </div>
         <a-spin v-else/>

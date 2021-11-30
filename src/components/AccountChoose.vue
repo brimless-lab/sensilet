@@ -52,16 +52,16 @@
         <div class="add-choose-container">
             <label class="item">
                 <input name="addType" type="radio" v-model="addNewUrl" value="/create"/>
-                <span>Create New Mnemonic(12-Words) Account</span>
+                <span>{{$t('account.add_type_1')}}</span>
             </label>
             <div class="line"></div>
             <label class="item">
                 <input name="addType" type="radio" v-model="addNewUrl" value="/import"/>
-                <span>Restore from Mnemonic</span>
+                <span>{{$t('account.add_type_2')}}</span>
             </label>
             <label class="item">
                 <input name="addType" type="radio" v-model="addNewUrl" value="/importPrivateKey"/>
-                <span>Restore from Private Key</span>
+                <span>{{$t('account.add_type_3')}}</span>
             </label>
         </div>
     </a-modal>

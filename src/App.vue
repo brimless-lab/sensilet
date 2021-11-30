@@ -139,7 +139,7 @@ export default {
         });
 
         if (request && request.method === 'connect') {
-            console.log('链接钱包');
+            console.log('connect to sensilet');
             return routerManager.goto('/connect')
         }
 
@@ -153,7 +153,7 @@ export default {
         }
 
         if (request && request.method === 'pay') {
-            console.log('支付');
+            console.log('pay bsv');
             routerManager.goto('/pay')
         }
         if (request && request.method === 'payToken') {
@@ -161,23 +161,23 @@ export default {
             routerManager.goto('/payToken')
         }
         if (request && request.method === 'transferNft') {
-            console.log('转移NFT');
+            console.log('transfer nft');
             routerManager.goto('/transferNft')
         }
         if (request && request.method === 'signTx') {
-            console.log('签名交易 for tswap');
+            console.log('sign transaction for tswap');
             return routerManager.goto('/signTx')
         }
         if (request && request.method === 'signTransaction') {
-            console.log('签名交易 for web3');
+            console.log('sign transaction for web3');
             return routerManager.goto('/signTransaction')
         }
         if (request && request.method === 'checkTokenUtxoCount') {
-            console.log('合并Utxo');
+            console.log('merge Utxo');
             return routerManager.goto('/merge')
         }
         if (request && request.method === 'signMsg') {
-            console.log('签名消息');
+            console.log('sign message');
             return routerManager.goto('/signMsg')
         }
 

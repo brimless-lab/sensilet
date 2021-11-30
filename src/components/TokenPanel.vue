@@ -157,7 +157,7 @@
                 <img :src="item.logo||'/img/empty-token.png'" alt="">
                 <div class="info">
                     <div class="name">{{ item.name }}</div>
-                    <div class="genesis ellipsis">Genesis: {{ item.genesis }}</div>
+                    <div class="genesis ellipsis">{{$t('popup.genesis')}}: {{ item.genesis }}</div>
                 </div>
                 <svg v-if="item.added" t="1634030847866" class="icon added" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1814" width="48"
                      height="48">

@@ -70,25 +70,25 @@
             <TokenPanel v-model:showQr="showQr"></TokenPanel>
             <div class="panel" v-if="true">
                 <div class="account-top">
-                    <div class="title"> NFTs</div>
+                    <div class="title"> {{ $t('account.nfts') }}</div>
                 </div>
                 <div class="list" v-if="nftGenesisList==null" style="text-align: center">
                     <a-spin v-if="false"/>
                     <div v-else class="empty">
-                        Coming Soon
+                        {{ $t('account.coming_soon') }}
                     </div>
                 </div>
                 <div class="nft-list" v-else-if="nftGenesisList.length>0">
                     <div class="item" v-for="item in nftGenesisList">
                         <div class="genesis">
-                            Genesis:{{ item.genesis }}
+                            {{$t('account.genesis')}}:{{ item.genesis }}
                         </div>
                         <div class="count">{{ item.count }}</div>
                     </div>
                 </div>
                 <div class="list" v-else>
                     <div class="empty">
-                        empty
+                        {{$t('account.empty')}}
                     </div>
                 </div>
             </div>
@@ -135,16 +135,16 @@
             <div class="notice">
                 <div class="balance" v-if="transInfo">
                     <div class="key">
-                        Balance :
+                        {{ $t('account.balance') }} :
                     </div>
                     <div class="amount">
                         {{ transBalance }} {{ transUnit }}
                     </div>
-                    <div class="action" @click="sendAll">Send All</div>
+                    <div class="action" @click="sendAll">{{ $t('account.send_all') }}</div>
                 </div>
                 <div class="fee">
                     <div class="key">
-                        Fee:
+                        {{ $t('account.fee') }}:
                     </div>
                     <div class="amount">
                         <span v-if="!transFeeLoading">{{ transFee }}</span>
@@ -158,7 +158,7 @@
     </a-modal>
 
     <a-modal v-model:visible="showQr" :footer="null" :closable=false>
-        <div style="font-size: 18px;text-align: center;margin-bottom: 16px">Receive BSV or Sensible FT</div>
+        <div style="font-size: 18px;text-align: center;margin-bottom: 16px">{{$t('account.qr_title')}}</div>
         <div style="display: flex;flex-direction: column;align-items: center">
             <QrcodeVue :value="$store.getters.address" :size="200" level="H"/>
             <p class="copy-address" style="margin-top: 20px;" id="address-copy" :data-clipboard-text="$store.getters.address">
@@ -168,7 +168,7 @@
                 </svg>
             </p>
             <p style="color: #999;font-size: 12px">
-                The address can only receive BSV or Sensible FT Token
+                {{$t('account.qr_notice')}}
             </p>
         </div>
     </a-modal>
