@@ -129,7 +129,7 @@ export default {
             return this.currentPage === '/account'
         },
         showAccountChoose() {
-            return this.currentPage === '/create'
+            return  ['/create','/unlock'].indexOf( this.currentPage) >= 0
         }
     },
     beforeCreate() {

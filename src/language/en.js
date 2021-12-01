@@ -114,6 +114,8 @@ export default {
         add_type_2:"Restore from Mnemonic",
         add_type_3:"Restore from Private Key",
 
+        not_display_notice: "According to local laws and regulations, the content will not be displayed.",
+
     },
     setting: {
         // this.$t('setting.') {{$t('setting.')}} :placeholder="$t('setting.')"

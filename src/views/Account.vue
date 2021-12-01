@@ -81,14 +81,14 @@
                 <div class="nft-list" v-else-if="nftGenesisList.length>0">
                     <div class="item" v-for="item in nftGenesisList">
                         <div class="genesis">
-                            {{$t('account.genesis')}}:{{ item.genesis }}
+                            {{ $t('account.genesis') }}:{{ item.genesis }}
                         </div>
                         <div class="count">{{ item.count }}</div>
                     </div>
                 </div>
                 <div class="list" v-else>
                     <div class="empty">
-                        {{$t('account.empty')}}
+                        {{ $t('account.empty') }}
                     </div>
                 </div>
             </div>
@@ -96,7 +96,7 @@
                 <div class="account-top">
                     <div class="title"> {{ $t('account.hot_app') }}</div>
                 </div>
-                <div class="app-list" v-if="appList!=null">
+                <div class="app-list" v-if="appList!=null && canShowApp">
                     <!--                <div class="app-list" v-if="false">-->
                     <div class="item" v-for="item in appList">
                         <img :src="item.logo" alt="">
@@ -116,7 +116,14 @@
                     <!--                        and more ...-->
                     <!--                    </div>-->
                 </div>
-                <a-spin v-else style="padding:16px;text-align: center"></a-spin>
+                <div v-else-if="!canShowApp" class="list">
+                    <div class="empty">
+                        {{ $t('account.not_display_notice') }}
+                    </div>
+                </div>
+                <div class="list" v-else style="text-align: center">
+                    <a-spin style="padding:16px"></a-spin>
+                </div>
             </div>
         </div>
 
@@ -158,7 +165,7 @@
     </a-modal>
 
     <a-modal v-model:visible="showQr" :footer="null" :closable=false>
-        <div style="font-size: 18px;text-align: center;margin-bottom: 16px">{{$t('account.qr_title')}}</div>
+        <div style="font-size: 18px;text-align: center;margin-bottom: 16px">{{ $t('account.qr_title') }}</div>
         <div style="display: flex;flex-direction: column;align-items: center">
             <QrcodeVue :value="$store.getters.address" :size="200" level="H"/>
             <p class="copy-address" style="margin-top: 20px;" id="address-copy" :data-clipboard-text="$store.getters.address">
@@ -168,7 +175,7 @@
                 </svg>
             </p>
             <p style="color: #999;font-size: 12px">
-                {{$t('account.qr_notice')}}
+                {{ $t('account.qr_notice') }}
             </p>
         </div>
     </a-modal>
@@ -228,6 +235,7 @@ export default {
                 isRefreshingAmount: true,
                 address: walletManager.getMainAddress(),
             },
+            canShowApp: true,
 
         }
     },
@@ -327,9 +335,15 @@ export default {
             } catch (e) {
                 console.error(e)
             }
-            let data = (await apiUtils.getApplicationList()).data;
-            localStorage.setItem('appList', JSON.stringify(data));
-            this.appList = data;
+            let {data, canShow} = await apiUtils.getApplicationList();
+            this.canShowApp = canShow;
+            if (canShow) {
+                localStorage.setItem('appList', JSON.stringify(data));
+                this.appList = data;
+            } else {
+                localStorage.setItem('appList', "");
+                this.appList = [];
+            }
         },
         receive(item) {
             this.showQr = true
