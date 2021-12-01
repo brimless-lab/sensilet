@@ -116,6 +116,8 @@ export default {
 
         not_display_notice: "According to local laws and regulations, the content will not be displayed.",
 
+        search_placeholder:"input name/genesis to search"
+
     },
     setting: {
         // this.$t('setting.') {{$t('setting.')}} :placeholder="$t('setting.')"

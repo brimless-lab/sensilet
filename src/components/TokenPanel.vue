@@ -92,7 +92,7 @@
                 </div>
             </div>
             <div class="refresh-item">
-                <span>Total: ${{ $store.state.totalTokenValue}}</span>
+                <span>Total: ${{ $store.state.totalTokenValue }}</span>
                 <div class="refresh-icon" @click="refreshToken()">
                     <img src="../assets/icon-refresh.svg" alt="">
                 </div>
@@ -153,19 +153,24 @@
                 <div class="title">{{ $t('account.token_list') }}</div>
                 <div class="action" @click="showAddCustomTokenPanel">{{ $t('account.add_custom_token') }}</div>
             </div>
-            <div class="item" v-for="item in baseTokenList" @click="addToken(item)">
-                <img :src="item.logo||'/img/empty-token.png'" alt="">
-                <div class="info">
-                    <div class="name">{{ item.name }}</div>
-                    <div class="genesis ellipsis">{{$t('popup.genesis')}}: {{ item.genesis }}</div>
+            <a-input class="search-input" :placeholder="$t('account.search_placeholder')" type="text" v-model:value="inputSearch" @change="refreshSearch"></a-input>
+            <div v-if="showTokenList && showTokenList.length>0">
+                <div class="item" v-for="item in showTokenList" @click="addToken(item)" :key="item.genesis">
+                    <img :src="item.logo||'/img/empty-token.png'" alt="">
+                    <div class="info">
+                        <div class="name">{{ item.name }}</div>
+                        <div class="genesis ellipsis">{{ $t('popup.genesis') }}: {{ item.genesis }}</div>
+                    </div>
+                    <svg v-if="item.added" t="1634030847866" class="icon added" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1814" width="48"
+                         height="48">
+                        <path
+                            d="M768 85.333333a85.333333 85.333333 0 0 1 85.333333 85.333334v727.978666a42.666667 42.666667 0 0 1-62.677333 37.717334l-258.688-137.301334a42.666667 42.666667 0 0 0-40.021333 0L233.386667 936.32A42.666667 42.666667 0 0 1 170.666667 898.645333V170.666667a85.333333 85.333333 0 0 1 85.333333-85.333334h512z m-83.498667 223.317334a42.666667 42.666667 0 0 0-60.117333 5.248l-164.394667 195.669333-58.965333-66.730667-3.754667-3.754666a42.666667 42.666667 0 0 0-60.16 60.245333l91.733334 103.893333 3.626666 3.626667a42.666667 42.666667 0 0 0 61.013334-4.437333l196.266666-233.642667 3.2-4.266667a42.666667 42.666667 0 0 0-8.448-55.850666z"
+                            p-id="1815" fill="#1afa29"></path>
+                    </svg>
                 </div>
-                <svg v-if="item.added" t="1634030847866" class="icon added" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1814" width="48"
-                     height="48">
-                    <path
-                        d="M768 85.333333a85.333333 85.333333 0 0 1 85.333333 85.333334v727.978666a42.666667 42.666667 0 0 1-62.677333 37.717334l-258.688-137.301334a42.666667 42.666667 0 0 0-40.021333 0L233.386667 936.32A42.666667 42.666667 0 0 1 170.666667 898.645333V170.666667a85.333333 85.333333 0 0 1 85.333333-85.333334h512z m-83.498667 223.317334a42.666667 42.666667 0 0 0-60.117333 5.248l-164.394667 195.669333-58.965333-66.730667-3.754667-3.754666a42.666667 42.666667 0 0 0-60.16 60.245333l91.733334 103.893333 3.626666 3.626667a42.666667 42.666667 0 0 0 61.013334-4.437333l196.266666-233.642667 3.2-4.266667a42.666667 42.666667 0 0 0-8.448-55.850666z"
-                        p-id="1815" fill="#1afa29"></path>
-                </svg>
-
+            </div>
+            <div v-else style="text-align: center;padding-top: 32px">
+                {{ $t('account.empty') }}
             </div>
         </div>
         <div v-else style="display:flex;justify-content:center;align-items: center">
@@ -218,9 +223,10 @@ export default {
             btnLoading: false,
             isShowAddCustomTokenPanel: false,
             showAddTokenPanel: false,
-            baseTokenList: null,
             customToken: {},
-
+            baseTokenList: null,
+            inputSearch: "",
+            showTokenList: null,
 
         }
     },
@@ -244,10 +250,33 @@ export default {
                 return
             this.showAddTokenPanel = true;
             this.baseTokenList = null;
+            this.showTokenList = null;
+            this.inputSearch = "";
 
-            this.baseTokenList = await tokenManager.getTokenListNet();
+            let list = await tokenManager.getTokenListNet();
+            if(list && list.length>0){
+                list.forEach(item=>{
+                    item.searchWord = item.genesis.toLowerCase();
+                    if(item.name)
+                        item.searchWord += '/'+ item.name.toLowerCase();
+                    if(item.unit)
+                        item.searchWord += '/'+ item.unit.toLowerCase();
+                })
+            }
 
+            this.baseTokenList =list;
+
+            this.refreshSearch()
         },
+        refreshSearch() {
+            if (this.inputSearch.length <= 0)
+                this.showTokenList = this.baseTokenList;
+            else
+                this.showTokenList = this.baseTokenList.filter((item) => {
+                    return item.searchWord.indexOf(this.inputSearch.toLowerCase()) > -1
+                })
+        },
+
         enterEditTokenListMode() {
             if (this.showTokenType === 'all')
                 return
@@ -421,7 +450,7 @@ export default {
                 let signers = null
                 let tokenInfo = await tokenManager.getTokenInfo(this.transInfo.genesis, this.transInfo.codehash);
                 console.log(tokenInfo)
-                if (tokenInfo.notDefaultSigners ||this.transInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
+                if (tokenInfo.notDefaultSigners || this.transInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
                     || this.transInfo.genesis === "8764ede9fa7bf81ba1eec5e1312cf67117d47930") {
                     signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
                 }
@@ -603,6 +632,10 @@ export default {
     }
 }
 
+.search-input{
+    margin: 10px 0;
+}
+
 .list {
 
     .empty {
@@ -611,7 +644,7 @@ export default {
         color: #999;
         position: relative;
 
-        .refresh-icon{
+        .refresh-icon {
             position: absolute;
             right: 12px;
             top: 50%;
@@ -670,7 +703,7 @@ export default {
                     width: 260px;
                 }
 
-                .item-amount{
+                .item-amount {
                     font-weight: bold;
                     display: flex;
                     flex-direction: column;
@@ -752,12 +785,13 @@ export default {
         }
     }
 
-    .refresh-item{
+    .refresh-item {
         padding: 8px 12px;
         display: flex;
         align-items: center;
         justify-content: end;
-        span{
+
+        span {
             font-weight: bold;
             margin-right: 12px;
             color: #999;
