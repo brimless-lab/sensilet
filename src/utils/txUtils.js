@@ -1,3 +1,4 @@
+const apiUtils = require("./apiUtils");
 const txUtils = {};
 
 let bg = chrome.extension && chrome.extension.getBackgroundPage();
@@ -82,6 +83,21 @@ txUtils.signTransaction =  function (wif, txHex, inputInfos) {
         return {sig, publicKey: privateKey.toPublicKey().toString()};
     });
 }
+
+txUtils.getMetaData = async function (metaTxId, metaOutputIndex) {
+    let metaData = {};
+    try {
+        let _res = await apiUtils.GetRawTxById(metaTxId);
+        let tx = new bsv156.Transaction(_res.data);
+        let jsondata = tx.outputs[metaOutputIndex].script.chunks[2].buf.toString();
+        metaData = JSON.parse(jsondata);
+    } catch (e) {
+        console.log('parse metadata failed', e);
+    }
+    return metaData;
+}
+
+
 
 
 module.exports = txUtils;

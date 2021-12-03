@@ -91,7 +91,6 @@ export default {
         DownOutlined, CheckOutlined, DeleteOutlined
     },
     data() {
-        console.log(this.$store.state.account)
         return {
             accountMode: walletManager.getAccountMode(),
             account: this.$store.state.account,
@@ -109,7 +108,6 @@ export default {
             this.list = null;
             let temp = await connectManager.list(this.account.address);
             let list = [];
-            console.log(temp)
             if (temp && Object.keys(temp).length > 0) {
                 for (let key in temp) {
                     temp[key].origin = key;

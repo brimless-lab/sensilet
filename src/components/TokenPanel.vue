@@ -107,39 +107,58 @@
             </div>
         </div>
     </div>
-    <a-modal v-model:visible="showTransPanel" @ok="transfer()" @cancel="cancelTransfer" :closable=false>
+    <a-modal v-model:visible="showTransPanel" :closable=false>
 
         <div class="trans-info-container" v-if="transInfo">
             <div class="title">
-                Send {{ isTransBSV ? "BSV" : transInfo.name }}
+                Send {{ transInfo.name }}
             </div>
-            <a-input v-model:value="transAddress" @change="transAddressChange" :placeholder="$t('account.input_address')"/>
-            <a-input v-model:value="transAmount" @change="transAmountChange"
-                     :placeholder="$t('account.input_amount',[transInfo.unit||transInfo.symbol])"/>
+            <div class="small-title">
+                You are sending <span> {{transInfo.name || transInfo.unit || transInfo.symbol }}</span>
+                <img class="coin-logo" v-if="transInfo.logo" :src="transInfo.logo" alt="">
 
-            <div class="notice">
-                <div class="balance" v-if="transInfo">
-                    <div class="key">
-                        Balance :
-                    </div>
-                    <div class="amount">
-                        {{ transBalance }} {{ transUnit }}
-                    </div>
-                    <div class="action" @click="sendAll">Send All</div>
+            </div>
+            <!--            <a-input v-model:value="transAddress" @change="transAddressChange" :placeholder="$t('account.input_address')"/>-->
+            <AddressInput v-if="transStep===0" @next="onTransNext" ref="addressInput"></AddressInput>
+            <div v-else>
+                <div style="margin-top: 8px">
+                    Address: {{ transAddress }}
                 </div>
-                <div class="fee">
-                    <div class="key">
-                        Fee:
+                <div class="input-container" :class="{'has-error':inputErrorNotice!==''}">
+                    <a-input v-model:value="transAmount" @change="transAmountChange"
+                             :placeholder="$t('account.input_amount',[transInfo.unit||transInfo.symbol])"/>
+                    <div class="notice">{{ inputErrorNotice }}</div>
+                </div>
+                <div class="notice">
+                    <div class="balance" v-if="transInfo">
+                        <div class="key">
+                            Balance :
+                        </div>
+                        <div class="amount">
+                            {{ transBalance }} {{ transUnit }}
+                        </div>
+                        <div class="action" @click="sendAll">Send All</div>
                     </div>
-                    <div class="amount">
-                        <span v-if="!transFeeLoading">{{ transFee }}</span>
-                        <a-spin size="small" v-else/>
-                        BSV
+                    <div class="fee">
+                        <div class="key">
+                            Fee:
+                        </div>
+                        <div class="amount">
+                            <span v-if="!transFeeLoading">{{ transFee }}</span>
+                            <a-spin size="small" v-else/>
+                            BSV
+                        </div>
+                        <div class="action"></div>
                     </div>
-                    <div class="action"></div>
                 </div>
             </div>
         </div>
+        <template v-slot:footer>
+            <div class="action-container">
+                <a-button @click="transBack">{{ transStepBackWord }}</a-button>
+                <a-button type="primary" @click="transNext">{{ transStepNextWord }}</a-button>
+            </div>
+        </template>
     </a-modal>
     <a-modal v-model:visible="isShowAddCustomTokenPanel" @ok="addCustomToken" :closable=false>
         <div class="custom-token-form">
@@ -190,11 +209,13 @@ import ArrowUpOutlined from '@ant-design/icons-vue/lib/icons/ArrowUpOutlined'
 import ArrowDownOutlined from '@ant-design/icons-vue/lib/icons/ArrowDownOutlined'
 import VerticalAlignTopOutlined from '@ant-design/icons-vue/lib/icons/VerticalAlignTopOutlined'
 import DownOutlined from '@ant-design/icons-vue/lib/icons/DownOutlined'
+import AddressInput from "@/components/AddressInput";
 
 
 export default {
     name: "TokenPanel",
     components: {
+        AddressInput,
         CheckOutlined,
         CloseOutlined,
         DeleteOutlined,
@@ -227,6 +248,10 @@ export default {
             baseTokenList: null,
             inputSearch: "",
             showTokenList: null,
+            transStep: 0,
+            transStepNextWord: this.$t('account.next'),
+            transStepBackWord: this.$t('account.cancel'),
+            inputErrorNotice:"",
 
         }
     },
@@ -254,17 +279,17 @@ export default {
             this.inputSearch = "";
 
             let list = await tokenManager.getTokenListNet();
-            if(list && list.length>0){
-                list.forEach(item=>{
+            if (list && list.length > 0) {
+                list.forEach(item => {
                     item.searchWord = item.genesis.toLowerCase();
-                    if(item.name)
-                        item.searchWord += '/'+ item.name.toLowerCase();
-                    if(item.unit)
-                        item.searchWord += '/'+ item.unit.toLowerCase();
+                    if (item.name)
+                        item.searchWord += '/' + item.name.toLowerCase();
+                    if (item.unit)
+                        item.searchWord += '/' + item.unit.toLowerCase();
                 })
             }
 
-            this.baseTokenList =list;
+            this.baseTokenList = list;
 
             this.refreshSearch()
         },
@@ -413,8 +438,6 @@ export default {
             this.transUnit = item.unit || item.symbol;
             this.transBalance = item.balance / Math.pow(10, item.decimal);
             this.showTransPanel = true;
-
-
         },
         receive(item) {
             // this.showQr = true
@@ -435,6 +458,13 @@ export default {
             }
         },
         transAmountChange(value) {
+            // console.log(this.transAmount ,this.transAmount * Math.pow(10, this.transInfo.decimal), this.transBalance)
+            if (this.transAmount  > this.transBalance)
+                return this.inputErrorNotice=this.$t('account.balance_not_enough')
+            else
+                this.inputErrorNotice = "";
+
+
             if (this.transAmount > 0 && walletManager.checkBsvAddress(this.transAddress)) {
                 this.calcTransFee();
             }
@@ -449,7 +479,7 @@ export default {
 
                 let signers = null
                 let tokenInfo = await tokenManager.getTokenInfo(this.transInfo.genesis, this.transInfo.codehash);
-                console.log(tokenInfo)
+                // console.log(tokenInfo)
                 if (tokenInfo.notDefaultSigners || this.transInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
                     || this.transInfo.genesis === "8764ede9fa7bf81ba1eec5e1312cf67117d47930") {
                     signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
@@ -471,11 +501,43 @@ export default {
                 this.transFeeLoading = false;
             }
         },
-        cancelTransfer() {
+        transNext() {
+            console.log('#1')
+
+            if (this.transStep === 0) {
+                this.$refs.addressInput.onOk();
+            } else {
+                this.transfer();
+            }
+        },
+        onTransNext(address) {
+            console.log('aaaa')
+            this.transStep = 1;
+            this.transAddress = address;
+            this.transStepNextWord = this.$t('account.ok')
+            this.transStepBackWord = this.$t('account.back')
+
+        },
+        transBack() {
+            this.transStepNextWord = this.$t('account.next')
+            this.transStepBackWord = this.$t('account.cancel')
+
+            if (this.transStep === 1) {
+                this.transStep = 0;
+            } else {
+                this.clearTransferInfo()
+            }
+        },
+
+        clearTransferInfo() {
             this.transAddress = "";
             this.transAmount = null;
             this.transFeeLoading = false;
             this.transFee = 0;
+            this.transStep = 0;
+            this.$refs.addressInput.reset();
+            this.showTransPanel = false;
+
         },
         async transfer() {
             //检查信息
@@ -632,7 +694,7 @@ export default {
     }
 }
 
-.search-input{
+.search-input {
     margin: 10px 0;
 }
 
@@ -690,7 +752,7 @@ export default {
                     div {
                         display: flex;
                         justify-content: space-between;
-                        margin-right: 8px;
+                        //margin-right: 8px;
                         align-items: center;
                     }
                 }
@@ -798,6 +860,84 @@ export default {
         }
     }
 }
+
+
+.base-token-list {
+
+    max-height: 60vh;
+    overflow: scroll;
+    //scroll
+    &::-webkit-scrollbar {
+        width: 0;
+    }
+
+    .title-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .action {
+            color: #666;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
+
+    .title {
+        font-size: 16px;
+
+        &:not(:first-child) {
+            margin-top: 10px;
+        }
+
+    }
+
+    .item {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+        //background-color: #ddeeff;
+        //border-radius: 5px;
+        padding: 8px;
+        border-bottom: #ddd 1px solid;
+
+        overflow: hidden;
+        position: relative;
+
+        .added {
+            width: 48px;
+            position: absolute;
+            top: -4px;
+            right: -4px;
+        }
+
+        &:not(:first-child) {
+            margin-top: 10px;
+        }
+
+        img {
+            border-radius: 50%;
+            width: 36px;
+        }
+
+        .info {
+            margin: 0 16px;
+
+            .name {
+
+            }
+
+            .genesis {
+                font-size: 12px;
+                color: #666;
+                width: calc(100vw - 144px);
+            }
+        }
+    }
+}
+
 </style>
 
 

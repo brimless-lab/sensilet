@@ -116,7 +116,11 @@ export default {
 
         not_display_notice: "According to local laws and regulations, the content will not be displayed.",
 
-        search_placeholder:"input name/genesis to search"
+        search_placeholder:"input name/genesis to search",
+        cancel:"Cancel",
+        back:"Back",
+        next:"Next",
+        ok:"Ok",
 
     },
     setting: {

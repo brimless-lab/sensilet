@@ -162,7 +162,7 @@ export default {
 
 .notice {
     margin:4px 10px;
-    font-size: 12px;
+    //font-size: 12px;
     &.main-word {
         color: #222;
         font-weight: bold;

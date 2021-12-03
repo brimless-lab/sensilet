@@ -18,9 +18,16 @@ apiUtils.getTokenPrice = function () {
 apiUtils.getTokenList = function () {
     return httpUtils.get(`${host}/token_list`)
 }
+apiUtils.getNftInfoList = function () {
+    return httpUtils.get(`${host}/nft_list`)
+}
 
 apiUtils.getTokenListVersion = function () {
     return httpUtils.get(`${host}/token_data_version`)
+}
+
+apiUtils.getDataVersion = function () {
+    return httpUtils.get(`${host}/data_version`)
 }
 
 apiUtils.getVersion = function () {
@@ -29,5 +36,17 @@ apiUtils.getVersion = function () {
 apiUtils.getTokenInfo = function (genesis, codehash) {
     return httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${codehash}/${genesis}`)
 }
+
+apiUtils.listNftByGenesis = function (codehash,genesis,address) {
+    return httpUtils.get(`https://api.sensiblequery.com/nft/utxo-data/${codehash}/${genesis}/${address}?cursor=0&size=1000`)
+}
+apiUtils.getNftDetail = function (codehash,genesis,tokenIndex){
+    return httpUtils.get(`http://127.0.0.1:30030/api/slime/${tokenIndex}`)
+}
+
+apiUtils.GetRawTxById = async function (metaTxId){
+    return httpUtils.get(`https://api.sensiblequery.com/rawtx/${metaTxId}`)
+}
+
 
 module.exports = apiUtils;

@@ -155,6 +155,39 @@ localManager.getTokenTableVersion = function () {
     return temp ? (isNaN(temp) ? 0 : parseInt(temp)) : 0;
 }
 
+localManager.getNftDataVersion = function () {
+    let temp = localStorage.getItem("nftDataVersion");
+    return temp ? (isNaN(temp) ? 0 : parseInt(temp)) : 0;
+}
+
+localManager.setNftInfoTable = function (data, version) {
+    setItem('nftInfoTable', data)
+    setItem('nftDataVersion', version)
+}
+localManager.getNftInfoTable = function (){
+    return getObjItem('nftInfoTable')
+}
+
+localManager.getRecentAddress = function () {
+    let temp = localStorage.getItem('recentAddress')
+    return temp ? JSON.parse(temp) : [];
+}
+localManager.addRecentAddress = function (address,alias="") {
+    let temp = localManager.getRecentAddress();
+    if(temp.findIndex((item=>item.address===address))>-1){
+        return
+    }
+
+    temp.unshift({
+        address,
+        alias
+    })
+    localStorage.setItem('recentAddress',JSON.stringify(temp))
+}
+localManager.clearRecentAddress = function (){
+    localStorage.removeItem('recentAddress')
+}
+
 function getObjItem(key) {
     let temp = localStorage.getItem(key);
     return temp ? JSON.parse(temp) : null;

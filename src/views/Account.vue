@@ -9,7 +9,7 @@
                     <div class="word">{{ $t($store.state.isConnected ? "account.connected" : "account.not_connected") }}</div>
                 </div>
             </div>
-            <div class="account-top account">
+            <div class="account">
                 <AccountChoose/>
             </div>
             <div class="panel">
@@ -68,32 +68,9 @@
                 </div>
             </div>
             <TokenPanel v-model:showQr="showQr"></TokenPanel>
-            <div class="panel" v-if="true">
-                <div class="account-top">
-                    <div class="title"> {{ $t('account.nfts') }}</div>
-                </div>
-                <div class="list" v-if="nftGenesisList==null" style="text-align: center">
-                    <a-spin v-if="false"/>
-                    <div v-else class="empty">
-                        {{ $t('account.coming_soon') }}
-                    </div>
-                </div>
-                <div class="nft-list" v-else-if="nftGenesisList.length>0">
-                    <div class="item" v-for="item in nftGenesisList">
-                        <div class="genesis">
-                            {{ $t('account.genesis') }}:{{ item.genesis }}
-                        </div>
-                        <div class="count">{{ item.count }}</div>
-                    </div>
-                </div>
-                <div class="list" v-else>
-                    <div class="empty">
-                        {{ $t('account.empty') }}
-                    </div>
-                </div>
-            </div>
+            <NftPanel></NftPanel>
             <div class="panel">
-                <div class="account-top">
+                <div class="panel-top">
                     <div class="title"> {{ $t('account.hot_app') }}</div>
                 </div>
                 <div class="app-list" v-if="appList!=null && canShowApp">
@@ -130,38 +107,57 @@
         <Footer></Footer>
     </div>
 
-    <a-modal v-model:visible="showTransPanel" @ok="transfer()" @cancel="cancelTransfer" :closable=false>
+    <a-modal v-model:visible="showTransPanel" :closable=false @cancel="clearTransferInfo">
+
         <div class="trans-info-container">
             <div class="title">
                 Send {{ isTransBSV ? "BSV" : transInfo.name }}
             </div>
-            <a-input v-model:value="transAddress" @change="transAddressChange" :placeholder="$t('account.input_address')"/>
-            <a-input v-model:value="transAmount" @change="transAmountChange"
-                     :placeholder="$t('account.input_amount',[transType==='BSV'? 'BSV':(transInfo.unit||transInfo.symbol)])"/>
+            <div class="small-title">
+                You are sending <span> BSV</span> <img class="coin-logo" src="../assets/bsv-icon.svg" alt="">
 
-            <div class="notice">
-                <div class="balance" v-if="transInfo">
-                    <div class="key">
-                        {{ $t('account.balance') }} :
-                    </div>
-                    <div class="amount">
-                        {{ transBalance }} {{ transUnit }}
-                    </div>
-                    <div class="action" @click="sendAll">{{ $t('account.send_all') }}</div>
+            </div>
+            <AddressInput v-if="transStep===0" @next="onTransNext" ref="addressInput"></AddressInput>
+            <div v-else>
+                <div style="margin-top: 8px">
+                    Address: {{ transAddress }}
                 </div>
-                <div class="fee">
-                    <div class="key">
-                        {{ $t('account.fee') }}:
+                <div class="input-container" :class="{'has-error':inputErrorNotice!==''}">
+                    <a-input v-model:value="transAmount" @change="transAmountChange" type="number"
+                             :placeholder="$t('account.input_amount',[transType==='BSV'? 'BSV':(transInfo.unit||transInfo.symbol)])"/>
+                    <div class="notice">{{ inputErrorNotice }}</div>
+                </div>
+                <div class="notice">
+                    <div class="balance" v-if="transInfo">
+                        <div class="key">
+                            {{ $t('account.balance') }} :
+                        </div>
+                        <div class="amount">
+                            {{ transBalance }} {{ transUnit }}
+                        </div>
+                        <div class="action" @click="sendAll">{{ $t('account.send_all') }}</div>
                     </div>
-                    <div class="amount">
-                        <span v-if="!transFeeLoading">{{ transFee }}</span>
-                        <a-spin size="small" v-else/>
-                        BSV
+                    <div class="fee">
+                        <div class="key">
+                            {{ $t('account.fee') }}:
+                        </div>
+                        <div class="amount">
+                            <span v-if="!transFeeLoading">{{ transFee }}</span>
+                            <a-spin size="small" v-else/>
+                            BSV
+                        </div>
+                        <div class="action"></div>
                     </div>
-                    <div class="action"></div>
                 </div>
             </div>
         </div>
+        <template v-slot:footer>
+            <div class="action-container">
+                <a-button @click="transBack">{{ transStepBackWord }}</a-button>
+                <a-button type="primary" @click="transNext">{{ transStepNextWord }}</a-button>
+            </div>
+        </template>
+
     </a-modal>
 
     <a-modal v-model:visible="showQr" :footer="null" :closable=false>
@@ -193,6 +189,8 @@ import Footer from "../components/Footer";
 import TokenPanel from "@/components/TokenPanel";
 
 import apiUtils from '../utils/apiUtils';
+import AddressInput from "@/components/AddressInput";
+import NftPanel from "@/components/NftPanel";
 
 let clip = null;
 let clip2 = null;
@@ -200,6 +198,8 @@ let clip2 = null;
 export default {
     name: "Account",
     components: {
+        NftPanel,
+        AddressInput,
         TokenPanel,
         AccountChoose,
         Footer,
@@ -210,7 +210,6 @@ export default {
             // extName: chrome.i18n.getMessage("extName"),
             asset: [],
             appList: null,
-            nftGenesisList: null,
             tokenList: null,
             mainAddress: walletManager.getMainAddress(),
             showTransPanel: false,
@@ -236,6 +235,10 @@ export default {
                 address: walletManager.getMainAddress(),
             },
             canShowApp: true,
+            transStep: 0,
+            transStepNextWord: this.$t('account.next'),
+            transStepBackWord: this.$t('account.cancel'),
+            inputErrorNotice: "",
 
         }
     },
@@ -253,10 +256,7 @@ export default {
 
         this.initAsset();
 
-        // this.initNfts();
-
         this.initAppList();
-
 
     },
     mounted() {
@@ -271,7 +271,7 @@ export default {
         });
 
         //    获取版本号和公告
-        this.initVersionAndNotice()
+        // this.initVersionAndNotice()
     },
     unmounted() {
         //卸载组件时，销毁
@@ -321,12 +321,7 @@ export default {
             this.isRefreshBsv = false
 
         },
-        async initNfts() {
-            this.nftGenesisList = await nftManager.listAllNft().catch(e => {
-                console.error(e);
-                return []
-            });
-        },
+
         async initAppList() {
             try {
                 let temp = localStorage.getItem('appList', data);
@@ -348,6 +343,45 @@ export default {
         receive(item) {
             this.showQr = true
         },
+        transNext() {
+            console.log('#1')
+
+            if (this.transStep === 0) {
+                this.$refs.addressInput.onOk();
+            } else {
+                this.transfer();
+            }
+        },
+        onTransNext(address) {
+            console.log('aaaa')
+            this.transStep = 1;
+            this.transAddress = address;
+            this.transStepNextWord = this.$t('account.ok')
+            this.transStepBackWord = this.$t('account.back')
+
+        },
+        transBack() {
+            this.transStepNextWord = this.$t('account.next')
+            this.transStepBackWord = this.$t('account.cancel')
+
+            if (this.transStep === 1) {
+                this.transStep = 0;
+            } else {
+                this.clearTransferInfo()
+            }
+        },
+
+        clearTransferInfo() {
+            this.transAddress = "";
+            this.transAmount = null;
+            this.transFeeLoading = false;
+            this.transFee = 0;
+            this.transStep = 0;
+            this.showTransPanel = false;
+
+            if(this.$refs.addressInput)
+                this.$refs.addressInput.reset();
+        },
 
         async sendBsv(item) {
             this.transType = 'BSV';
@@ -357,24 +391,20 @@ export default {
             this.showTransPanel = true;
         },
         async sendAll() {
-            if (this.transType === 'BSV') {
-                let {amount, fee} = await walletManager.getSendAllInfo(walletManager.getMainWif());
+            let {amount, fee} = await walletManager.getSendAllInfo(walletManager.getMainWif());
 
-                this.transAmount = amount / Math.pow(10, 8);
-                this.transFee = fee / Math.pow(10, 8);
-            } else {
-                this.transAmount = this.transBalance;
-                this.transAmountChange()
-            }
+            this.transAmount = amount / Math.pow(10, 8);
+            this.transFee = fee / Math.pow(10, 8);
+
         },
-        transAddressChange(value) {
-            if (this.transAddress.length >= 26) {
-                if (walletManager.checkBsvAddress(this.transAddress) && this.transAmount > 0) {
-                    this.calcTransFee()
-                }
-            }
-        },
+
         transAmountChange(value) {
+
+            if (this.transAmount * Math.pow(10,8) > this.transInfo.balance.total)
+                return this.inputErrorNotice=this.$t('account.balance_not_enough')
+            else
+                this.inputErrorNotice = "";
+
             if (this.transAmount > 0 && walletManager.checkBsvAddress(this.transAddress)) {
                 this.calcTransFee();
             }
@@ -383,63 +413,34 @@ export default {
             if (this.transFeeLoading)
                 return
             this.transFeeLoading = true;
+            await sleep(100);
             try {
                 let amount = Math.round(parseFloat(this.transAmount) * Math.pow(10, this.transInfo.decimal));
                 // console.log(amount)
-                if (this.transType === 'BSV') {
-                    let {fee, isInvalid} = await walletManager.payArray([{
-                        address: this.transAddress,
-                        amount,
-                    }], false)
-                    console.log(fee)
-                    if (!isInvalid) {
-                        fee = fee / Math.pow(10, 8)
-                        this.transFee = fee;
-                    } else {
-                        this.transFee = "Invalid";
-                    }
-                } else {
-                    let signers = null
-                    let tokenInfo = await tokenManager.getTokenInfo(this.transInfo.genesis, this.transInfo.codehash);
-
-                    if (this.transInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
-                        || this.transInfo.genesis === "8764ede9fa7bf81ba1eec5e1312cf67117d47930") {
-                        signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
-                    }
-                    // console.log(tokenInfo)
-                    // console.log(this.transInfo)
-                    // console.log(signers)
-                    let fee = await tokenManager.sensibleFt.getTransferEsitimate(this.transInfo.codehash, this.transInfo.genesis,
-                        [{
-                            address: this.transAddress,
-                            amount,
-                        }], walletManager.getMainWif(), signers
-                    );
+                let {fee, isInvalid} = await walletManager.payArray([{
+                    address: this.transAddress,
+                    amount,
+                }], false)
+                if (!isInvalid) {
                     fee = fee / Math.pow(10, 8)
                     this.transFee = fee;
+                } else {
+                    this.transFee = "Invalid";
                 }
+
             } catch (e) {
                 console.log(e)
                 this.transFee = "Invalid"
             } finally {
-
                 this.transFeeLoading = false;
             }
         },
-        cancelTransfer() {
-            this.transAddress = "";
-            this.transAmount = null;
-            this.transFeeLoading = false;
-            this.transFee = 0;
-        },
+
         async transfer() {
-            //检查信息
-            if (!walletManager.checkBsvAddress(this.transAddress)) {
-                return antMessage.error(this.$t('account.address_error'))
-            }
 
             let amount = this.transAmount;
-            if (isNaN(amount))
+            console.log('amount', amount)
+            if (!amount || isNaN(amount))
                 return antMessage.error(this.$t('account.amount_error'))
 
             switch (this.transType) {
@@ -607,50 +608,28 @@ export default {
     }
 }
 
-.account-top {
-    width: 100%;
-    padding: 4px 16px;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    background-color: $base-color;
-    color: white;
-    position: relative;
+.account {
+    margin: 4px auto;
+    padding: 0 16px;
     max-width: 375px;
 
-    &.account {
-        margin: 4px auto;
-        padding: 0 16px;
 
-        background-color: $main-bg;
-        justify-content: center;
-        position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-        .account-mode {
-            position: absolute;
-            right: 8px;
-            color: #bbb;
-        }
+
+    background-color: $main-bg;
+    position: relative;
+
+    .account-mode {
+        position: absolute;
+        right: 8px;
+        color: #bbb;
     }
+}
 
-
-    .title {
-        font-size: 16px;
-        font-weight: bold;
-
-        &.action {
-            z-index: 1;
-            padding: 4px 16px;
-            cursor: pointer;
-            border-radius: 5px;
-
-            &:hover {
-                background-color: #ddd;
-            }
-        }
-    }
+.panel-top {
 
     .type-choose {
         border-radius: 2em;
@@ -978,22 +957,5 @@ export default {
     }
 }
 
-.nft-list {
-    .item {
-        display: flex;
-        align-items: center;
-
-        .genesis {
-            padding: 16px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .count {
-            padding-right: 16px;
-        }
-    }
-}
 
 </style>

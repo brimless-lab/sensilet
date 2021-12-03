@@ -44,6 +44,7 @@
         <ExportPrivate v-else-if="currentPage==='/exportPrivateKey'"/>
         <SignTransaction v-else-if="currentPage==='/signTransaction'"/>
         <ConnectManagement v-else-if="currentPage==='/connectManagement'"/>
+        <NftList v-else-if="currentPage==='/nftList'"/>
     </div>
 
 </template>
@@ -74,6 +75,7 @@ const ImportPrivate = defineAsyncComponent(() => import( "./views/ImportPrivate"
 const ExportPrivate = defineAsyncComponent(() => import( "./views/ExportPrivate"));
 const SignTransaction = defineAsyncComponent(() => import( "./views/SignTransaction"));
 const ConnectManagement = defineAsyncComponent(() => import( "./views/ConnectManagement"));
+const NftList = defineAsyncComponent(() => import( "./views/NftList"));
 
 const AccountChoose = defineAsyncComponent(() => import( "./components/AccountChoose"));
 
@@ -107,6 +109,7 @@ export default {
         ImportPrivate,
         ExportPrivate,
         SignTransaction,
+        NftList,
         ConnectManagement,
     },
     data() {
@@ -129,7 +132,7 @@ export default {
             return this.currentPage === '/account'
         },
         showAccountChoose() {
-            return  ['/create','/unlock'].indexOf( this.currentPage) >= 0
+            return ['/create', '/unlock'].indexOf(this.currentPage) >= 0
         }
     },
     beforeCreate() {
@@ -137,6 +140,8 @@ export default {
             console.log(url)
             this.currentPage = url;
         });
+
+
 
         if (request && request.method === 'connect') {
             console.log('connect to sensilet');
@@ -183,8 +188,8 @@ export default {
 
 
         if (routerManager.getCurrentPage() === '/') {
-            // if(config.debug)
-            //     return routerManager.goto('/connectManagement')
+            if(config.debug)
+                return routerManager.gotoDebug();
             routerManager.goto('/account')
         }
 
@@ -219,18 +224,35 @@ export default {
         });
 
         //    检查已保存的数据版本 //不等同步
-        this.checkTokenVersion()
+        this.checkDataVersion();
+
+
     },
     methods: {
-        async checkTokenVersion() {
-            let {data} = await apiUtils.getTokenListVersion()
+        async checkDataVersion() {
+            try {
+
+
+            let {tokenDataVersion,nftDataVersion} = (await apiUtils.getDataVersion()).data
+
+            //    检查token信息
             let version = localManager.getTokenTableVersion();
-            if (data > version) {
+            if (tokenDataVersion > version) {
                 console.log("refresh token data")
                 await tokenManager.getTokenListNet();
-            //    修复已添加的
+                //    修复已添加的
                 await tokenManager.refreshLocalTokenData();
             }
+
+            //检查nft 信息
+            let localNftDataVersion =   localManager.getNftDataVersion();
+            if(nftDataVersion > localNftDataVersion){
+                await nftManager.getNftInfoNet();
+            }
+            }catch (e) {
+                console.error(e)
+            }
+
         },
         newVersion() {
             if (this.$store.getters.hasNewVersion) {
@@ -465,6 +487,38 @@ body {
         box-shadow: 0 2px 4px 1px rgb(0 0 0 / 15%), 0px 1px 1px 0px rgb(0 0 0 / 12%), 0px 1px 3px 0px rgb(0 0 0 / 8%);
     }
 
+    .panel-top{
+        width: 100%;
+        padding: 4px 16px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        background-color: $base-color;
+        color: white;
+        position: relative;
+        max-width: 375px;
+
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+
+            &.action {
+                z-index: 1;
+                padding: 4px 16px;
+                cursor: pointer;
+                border-radius: 5px;
+
+                &:hover {
+                    background-color: #ddd;
+                }
+            }
+        }
+
+    }
+
 }
 
 
@@ -474,95 +528,38 @@ body {
     white-space: nowrap;
 }
 
-.base-token-list {
-
-    max-height: 60vh;
-    overflow: scroll;
-    //scroll
-    &::-webkit-scrollbar {
-        width: 0;
-    }
-
-    .title-container {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        .action {
-            color: #666;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-    }
-
-    .title {
-        font-size: 16px;
-
-        &:not(:first-child) {
-            margin-top: 10px;
-        }
-
-    }
-
-    .item {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-
-        background-color: #ddeeff;
-        border-radius: 5px;
-        padding: 8px;
-
-        overflow: hidden;
-        position: relative;
-
-        .added {
-            width: 48px;
-            position: absolute;
-            top: -4px;
-            right: -4px;
-        }
-
-        &:not(:first-child) {
-            margin-top: 10px;
-        }
-
-        img {
-            border-radius: 50%;
-            width: 36px;
-        }
-
-        .info {
-            margin: 0 16px;
-
-            .name {
-
-            }
-
-            .genesis {
-                font-size: 12px;
-                color: #666;
-                width: calc(100vw - 144px);
-            }
-        }
-    }
-}
-
 .trans-info-container {
     .title {
         text-align: center;
         font-size: 18px;
     }
 
-    input {
-        &:not(:first-child) {
-            margin-top: 16px;
+    .small-title {
+        display: flex;
+        align-items: center;
+
+        span {
+            margin-left: .5em;
+            font-weight: bold;
+        }
+
+        img {
+            margin-left: .5em;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
         }
     }
 
+
+    //input {
+    //    &:not(:first-child) {
+    //        margin-top: 16px;
+    //    }
+    //}
+
     .notice {
-        margin-top: 16px;
+        margin-top: 20px;
 
         .balance, .fee {
             display: grid;
@@ -716,6 +713,28 @@ body {
 
     &.refreshing {
         animation: 1s rotate360 infinite linear;
+    }
+}
+
+
+
+.input-container {
+    margin: 20px auto;
+    position: relative;
+
+    .notice {
+        margin-top: 0;
+        transform: scaleY(0);
+        color: red;
+        position: absolute;
+        left: 0;
+        top: 100%;
+    }
+
+    &.has-error {
+        .notice {
+            transform: scaleY(1);
+        }
     }
 }
 

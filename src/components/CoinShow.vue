@@ -21,7 +21,7 @@
             priceColorClass: String,
             value: [String , Number],
             decimal:Number,
-            fixed:{type: Number,default:3},
+            fixed:{type: [Number,String],default:3},
         },
 
         computed: {

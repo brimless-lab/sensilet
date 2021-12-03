@@ -2,13 +2,35 @@ let nftManager = {};
 
 const sensibleNftUtils = require('../utils/sensibleNftUtils');
 const metaIdUtils = require('../utils/metaIdUtils');
+const apiUtils = require('../utils/apiUtils');
 nftManager.sensibleNft = sensibleNftUtils;
 
-let bg =chrome.extension && chrome.extension.getBackgroundPage();
+let bg = chrome.extension && chrome.extension.getBackgroundPage();
 if (!bg)
     window.location.reload();
 const {API_NET, API_TARGET, Wallet, SensibleApi} = bg.sensibleSdk;
 
+nftManager.getNftInfoNet = async function () {
+    let {data, version} = await apiUtils.getNftInfoList()
+    if (data && data.length > 0) {
+        //    转换成table存下来
+        let table = {};
+        data.forEach((item) => {
+            table[item.genesis] = item;
+        })
+        localManager.setNftInfoTable(table, version)
+
+        return table
+    }
+    return {}
+}
+nftManager.getNftInfoTable = async function(){
+    let table = localManager.getNftInfoTable();
+    if(!table){
+        table = await nftManager.getNftInfoNet()
+    }
+    return table;
+}
 
 nftManager.listGenesis = async function () {
     return localManager.listGenesis();
@@ -17,9 +39,7 @@ nftManager.getNewGenesisPathIndex = function () {
     return nftManager.listGenesis().length + 1;
 };
 nftManager.listAllNft = function () {
-
     return sensibleNftUtils.getSummary(walletManager.getMainAddress())
-
 };
 nftManager.genesis = function (index, metaIdInfo, totalSupply = 9223372036854776000) { //2^63  默认值
     return new Promise(async (resolve, reject) => {
@@ -92,25 +112,25 @@ nftManager.createMetaIdForGenesisNft = async function ({index, name, desc, icon,
     if (name || desc || icon) {
         if (callback)
             callback(2, '正在创建Info节点');
-        infoTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(infoInfo.pubKey, rootTxid, "Info", "", "0", "", "text/plain", "UTF-8"),rootInfo.wif)).txid;
+        infoTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(infoInfo.pubKey, rootTxid, "Info", "", "0", "", "text/plain", "UTF-8"), rootInfo.wif)).txid;
         if (name) {
             if (callback)
                 callback(3, '正在记录名称信息');
-            nameTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(nameInfo.pubKey, infoTxid, "name", name, "0", "0", "text/plain", "UTF-8"),infoInfo.wif)).txid;
+            nameTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(nameInfo.pubKey, infoTxid, "name", name, "0", "0", "text/plain", "UTF-8"), infoInfo.wif)).txid;
         }
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         if (desc) {
             if (callback)
                 callback(4, '正在记录描述信息');
-            descTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(nameInfo.pubKey, infoTxid, "desc", desc, "0", "0", "text/plain", "UTF-8"),infoInfo.wif)).txid;
+            descTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(nameInfo.pubKey, infoTxid, "desc", desc, "0", "0", "text/plain", "UTF-8"), infoInfo.wif)).txid;
         }
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         if (icon) {
             if (callback)
                 callback(5, '正在记录icon信息');
-            iconTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(nameInfo.pubKey, infoTxid, "icon", icon, "0", "0", "text/plain", "UTF-8"),infoInfo.wif)).txid;
+            iconTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(nameInfo.pubKey, infoTxid, "icon", icon, "0", "0", "text/plain", "UTF-8"), infoInfo.wif)).txid;
         }
     }
 
@@ -118,12 +138,12 @@ nftManager.createMetaIdForGenesisNft = async function ({index, name, desc, icon,
 //    创建protocols 节点
     if (callback)
         callback(6, '正在创建创建Protocols节点');
-    let protocolsTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(protocolsInfo.pubKey, rootTxid, "Protocols", "", 0, "", "text/plain", "utf-8"),rootInfo.wif)).txid;
+    let protocolsTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(protocolsInfo.pubKey, rootTxid, "Protocols", "", 0, "", "text/plain", "utf-8"), rootInfo.wif)).txid;
 
 //    创建nft协议节点  这里直接用root节点作为公钥 方便创建子节点
     if (callback)
         callback(7, '正在创建创建NFT协议节点');
-    let nftProtocolTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(rootInfo.pubKey, protocolsTxid, "NftIssue", "f18d5098a90d", "0", "1.0.3", "text/plain", "UTF-8"),protocolsInfo.wif)).txid
+    let nftProtocolTxid = (await walletManager.sendOpReturn(metaIdUtils.buildMetaData(rootInfo.pubKey, protocolsTxid, "NftIssue", "f18d5098a90d", "0", "1.0.3", "text/plain", "UTF-8"), protocolsInfo.wif)).txid
 
     return {
         rootTxid, protocolsTxid, nftProtocolTxid,

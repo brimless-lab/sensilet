@@ -60,6 +60,10 @@ const pageConfigs = {
         needCreate: true,
         needUnlock: true,
     },
+    '/nftList': {
+        needCreate: true,
+        needUnlock: true,
+    },
 
 };
 
@@ -75,8 +79,8 @@ routerManager.addListener = function (event) {
 };
 routerManager.data = null;
 routerManager.goto = function (url, data) {
-    if(config.debug)
-        console.log('goto',url)
+    if (config.debug)
+        console.log('goto', url)
     //修改链接上的参数显示
     let needGoto = url;
     let pageConfig = pageConfigs[url];
@@ -92,6 +96,10 @@ routerManager.goto = function (url, data) {
         sessionStorage.setItem('go_for_url', url);
         if (data)
             sessionStorage.setItem('go_for_url_data', JSON.stringify(data))
+    }
+    if (config.debug) {
+        localStorage.setItem('debug_need_goto', needGoto)
+        localStorage.setItem('debug_need_goto_data', JSON.stringify(data||{}))
     }
 
     routerManager.data = data;
@@ -125,6 +133,14 @@ routerManager.gotoHome = function () {
 
 routerManager.goBack = function () {
     routerManager.goto(last);
+}
+
+routerManager.gotoDebug = function () {
+    let needGoto = localStorage.getItem('debug_need_goto')
+    if(needGoto)
+        routerManager.goto(needGoto, JSON.parse(localStorage.getItem("debug_need_goto_data") || "{}"))
+    else
+        routerManager.gotoHome()
 }
 
 module.exports = routerManager;
