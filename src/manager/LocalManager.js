@@ -164,7 +164,7 @@ localManager.setNftInfoTable = function (data, version) {
     setItem('nftInfoTable', data)
     setItem('nftDataVersion', version)
 }
-localManager.getNftInfoTable = function (){
+localManager.getNftInfoTable = function () {
     return getObjItem('nftInfoTable')
 }
 
@@ -172,19 +172,32 @@ localManager.getRecentAddress = function () {
     let temp = localStorage.getItem('recentAddress')
     return temp ? JSON.parse(temp) : [];
 }
-localManager.addRecentAddress = function (address,alias="") {
+localManager.addRecentAddress = function (address, tag, alias = "") {
     let temp = localManager.getRecentAddress();
-    if(temp.findIndex((item=>item.address===address))>-1){
-        return
-    }
+    let index = temp.findIndex((item => item.address === address));
 
-    temp.unshift({
-        address,
-        alias
-    })
-    localStorage.setItem('recentAddress',JSON.stringify(temp))
+    if (index > -1) {
+        //    如果已经存在，移到开头
+        let target = (temp.splice(index, 1))[0]
+        target.timestamp = Date.now();
+        if (!target.tags)
+            target.tags = []
+        if (target.tags.indexOf(tag) < 0) {
+            target.tags.push[tag]
+        }
+        temp.unshift(target)
+    } else {
+        temp.unshift({
+            address,
+            alias,
+            timestamp: Date.now(),
+            tags: [tag]
+        })
+    }
+    localStorage.setItem('recentAddress', JSON.stringify(temp))
+
 }
-localManager.clearRecentAddress = function (){
+localManager.clearRecentAddress = function () {
     localStorage.removeItem('recentAddress')
 }
 

@@ -119,7 +119,7 @@
 
             </div>
             <!--            <a-input v-model:value="transAddress" @change="transAddressChange" :placeholder="$t('account.input_address')"/>-->
-            <AddressInput v-if="transStep===0" @next="onTransNext" ref="addressInput"></AddressInput>
+            <AddressInput v-if="transStep===0" @next="onTransNext" ref="addressInput" transType="FT"></AddressInput>
             <div v-else>
                 <div style="margin-top: 8px">
                     Address: {{ transAddress }}
@@ -502,7 +502,6 @@ export default {
             }
         },
         transNext() {
-            console.log('#1')
 
             if (this.transStep === 0) {
                 this.$refs.addressInput.onOk();

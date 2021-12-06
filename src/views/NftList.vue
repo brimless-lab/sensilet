@@ -51,7 +51,7 @@ export default {
     methods: {
         async refreshNftList() {
             let result = await apiUtils.listNftByGenesis(this.nftInfo.codehash, this.nftInfo.genesis, this.$store.getters.address)
-            console.log(result)
+
             if (result.code === 0 && result.data) {
                 this.list = result.data.utxo;
             }

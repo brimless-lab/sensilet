@@ -117,7 +117,7 @@
                 You are sending <span> BSV</span> <img class="coin-logo" src="../assets/bsv-icon.svg" alt="">
 
             </div>
-            <AddressInput v-if="transStep===0" @next="onTransNext" ref="addressInput"></AddressInput>
+            <AddressInput v-if="transStep===0" @next="onTransNext" ref="addressInput" transType="BSV"></AddressInput>
             <div v-else>
                 <div style="margin-top: 8px">
                     Address: {{ transAddress }}

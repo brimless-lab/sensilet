@@ -23,7 +23,9 @@
                 <div class="right">#{{ mNftInfo.tokenIndex }}</div>
             </div>
             <div class="img-container">
-                <img class="pic" v-if="metaData" :src='metaData.image' alt="">
+<!--                <img class="pic" v-if="metaData" :src='metaData.image' alt="">-->
+                <img class="pic" v-if="metaData && metaData.image" :src='metaData.image ' alt="">
+                <QuestionCircleOutlined v-else :style="{fontSize: '24px'}"/>
             </div>
             <div class="desc" v-if="metaData">
                 {{ metaData.description }}
@@ -59,7 +61,7 @@
                     </div>
                 </div>
             </div>
-            <AddressInput v-else v-model:bindAddress="transAddress"></AddressInput>
+            <AddressInput v-else @next="onTransNext" ref="addressInput" transType="NFT"></AddressInput>
 
             <div class="action-container">
                 <a class="info" :href="`https://blockcheck.info/nft/${mNftInfo.codehash}/${mNftInfo.genesis}/${mNftInfo.tokenIndex}`" target="_blank">
@@ -102,7 +104,6 @@ export default {
             showDetail: false,
             metaData: null,
             isTransMode: false,
-            transAddress: "",
         }
     },
     watch: {
@@ -124,18 +125,23 @@ export default {
             this.showDetail = true;
         },
         closeDetail() {
+            if(this.$refs && this.$refs.addressInput) {
+                this.$refs.addressInput.reset();
+            }
             this.isTransMode = false;
-            this.transAddress = "";
         },
-
         transNft() {
-            console.log(this.transAddress)
-
-            if (!walletManager.checkBsvAddress(this.transAddress)) {
+            this.$refs.addressInput.onOk();
+        },
+        //转移NFT
+        onTransNext(address){
+            if (!walletManager.checkBsvAddress(address)) {
                 return antMessage.error(this.$t('account.address_error'))
             }
 
+            console.log(address)
         },
+
     }
 }
 </script>

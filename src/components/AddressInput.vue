@@ -31,7 +31,9 @@ export default {
     ],
     props: {
         bindAddress: String,
+        transType:String,
     },
+
     data() {
         return {
             transAddress: "",
@@ -57,6 +59,9 @@ export default {
     },
     mounted() {
         this.list = localManager.getRecentAddress().slice(0, 5)
+
+    },
+    activated(){
 
     },
     methods: {
@@ -88,7 +93,7 @@ export default {
                 return antMessage.error(this.$t('account.address_error'))
             }
 
-            localManager.addRecentAddress(this.transAddress)
+            localManager.addRecentAddress(this.transAddress,this.transType)
             this.$emit('next', this.transAddress);
 
         }
