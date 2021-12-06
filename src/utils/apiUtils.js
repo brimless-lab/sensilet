@@ -48,5 +48,10 @@ apiUtils.GetRawTxById = async function (metaTxId){
     return httpUtils.get(`https://api.sensiblequery.com/rawtx/${metaTxId}`)
 }
 
+apiUtils.getRawTx = function (txid) {
+    return httpUtils.get(`https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`)
+}
+
+
 
 module.exports = apiUtils;

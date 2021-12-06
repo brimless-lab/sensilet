@@ -142,7 +142,6 @@ export default {
         });
 
 
-
         if (request && request.method === 'connect') {
             console.log('connect to sensilet');
             return routerManager.goto('/connect')
@@ -188,7 +187,7 @@ export default {
 
 
         if (routerManager.getCurrentPage() === '/') {
-            if(config.debug)
+            if (config.debug)
                 return routerManager.gotoDebug();
             routerManager.goto('/account')
         }
@@ -233,23 +232,23 @@ export default {
             try {
 
 
-            let {tokenDataVersion,nftDataVersion} = (await apiUtils.getDataVersion()).data
+                let {tokenDataVersion, nftDataVersion} = (await apiUtils.getDataVersion()).data
 
-            //    检查token信息
-            let version = localManager.getTokenTableVersion();
-            if (tokenDataVersion > version) {
-                console.log("refresh token data")
-                await tokenManager.getTokenListNet();
-                //    修复已添加的
-                await tokenManager.refreshLocalTokenData();
-            }
+                //    检查token信息
+                let version = localManager.getTokenTableVersion();
+                if (tokenDataVersion > version) {
+                    console.log("refresh token data")
+                    await tokenManager.getTokenListNet();
+                    //    修复已添加的
+                    await tokenManager.refreshLocalTokenData();
+                }
 
-            //检查nft 信息
-            let localNftDataVersion =   localManager.getNftDataVersion();
-            if(nftDataVersion > localNftDataVersion){
-                await nftManager.getNftInfoNet();
-            }
-            }catch (e) {
+                //检查nft 信息
+                let localNftDataVersion = localManager.getNftDataVersion();
+                if (nftDataVersion > localNftDataVersion) {
+                    await nftManager.getNftInfoNet();
+                }
+            } catch (e) {
                 console.error(e)
             }
 
@@ -487,7 +486,7 @@ body {
         box-shadow: 0 2px 4px 1px rgb(0 0 0 / 15%), 0px 1px 1px 0px rgb(0 0 0 / 12%), 0px 1px 3px 0px rgb(0 0 0 / 8%);
     }
 
-    .panel-top{
+    .panel-top {
         width: 100%;
         padding: 4px 16px;
 
@@ -717,7 +716,6 @@ body {
 }
 
 
-
 .input-container {
     margin: 20px auto;
     position: relative;
@@ -738,4 +736,112 @@ body {
     }
 }
 
+.nft-detail-panel {
+
+    .top-info {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+
+        .name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .right {
+            position: absolute;
+            right: 0;
+        }
+    }
+
+    .img-container {
+        display: flex;
+        justify-content: center;
+        margin: 10px auto;
+
+        img {
+            max-height: 200px;
+        }
+    }
+
+    .desc {
+        text-align: center;
+        color: #999;
+    }
+
+    .info-list {
+        margin-top: 16px;
+
+        .info {
+            margin-top: 4px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+
+            span:nth-child(2){
+                flex-grow: 99;
+                text-align: right;
+            }
+        }
+    }
+
+
+    .action-container {
+        margin-top: 16PX;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+
+
+    }
+}
+
+
+.ant-btn-round {
+    color: #7a7a7a;
+    //border-color: #d2f1e5;
+    //background-color: white;
+    width: 100px;
+    font-weight: bold;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.ant-btn-primary {
+        color: white;
+
+        &:hover{
+            color: #eee;
+        }
+    }
+
+
+
+    &:hover{
+        color: #333;
+    }
+
+    span {
+        min-width: 56px;
+        margin-top: 1px;
+    }
+
+    img {
+        width: 18px;
+        margin-right: 2px;
+    }
+
+    @media (max-width:400px) {
+        width: 92px;
+
+        img{width: 17px}
+    }
+}
 </style>

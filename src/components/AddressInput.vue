@@ -27,8 +27,11 @@ export default {
         DeleteOutlined,
     },
     emits: [
-        "next",
+        "next","update:bindAddress"
     ],
+    props: {
+        bindAddress: String,
+    },
     data() {
         return {
             transAddress: "",
@@ -58,6 +61,7 @@ export default {
     },
     methods: {
         addressChange() {
+            this.$emit('update:bindAddress', this.transAddress)
             if (this.transAddress === '') {
                 this.inputErrorNotice = 'Please input the Address';
             } else {
@@ -65,7 +69,6 @@ export default {
                     this.inputErrorNotice = 'Invalid Address';
                 } else
                     this.inputErrorNotice = '';
-
             }
         },
         choose(address) {

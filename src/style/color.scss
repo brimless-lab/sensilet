@@ -9,40 +9,6 @@ $font-weaken: #999;
     border-radius: 2em;
 }
 
-.ant-btn-round {
-    color: #7a7a7a;
-    //border-color: #d2f1e5;
-    //background-color: white;
-    width: 100px;
-    font-weight: bold;
-    padding: 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-
-
-    &:hover{
-        color: #333;
-    }
-
-    span {
-        min-width: 56px;
-        margin-top: 1px;
-    }
-
-    img {
-        width: 18px;
-        margin-right: 2px;
-    }
-
-    @media (max-width:400px) {
-        width: 92px;
-
-        img{width: 17px}
-    }
-}
 .account-top {
     .ant-radio-button-wrapper {
         width: 72px;

@@ -21,7 +21,7 @@
                             {{ $t('account.genesis') }}:{{ item.genesisShow }}
                         </div>
                     </div>
-                    <div class="count">{{ item.count }}</div>
+                    <div class="count">{{ item.count + item.pendingCount}}</div>
                 </div>
                 <div class="right">
                     <RightOutlined></RightOutlined>

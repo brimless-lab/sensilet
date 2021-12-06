@@ -1,4 +1,5 @@
 const apiUtils = require("./apiUtils");
+const httpUtils = require("@/utils/httpUtils");
 const txUtils = {};
 
 let bg = chrome.extension && chrome.extension.getBackgroundPage();
@@ -59,7 +60,7 @@ txUtils.sign = (wif, {txHex, scriptHex, address, inputIndex, satoshis, sigtype,}
     }
 }
 
-txUtils.signTransaction =  function (wif, txHex, inputInfos) {
+txUtils.signTransaction = function (wif, txHex, inputInfos) {
     const tx = new bsv156.Transaction(txHex);
     let privateKey = bsv156.PrivateKey.fromWIF(wif);
 
@@ -87,17 +88,42 @@ txUtils.signTransaction =  function (wif, txHex, inputInfos) {
 txUtils.getMetaData = async function (metaTxId, metaOutputIndex) {
     let metaData = {};
     try {
-        let _res = await apiUtils.GetRawTxById(metaTxId);
-        let tx = new bsv156.Transaction(_res.data);
-        let jsondata = tx.outputs[metaOutputIndex].script.chunks[2].buf.toString();
-        metaData = JSON.parse(jsondata);
+        let _res = await apiUtils.getRawTx(metaTxId);
+        let tx = new bsv156.Transaction(_res);
+        let chunks = tx.outputs[metaOutputIndex].script.chunks;
+        let jsonData = chunks[2].buf.toString();
+        if (jsonData === 'meta') {
+            let data = chunks[7].buf.toString();
+            metaData = JSON.parse(data);
+            metaData.type = "metaid"
+            metaData.description = metaData.desc;
+            metaData.officialSite = metaData.website;
+            if (metaData.icon)
+                metaData.image = 'https://showman.showpay.io/metafile/' + metaData.icon.replace('metafile://', "")
+        } else {
+            metaData = JSON.parse(jsonData);
+            metaData.type = "standard"
+
+            // console.log(metaData,"metaData")
+            if (metaData && metaData.tokenUri) {
+                let result = await httpUtils.get(metaData.tokenUri)
+                if (result) {
+                    metaData.name = result.name;
+                    metaData.image = result.image;
+                    metaData.description = result.description;
+                    metaData.attributes = result.attributes;
+                }
+            }
+        }
+
     } catch (e) {
-        console.log('parse metadata failed', e);
+        console.error('parse metadata failed', e);
     }
+    if (config.debug)
+        console.log(metaData, 'metaData')
     return metaData;
+    // return {};
 }
-
-
 
 
 module.exports = txUtils;
