@@ -16,6 +16,10 @@
                         {{ $t(accountMode) }}
                     </span>
                 </div>
+                <div class="item btn"  @click="gotoExplorer">
+                    <CompassOutlined class="item-icon"/>
+                    <span>{{ $t("setting.view_in_explorer") }}</span>
+                </div>
                 <!--                <div class="item btn" @click="uploadAddressConfirm()">-->
                 <!--                    <img v-if="registered" src="../assets/icon-checked.svg" alt="">-->
                 <!--                    <img v-else src="../assets/icon-check.svg" alt="">-->
@@ -93,6 +97,7 @@ import KeyOutlined from '@ant-design/icons-vue/lib/icons/KeyOutlined'
 import FullscreenOutlined from '@ant-design/icons-vue/lib/icons/FullscreenOutlined'
 import EditOutlined from '@ant-design/icons-vue/lib/icons/EditOutlined'
 import DeleteOutlined from '@ant-design/icons-vue/lib/icons/DeleteOutlined'
+import CompassOutlined from '@ant-design/icons-vue/lib/icons/CompassOutlined'
 
 
 import {h} from 'vue'
@@ -102,7 +107,7 @@ export default {
     components: {
         Footer,
         KeyOutlined,
-        FullscreenOutlined, EditOutlined, DeleteOutlined
+        FullscreenOutlined, EditOutlined, DeleteOutlined,CompassOutlined
     },
     data() {
         return {
@@ -154,6 +159,9 @@ export default {
         },
         openWeb() {
             window.open("/popup.html")
+        },
+        gotoExplorer() {
+            window.open(`https://blockcheck.info/address/${this.$store.getters.address}`)
         },
         gotoExport() {
             antModal.confirm({

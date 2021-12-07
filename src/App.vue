@@ -828,7 +828,7 @@ body {
         color: #333;
     }
 
-    span {
+    span:last-child {
         min-width: 56px;
         margin-top: 1px;
     }

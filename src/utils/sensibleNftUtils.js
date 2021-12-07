@@ -18,7 +18,6 @@ if (typeof window !== 'undefined' && typeof window.Buffer === 'undefined') {
 
 
 
-
 sensibleUtils.getGenesisFee = function(op){
     return SensibleNFTObj.getGenesisEstimateFee({opreturnData:op})
 };
@@ -69,13 +68,17 @@ sensibleUtils.issue = function(feeWif,genesisWif,receiverAddress,sensibleId,gene
     })
 };
 
-sensibleUtils.transfer = function(feeWif,senderWif,receiverAddress,genesis,codehash,tokenIndex){
-    return new SensibleNFT({
+sensibleUtils.transfer = function(feeWif,senderWif,receiverAddress,genesis,codehash,tokenIndex,signers){
+    let params = {
         network: "mainnet", //mainnet or testnet
         purse: feeWif, //the wif of a bsv address to offer transaction fees
         feeb: 0.5,
         // signers
-    }).transfer({
+    }
+    if(signers)
+        params.signers = signers
+
+    return new SensibleNFT(params).transfer({
         senderWif,
         receiverAddress,
         genesis,

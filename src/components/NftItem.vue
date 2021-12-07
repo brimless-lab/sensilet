@@ -23,7 +23,7 @@
                 <div class="right">#{{ mNftInfo.tokenIndex }}</div>
             </div>
             <div class="img-container">
-<!--                <img class="pic" v-if="metaData" :src='metaData.image' alt="">-->
+                <!--                <img class="pic" v-if="metaData" :src='metaData.image' alt="">-->
                 <img class="pic" v-if="metaData && metaData.image" :src='metaData.image ' alt="">
                 <QuestionCircleOutlined v-else :style="{fontSize: '24px'}"/>
             </div>
@@ -72,7 +72,7 @@
                     </template>
                     {{ $t('account.send') }}
                 </a-button>
-                <a-button shape="round" type="primary" @click="transNft" v-else>
+                <a-button shape="round" type="primary" @click="transNft" v-else :loading="isTransfering">
                     <template #icon>
                         <img src="../assets/icon-transfer_white.svg" alt="">
                     </template>
@@ -95,6 +95,9 @@ export default {
         AddressInput,
         QuestionCircleOutlined
     },
+    emits:[
+        'nftTransferred'
+    ],
     props: {
         nftInfo: Object,
     },
@@ -104,12 +107,20 @@ export default {
             showDetail: false,
             metaData: null,
             isTransMode: false,
+            isTransfering: false,
         }
     },
     watch: {
         nftInfo(newVal) {
-            this.mNftInfo = newVal;
-            this.refreshInfo();
+            console.log('#nftInfo change',newVal)
+            this.metaData = null;
+            if(newVal) {
+                this.mNftInfo = newVal;
+
+                this.refreshInfo();
+            }else {
+                this.mNftInfo = null;
+            }
         },
     },
     mounted() {
@@ -117,6 +128,7 @@ export default {
     },
     methods: {
         async refreshInfo() {
+
             if (this.mNftInfo) {
                 this.metaData = await txUtils.getMetaData(this.mNftInfo.metaTxId, this.mNftInfo.metaOutputIndex);
             }
@@ -125,7 +137,7 @@ export default {
             this.showDetail = true;
         },
         closeDetail() {
-            if(this.$refs && this.$refs.addressInput) {
+            if (this.$refs && this.$refs.addressInput) {
                 this.$refs.addressInput.reset();
             }
             this.isTransMode = false;
@@ -134,12 +146,35 @@ export default {
             this.$refs.addressInput.onOk();
         },
         //转移NFT
-        onTransNext(address){
+        async onTransNext(address) {
             if (!walletManager.checkBsvAddress(address)) {
                 return antMessage.error(this.$t('account.address_error'))
             }
+            if (this.isTransfering)
+                return
 
-            console.log(address)
+            this.isTransfering = true;
+
+            await sleep(100)
+
+            // console.log(address)
+
+            nftManager.transfer(address,
+                this.mNftInfo.genesis,
+                this.mNftInfo.codehash,
+                this.mNftInfo.tokenIndex,
+                this.metaData && this.metaData.type === 'metaid'
+            ).then(async () => {
+                await sleep(1000)
+                antMessage.success('Success')
+                await sleep(1000)
+            //    通知转移完成
+                this.$emit('nftTransferred')
+            }).catch((e) => {
+
+            }).finally(() => {
+                this.isTransfering = false
+            })
         },
 
     }

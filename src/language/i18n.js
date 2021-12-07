@@ -3,12 +3,17 @@ import messages from './index'
 const language = (
     (navigator.language ? navigator.language : navigator.userLanguage) || "en"
 ).toLowerCase();
+let lang = language.split("-")[0] || "en";
+console.log(lang)
+if(['en','jp'].indexOf(lang)<0)
+    lang = 'en';
+console.log(lang)
 const i18n = createI18n({
     fallbackLocale: 'en',
     globalInjection:true,
     legacy: false, // you must specify 'legacy: false' option
-    // locale: language.split("-")[0] || "en",
-    locale: "en",
+    locale: lang,
+    // locale: "jp",
     messages,
 });
 

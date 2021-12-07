@@ -108,11 +108,7 @@ export default {
             );
             console.log(fee)
             this.fee = fee
-            // this.fee = 0;
-            // let _this = this;
-            // setTimeout(()=>{
-            //     _this.fee =fee; //又是数值变了，页面未刷新渲染的情况
-            // },1)
+
         } catch (e) {
             console.log(e)
             this.fee = this.$t('popup.error_balance')

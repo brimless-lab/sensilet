@@ -37,8 +37,8 @@ apiUtils.getTokenInfo = function (genesis, codehash) {
     return httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${codehash}/${genesis}`)
 }
 
-apiUtils.listNftByGenesis = function (codehash,genesis,address) {
-    return httpUtils.get(`https://api.sensiblequery.com/nft/utxo-data/${codehash}/${genesis}/${address}?cursor=0&size=1000`)
+apiUtils.listNftByGenesis = function (codehash,genesis,address,cursor,size) {
+    return httpUtils.get(`https://api.sensiblequery.com/nft/utxo-data/${codehash}/${genesis}/${address}?cursor=${cursor}&size=${size}`)
 }
 apiUtils.getNftDetail = function (codehash,genesis,tokenIndex){
     return httpUtils.get(`http://127.0.0.1:30030/api/slime/${tokenIndex}`)

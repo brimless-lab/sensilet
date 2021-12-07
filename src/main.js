@@ -39,6 +39,7 @@ import Select from 'ant-design-vue/lib/select';
 import Input from 'ant-design-vue/lib/input';
 import Dropdown from 'ant-design-vue/lib/dropdown';
 import Menu from 'ant-design-vue/lib/menu';
+import Pagination from 'ant-design-vue/lib/pagination';
 import antMessage from 'ant-design-vue/lib/message';
 import antModal from 'ant-design-vue/lib/modal';
 import 'ant-design-vue/dist/antd.less';
@@ -76,7 +77,7 @@ console.log('init i18n')
 // global.antMessage = {};
 // global.antModal = {};
 createApp(App).use(i18n).use(store)
-    .use(Spin).use(Collapse).use(Card).use(PopConfirm).use(Radio).use(Switch).use(CheckBox).use(Button).use(Input).use(Select).use(antModal).use(Dropdown).use(Menu).use(Tooltip)
+    .use(Spin).use(Pagination).use(Collapse).use(Card).use(PopConfirm).use(Radio).use(Switch).use(CheckBox).use(Button).use(Input).use(Select).use(antModal).use(Dropdown).use(Menu).use(Tooltip)
     .mount('#app');
 
 // console.log('###123');

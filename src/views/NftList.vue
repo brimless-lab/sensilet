@@ -18,9 +18,18 @@
                 <div v-else-if="Object.keys(list).length<=0" style="text-align: center">
                     {{ $t('setting.empty') }}
                 </div>
-                <div v-else class="list">
-                    <div class="item" v-for="(item,index) in list">
-                        <NftItem :nftInfo="item"></NftItem>
+                <div v-else class="list-container">
+                    <div class="list">
+                        <div class="item" v-for="(item,index) in list">
+                            <NftItem :nftInfo="item" @nftTransferred="onNftTransferred"></NftItem>
+                        </div>
+                    </div>
+                    <div class="bottom">
+                        <a-pagination simple
+                                      v-model:current="currentPage"
+                                      v-model:pageSize="pageSize"
+                                      :total="total"
+                                      @change="refreshNftList"/>
                     </div>
                 </div>
             </div>
@@ -33,6 +42,7 @@
 import apiUtils from '../utils/apiUtils'
 import NftItem from "@/components/NftItem";
 
+let temp = null;
 export default {
     name: "NftList",
     components: {
@@ -42,6 +52,9 @@ export default {
         // console.log(this.$store.state.account)
         return {
             list: null,
+            pageSize: 4,
+            currentPage: 1,
+            total: 0,
             nftInfo: routerManager.data
         }
     },
@@ -50,11 +63,17 @@ export default {
     },
     methods: {
         async refreshNftList() {
-            let result = await apiUtils.listNftByGenesis(this.nftInfo.codehash, this.nftInfo.genesis, this.$store.getters.address)
+            let cursor = (this.currentPage - 1) * this.pageSize;
+            let result = await apiUtils.listNftByGenesis(this.nftInfo.codehash, this.nftInfo.genesis, this.$store.getters.address, cursor, this.pageSize)
 
             if (result.code === 0 && result.data) {
+                this.total = result.data.total;
                 this.list = result.data.utxo;
             }
+        },
+        onNftTransferred() {
+            this.list = null;
+            this.refreshNftList();
         },
         goBack() {
             routerManager.gotoHome();
@@ -127,6 +146,9 @@ export default {
         flex: 1;
         padding-top: 20px;
 
+        display: flex;
+        flex-direction: column;
+
         .divider {
             padding: 4px;
             font-size: 16px;
@@ -142,28 +164,44 @@ export default {
 
         }
 
-        .list {
+        .list-container {
+            flex: 1;
             display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
+            flex-direction: column;
 
-            .item {
-                width: 48%;
-                margin-bottom: 20px;
-                //border-radius: 5px;
-                //display: flex;
-                //align-items: center;
-                //justify-content: space-between;
+            .list {
 
-                position: relative;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
 
-                &:nth-child(odd){
-                    margin-right: 2%;
+                .item {
+                    width: 48%;
+                    margin-bottom: 20px;
+                    //border-radius: 5px;
+                    //display: flex;
+                    //align-items: center;
+                    //justify-content: space-between;
+
+                    position: relative;
+
+                    &:nth-child(odd) {
+                        margin-right: 2%;
+                    }
+
+                    &:nth-child(even) {
+                        margin-left: 2%;
+                    }
+
                 }
-                &:nth-child(even){
-                    margin-left: 2%;
-                }
+            }
 
+            .bottom {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-end;
             }
         }
     }

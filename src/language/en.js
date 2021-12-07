@@ -146,7 +146,8 @@ export default {
 
         connected_web:"Connected Website",
         empty:"Empty",
-        copyright:"Copyright © 2021 Sensilet.com"
+        copyright:"Copyright © 2021 Sensilet.com",
+        view_in_explorer:"View Account in Explorer",
 
     },
     popup: {

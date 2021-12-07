@@ -1,9 +1,9 @@
 <template>
-    <div class="panel" v-if="true">
+    <div class="panel">
         <div class="panel-top">
             <div class="title"> {{ $t('account.nfts') }}</div>
         </div>
-        <div class="list" v-if="nftGenesisList==null" style="text-align: center">
+        <div class="list" v-if="nftGenesisList==null" style="text-align: center;padding: 8px">
             <a-spin v-if="true"/>
             <div v-else class="empty">
                 {{ $t('account.coming_soon') }}
@@ -21,7 +21,7 @@
                             {{ $t('account.genesis') }}:{{ item.genesisShow }}
                         </div>
                     </div>
-                    <div class="count">{{ item.count + item.pendingCount}}</div>
+                    <div class="count">{{ item.count + item.pendingCount }}</div>
                 </div>
                 <div class="right">
                     <RightOutlined></RightOutlined>
@@ -60,34 +60,47 @@ export default {
     },
     mounted() {
         this.refreshNft();
-
     },
     methods: {
         async refreshNft() {
-            const list = (await nftManager.listAllNft().catch(e => {
+            this.nftGenesisList = null;
+            let list = (await nftManager.listAllNft().catch(e => {
                 console.error(e);
                 return []
             })) || [];
-            list.forEach(item => {
+            list = list.filter(item => {  //过滤掉总数为0的
+                return (item.count + item.pendingCount) > 0
+            })
+
+            list.forEach(item => {  //添加默认信息
                 item.genesisShow = showLongString(item.genesis, 20)
                 item.logo = '/img/empty-token.png'
-                item.name = "unknown"
+                item.name = "loading"
             })
             this.nftGenesisList = list;
 
             //    补充nft信息
             const nftInfoTable = await nftManager.getNftInfoTable()
-            this.nftGenesisList.forEach(item => {
-                const info = nftInfoTable[item.genesis]
+
+            for (let i = 0; i < this.nftGenesisList.length; i++) {
+                let item = this.nftGenesisList[i]
+                let info = nftInfoTable[item.genesis]
+                if (!info)
+                    info = await nftManager.getNftInfo(item.codehash,item.genesis,this.$store.getters.address).catch(e=>{
+                        console.log(e);
+                        return null;
+                    });
                 if (info) {
                     item.name = info.name
                     if (info.logo)
                         item.logo = info.logo
-                }
-            })
+                }else
+                    item.name = "unknown"
+
+            }
         },
-        gotoNftList(nftInfo){
-            routerManager.goto('/nftList',nftInfo)
+        gotoNftList(nftInfo) {
+            routerManager.goto('/nftList', nftInfo)
         }
     }
 }
@@ -140,7 +153,7 @@ export default {
 
             img {
                 width: 28px;
-                border-radius: 50%;
+                border-radius: 5px;
             }
         }
 

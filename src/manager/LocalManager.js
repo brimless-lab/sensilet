@@ -201,6 +201,18 @@ localManager.clearRecentAddress = function () {
     localStorage.removeItem('recentAddress')
 }
 
+localManager.getNftInfoCache = function (key) {
+    let nftInfo = getObjItem('unknown_nft_cache')
+    return nftInfo && nftInfo[key]
+}
+localManager.saveNftInfoCache = function (key, data) {
+    let nftInfo = getObjItem('unknown_nft_cache') || {};
+    nftInfo[key] = data;
+
+    setItem("unknown_nft_cache", nftInfo)
+
+}
+
 function getObjItem(key) {
     let temp = localStorage.getItem(key);
     return temp ? JSON.parse(temp) : null;
