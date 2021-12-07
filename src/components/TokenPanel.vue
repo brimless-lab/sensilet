@@ -91,19 +91,19 @@
                     </a-button>
                 </div>
             </div>
-            <div class="refresh-item">
-                <span>Total: ${{ $store.state.totalTokenValue }}</span>
-                <div class="refresh-icon" @click="refreshToken()">
-                    <img src="../assets/icon-refresh.svg" alt="">
-                </div>
-            </div>
+<!--            <div class="refresh-item">-->
+<!--                <span>Total: ${{ $store.state.totalTokenValue }}</span>-->
+<!--                <div class="refresh-icon" @click="refreshToken()">-->
+<!--                    <img src="../assets/icon-refresh.svg" alt="">-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
         <div class="list" v-else>
             <div class="empty">
                 empty
-                <div class="refresh-icon" @click="refreshToken()">
-                    <img src="../assets/icon-refresh.svg" alt="">
-                </div>
+<!--                <div class="refresh-icon" @click="refreshToken()">-->
+<!--                    <img src="../assets/icon-refresh.svg" alt="">-->
+<!--                </div>-->
             </div>
         </div>
     </div>

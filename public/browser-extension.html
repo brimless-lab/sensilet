@@ -1,103 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title><%= htmlWebpackPlugin.options.title %></title>
-  <style>
-    .loading-panel{
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: #f5f7fa;
-      z-index: 10000;
-    }
-    .loading{
-      width: 100px;
-      height: 100px;
-      position: relative;
-      margin: 0 auto;
-      margin-top:200px;
-    }
-    .loading span{
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #527195;
-      position: absolute;
-      -webkit-animation: load 1.04s ease infinite;
-    }
-    @-webkit-keyframes load{
-      0%{
-        -webkit-transform: scale(1.2);
-        opacity: 1;
-      }
-      100%{
-        -webkit-transform: scale(.3);
-        opacity: 0.5;
-      }
-    }
-    .loading span:nth-child(1){
-      left: 0;
-      top: 50%;
-      margin-top:-10px;
-      -webkit-animation-delay:0.13s;
-    }
-    .loading span:nth-child(2){
-      left: 14px;
-      top: 14px;
-      -webkit-animation-delay:0.26s;
-    }
-    .loading span:nth-child(3){
-      left: 50%;
-      top: 0;
-      margin-left: -10px;
-      -webkit-animation-delay:0.39s;
-    }
-    .loading span:nth-child(4){
-      top: 14px;
-      right:14px;
-      -webkit-animation-delay:0.52s;
-    }
-    .loading span:nth-child(5){
-      right: 0;
-      top: 50%;
-      margin-top:-10px;
-      -webkit-animation-delay:0.65s;
-    }
-    .loading span:nth-child(6){
-      right: 14px;
-      bottom:14px;
-      -webkit-animation-delay:0.78s;
-    }
-    .loading span:nth-child(7){
-      bottom: 0;
-      left: 50%;
-      margin-left: -10px;
-      -webkit-animation-delay:0.91s;
-    }
-    .loading span:nth-child(8){
-      bottom: 14px;
-      left: 14px;
-      -webkit-animation-delay:1.04s;
-    }
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <style>
+        .loading-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #f5f7fa;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-  </style>
+        .loading {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            animation: load-container 1.2s linear infinite;
+            -webkit-animation: load-container 1.2s linear infinite;
+        }
+
+        .loading span {
+            display: inline-block;
+            width: 40%;
+            height: 40%;
+            border-radius: 100%;
+            background: #527195;
+            position: absolute;
+            opacity: 0.3;
+            animation: load 2s linear infinite;
+            -webkit-animation: load 2s linear infinite;
+        }
+        @-webkit-keyframes load-container {
+            from{
+                transform: rotate(0deg);
+            }
+            to{
+                transform: rotate(360deg);
+            }
+        }
+
+        @-webkit-keyframes load {
+            0% {opacity: 0.3; }
+            50%{opacity: 1}
+            100% { opacity: 0.3;}
+        }
+
+        .loading span:nth-child(1) {
+            left: 0;
+            top: 0;
+        }
+
+        .loading span:nth-child(2) {
+            right: 0;
+            top: 0;
+            animation-delay: 0.4s;
+        }
+
+        .loading span:nth-child(3) {
+            right: 0;
+            bottom: 0;
+            animation-delay: 0.8s;
+        }
+
+        .loading span:nth-child(4) {
+            left: 0;
+            bottom: 0;
+            animation-delay: 1.2s;
+        }
+
+    </style>
 
 </head>
 <body>
-  <div id="app">
+<div id="app">
     <!--      loading-->
     <div class="loading-panel">
-      <div class="loading">
-        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
-      </div>
+        <div class="loading">
+            <span></span><span></span><span></span><span></span>
+        </div>
     </div>
-  </div>
+</div>
 
 </body>
 </html>

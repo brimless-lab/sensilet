@@ -27,18 +27,15 @@
                     <RightOutlined></RightOutlined>
                 </div>
             </div>
-            <div class="refresh-item">
-                <div class="refresh-icon" @click="refreshNft()">
-                    <img src="../assets/icon-refresh.svg" alt="">
-                </div>
-            </div>
+<!--            <div class="refresh-item">-->
+<!--                <div class="refresh-icon" @click="refreshNft()">-->
+<!--                    <img src="../assets/icon-refresh.svg" alt="">-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
         <div class="list" v-else>
             <div class="empty">
                 {{ $t('account.empty') }}
-                <div class="refresh-icon" @click="refreshNft()">
-                    <img src="../assets/icon-refresh.svg" alt="">
-                </div>
             </div>
         </div>
     </div>
@@ -64,6 +61,7 @@ export default {
     methods: {
         async refreshNft() {
             this.nftGenesisList = null;
+            let startTime = Date.now();
             let list = (await nftManager.listAllNft().catch(e => {
                 console.error(e);
                 return []
@@ -77,10 +75,17 @@ export default {
                 item.logo = '/img/empty-token.png'
                 item.name = "loading"
             })
+
+            let during = Date.now() - startTime;
+            if(during<500)
+                await sleep(600 - during)
+
             this.nftGenesisList = list;
 
             //    补充nft信息
             const nftInfoTable = await nftManager.getNftInfoTable()
+
+
 
             for (let i = 0; i < this.nftGenesisList.length; i++) {
                 let item = this.nftGenesisList[i]

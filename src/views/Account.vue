@@ -8,6 +8,12 @@
                     </div>
                     <div class="word">{{ $t($store.state.isConnected ? "account.connected" : "account.not_connected") }}</div>
                 </div>
+                <div class="connect-container" @click="refreshAll">
+                    <img src="../assets/icon-refresh.svg" alt="">
+                    <div class="word">
+                        {{$t('account.refresh')}}
+                    </div>
+                </div>
             </div>
             <div class="account">
                 <AccountChoose/>
@@ -19,9 +25,12 @@
                 </div>
                 <div class="list" v-else>
                     <div class="bsv-item">
-                        <div class="refresh-icon" :class="{'refreshing':isRefreshBsv}" @click="refreshBsv()">
-                            <img src="../assets/icon-refresh.svg" alt="">
-                        </div>
+<!--                        <div class="refresh-icon" :class="{'refreshing':isRefreshBsv}" @click="refreshBsv()">-->
+<!--                            <img src="../assets/icon-refresh.svg" alt="">-->
+<!--                        </div>-->
+<!--                        <div class="refresh-icon" v-if="isRefreshBsv">-->
+<!--                            <a-spin></a-spin>-->
+<!--                        </div>-->
                         <div class="info">
                             <div class="balance">
                                 <img src="../assets/bsv-icon.svg" alt="">
@@ -67,8 +76,8 @@
                     </div>
                 </div>
             </div>
-            <TokenPanel v-model:showQr="showQr"></TokenPanel>
-            <NftPanel></NftPanel>
+            <TokenPanel v-model:showQr="showQr" ref="tokenPanel"></TokenPanel>
+            <NftPanel ref="nftPanel"></NftPanel>
             <div class="panel">
                 <div class="panel-top">
                     <div class="title"> {{ $t('account.hot_app') }}</div>
@@ -280,7 +289,11 @@ export default {
     },
 
     methods: {
-
+        refreshAll(){
+            this.refreshBsv();
+            this.$refs.tokenPanel.refreshToken();
+            this.$refs.nftPanel.refreshNft();
+        },
         async initAsset() {
 
             this.bsvAsset.addressShow = showLongString(this.bsvAsset.address, 10)
@@ -379,7 +392,7 @@ export default {
             this.transStep = 0;
             this.showTransPanel = false;
 
-            if(this.$refs.addressInput)
+            if (this.$refs.addressInput)
                 this.$refs.addressInput.reset();
         },
 
@@ -400,8 +413,8 @@ export default {
 
         transAmountChange(value) {
 
-            if (this.transAmount * Math.pow(10,8) > this.transInfo.balance.total)
-                return this.inputErrorNotice=this.$t('account.balance_not_enough')
+            if (this.transAmount * Math.pow(10, 8) > this.transInfo.balance.total)
+                return this.inputErrorNotice = this.$t('account.balance_not_enough')
             else
                 this.inputErrorNotice = "";
 
@@ -546,8 +559,9 @@ export default {
     max-width: 375px;
     margin: 0 auto;
     display: flex;
-    align-items: flex-start;
-    padding-left: 16px;
+    align-items: center;
+    justify-content: space-between;
+    padding:0 16px;
 }
 
 .connect-container {
@@ -574,6 +588,11 @@ export default {
 
     .word {
         font-size: 12px;
+    }
+
+    img{
+        width: 16px;
+        margin-right: 10px;
     }
 
     .connect-point {

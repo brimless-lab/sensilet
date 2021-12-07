@@ -11,12 +11,15 @@
                 </div>
 
                 <div class="divider">
-                    {{$t('setting.account_management')}}
-                    <span class="account-mode">
+                    {{ $t('setting.account_management') }}
+                    <div class="info-container">
+                        <span class="value">{{ $store.getters.alias }}</span>
+                        <span class="account-mode">
                         {{ $t(accountMode) }}
                     </span>
+                    </div>
                 </div>
-                <div class="item btn"  @click="gotoExplorer">
+                <div class="item btn" @click="gotoExplorer">
                     <CompassOutlined class="item-icon"/>
                     <span>{{ $t("setting.view_in_explorer") }}</span>
                 </div>
@@ -69,10 +72,10 @@
                 </div>
                 <div class="term-container">
                     <a href="https://sensilet.com/privacy-policy.html" class="term" target="_blank">
-                        {{$t('setting.privacy')}}
+                        {{ $t('setting.privacy') }}
                     </a>
                     <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank">
-                        {{$t('setting.term')}}
+                        {{ $t('setting.term') }}
                     </a>
                 </div>
             </div>
@@ -107,7 +110,7 @@ export default {
     components: {
         Footer,
         KeyOutlined,
-        FullscreenOutlined, EditOutlined, DeleteOutlined,CompassOutlined
+        FullscreenOutlined, EditOutlined, DeleteOutlined, CompassOutlined
     },
     data() {
         return {
@@ -298,6 +301,18 @@ export default {
             display: flex;
             align-items: center;
             justify-content: space-between;
+
+            .info-container {
+                display: flex;
+                align-items: center;
+                .value {
+                    padding-right: 8px;
+                    font-weight: normal;
+                }
+                .account-mode{
+                    margin-bottom: 1px;
+                }
+            }
 
         }
 

@@ -122,6 +122,8 @@ export default {
         next:"Next",
         ok:"Ok",
 
+        refresh:"Refresh"
+
     },
     setting: {
         // this.$t('setting.') {{$t('setting.')}} :placeholder="$t('setting.')"
@@ -147,7 +149,7 @@ export default {
         connected_web:"Connected Website",
         empty:"Empty",
         copyright:"Copyright © 2021 Sensilet.com",
-        view_in_explorer:"View Account in Explorer",
+        view_in_explorer:"View Account on blockcheck.info",
 
     },
     popup: {
