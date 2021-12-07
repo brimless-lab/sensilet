@@ -269,7 +269,8 @@ tokenManager.listUserTokens = async function (showAll = false) {
 
 tokenManager.getTokenInfoNet = async function (genesis, codehash) {
 
-    let result = await httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${codehash}/${genesis}`)
+    // let result = await httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${codehash}/${genesis}`)
+    let result = await apiUtils.getTokenInfo(genesis,codehash)
     if (!result || result.code !== 0)
         return null
 

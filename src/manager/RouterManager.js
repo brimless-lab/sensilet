@@ -97,10 +97,10 @@ routerManager.goto = function (url, data) {
         if (data)
             sessionStorage.setItem('go_for_url_data', JSON.stringify(data))
     }
-    if (config.debug) {
-        localStorage.setItem('debug_need_goto', needGoto)
-        localStorage.setItem('debug_need_goto_data', JSON.stringify(data||{}))
-    }
+    // if (config.debug) {
+    //     localStorage.setItem('debug_need_goto', needGoto)
+    //     localStorage.setItem('debug_need_goto_data', JSON.stringify(data||{}))
+    // }
 
     routerManager.data = data;
     last = current;
