@@ -107,8 +107,8 @@ export default {
         balance:"balance",
         send_all:"Send All",
         fee:"Fee",
-        qr_title:"Receive BSV or Sensible FT",
-        qr_notice:"The address can only receive BSV or Sensible FT Token",
+        qr_title:"Receive BSV or Sensible Assets",
+        qr_notice:"The address can only receive BSV or Sensible Assets",
 
         add_type_1:"Create New Mnemonic(12-Words) Account",
         add_type_2:"Restore from Mnemonic",
