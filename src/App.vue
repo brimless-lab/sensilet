@@ -132,7 +132,7 @@ export default {
             return this.currentPage === '/account'
         },
         showAccountChoose() {
-            return ['/create', '/unlock'].indexOf(this.currentPage) >= 0
+            return ['/create'].indexOf(this.currentPage) >= 0
         }
     },
     beforeCreate() {
@@ -426,6 +426,7 @@ body {
 .main {
     height: calc(100vh - 48px);
     overflow-y: scroll;
+    background-color: #f5f7fa;
 
     &::-webkit-scrollbar {
         width: 0;
@@ -466,15 +467,16 @@ body {
 .panel {
     width: calc(100vw - 32px);
     max-width: 375px;
-    box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+    box-shadow: 0px 8px 16px 0px rgb(0 0 0 / 7.5%);;
     padding: 16px;
-    border-radius: 4px;
+    border-radius: 10px;
     //line-height: 1.43;
     letter-spacing: 0.01071em;
 
     //@media (min-width: 450px) {
     margin: 20px auto 0;
     //}
+    background-color: white;
 
     overflow: hidden;
 
@@ -483,7 +485,7 @@ body {
     }
 
     &:hover {
-        box-shadow: 0 2px 4px 1px rgb(0 0 0 / 15%), 0px 1px 1px 0px rgb(0 0 0 / 12%), 0px 1px 3px 0px rgb(0 0 0 / 8%);
+        box-shadow: 0px 12px 24px 0px rgb(0 0 0 / 15%);;
     }
 
     .panel-top {

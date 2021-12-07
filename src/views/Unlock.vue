@@ -1,4 +1,7 @@
 <template>
+    <div class="account">
+        <AccountChoose></AccountChoose>
+    </div>
     <div class="panel">
         <div class="title">{{$t('wallet.unlock_wallet')}}</div>
         <a-input class="password" v-model:value="password" :placeholder="$t('wallet.input_password_2')" type="password"/>
@@ -13,8 +16,10 @@
 </template>
 
 <script>
+    import AccountChoose from "@/components/AccountChoose";
     export default {
         name: "Unlock",
+        components: {AccountChoose},
         data() {
             return {
                 keepUnlock: false,
@@ -67,6 +72,20 @@
 
 <style scoped lang="scss">
 
+
+.account {
+    margin: 20px auto 0;
+    padding: 0 16px;
+    max-width: 375px;
+
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+
+    position: relative;
+}
 
     .title {
         font-size: 1.2em;

@@ -309,6 +309,8 @@ export default {
             this.isRefreshBsv = true
 
             try {
+                this.bsvAsset.isRefreshingAmount = true;
+
                 //获取余额
                 let balance = await walletManager.getBsvBalance();
 

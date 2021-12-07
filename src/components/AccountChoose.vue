@@ -1,7 +1,7 @@
 <template>
     <a-dropdown placement="bottomCenter" :class="{'hide':!$store.state.account && (!$store.state.accountList || $store.state.accountList.length<=0 )}" :trigger="['click']">
         <div class="current-account" @click.prevent>
-            <div v-if="$store.state.account!=null && current!=='/create' && current!=='/unlock' " style="display: flex;align-items: center">
+            <div v-if="$store.state.account!=null && current!=='/create' " style="display: flex;align-items: center">
                 <HeadPicture :address="$store.getters.address" style="width: 40px;height: 40px;;margin-right: 10px;padding: 8px"/>
                 <div class="word ellipsis account-word">
                     <div class="account">

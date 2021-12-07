@@ -1,18 +1,21 @@
 <template>
-    <div class="panel" v-if="step===-1">
+    <div class="panel" v-if="step===-2">
+        <a-spin></a-spin>
+    </div>
+    <div class="panel" v-else-if="step===-1">
         <div class="title">
-            {{$t('wallet.welcome')}}
+            {{ $t('wallet.welcome') }}
         </div>
         <div class="desc">
-            {{$t('wallet.welcome_2')}}
+            {{ $t('wallet.welcome_2') }}
         </div>
         <div class="desc">
-            {{$t('wallet.welcome_3')}}
+            {{ $t('wallet.welcome_3') }}
         </div>
         <a-checkbox class="keep" v-model:checked="agreeTerm">
             <span>{{ $t('wallet.agree_term') }}</span>
             <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank">
-                {{$t('wallet.term')}}
+                {{ $t('wallet.term') }}
             </a>
         </a-checkbox>
         <div class="button-container">
@@ -101,8 +104,9 @@ export default {
     name: "CreateWallet",
     data: () => {
         let isFirstEnter = localStorage.getItem('firstEnterTimestamp') === null
+
         return {
-            step: isFirstEnter ? -1 : 0,
+            step:  isFirstEnter ? -1 : 0,
             agreeTerm: false,
             // isMnemonicSaved: false,
             // btnCanClick: false,
@@ -133,19 +137,27 @@ export default {
         // }
     },
 
-    created() {
+    async mounted() {
         _this = this;
-        let mnemonic = sessionStorage.getItem('mnemonic');
-        if (!mnemonic)
-            mnemonic = walletManager.createMnemonic();
-        sessionStorage.setItem('mnemonic', mnemonic);
-        this.mnemonic = mnemonic;
 
-    },
-    mounted() {
-        // document.getElementById('mnemonicCheckbox').onclick = this.toggleSaveCheckbox
+        await sleep(100)
+        this.createMnemonic();
+
+        // let isFirstEnter = localStorage.getItem('firstEnterTimestamp') === null
+        // this.step = isFirstEnter ? -1 : 0
     },
     methods: {
+        async createMnemonic() {
+            return new Promise(resolve => {
+                let mnemonic = sessionStorage.getItem('mnemonic');
+                if (!mnemonic)
+                    mnemonic = walletManager.createMnemonic();
+                sessionStorage.setItem('mnemonic', mnemonic);
+                this.mnemonic = mnemonic;
+
+                resolve();
+            })
+        },
         showCustomPanel() {
             this.inputPassphrase = this.passphrase;
             this.inputPath = this.path;
@@ -196,7 +208,7 @@ export default {
                     //解锁钱包，并跳转到账户页面
                     walletManager.unlock(this.password, false);
 
-                    if(this.$store.state.accountList && this.$store.state.accountList.length>0){
+                    if (this.$store.state.accountList && this.$store.state.accountList.length > 0) {
                         eventManager.dispatchAccountChange();
                     }
 
