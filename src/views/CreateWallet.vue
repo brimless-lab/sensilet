@@ -106,7 +106,7 @@ export default {
         let isFirstEnter = localStorage.getItem('firstEnterTimestamp') === null
 
         return {
-            step:  isFirstEnter ? -1 : 0,
+            step: isFirstEnter ? -1 : 0,
             agreeTerm: false,
             // isMnemonicSaved: false,
             // btnCanClick: false,
@@ -115,7 +115,6 @@ export default {
             mnemonic: null,
             isGoingToNext: false,
             inputMnemonic: "",
-            // showCheckContainer: true,
             clickCount: 0,
             passphrase: "",
             path: "m/44'/0'/0'",
@@ -125,26 +124,15 @@ export default {
         }
     },
     beforeCreate() {
-        // routerManager.goto('/import')
 
-        // if (walletManager.isMnemonicCreate()) {
-        //     if (walletManager.isNeedUnlock()) {
-        //         //    需要解锁
-        //         routerManager.goto('/unlock')
-        //     } else {
-        //         routerManager.goto('/account')
-        //     }
-        // }
     },
 
     async mounted() {
         _this = this;
 
         await sleep(100)
-        this.createMnemonic();
 
-        // let isFirstEnter = localStorage.getItem('firstEnterTimestamp') === null
-        // this.step = isFirstEnter ? -1 : 0
+        await this.createMnemonic();
     },
     methods: {
         async createMnemonic() {
@@ -168,12 +156,10 @@ export default {
             this.path = this.inputPath;
             this.showCustom = false;
         },
-        toggleSaveCheckbox() {
-            this.isMnemonicSaved = !this.isMnemonicSaved
-        },
+
         next() {
             if (this.step === -1) {
-                localStorage.setItem('firstEnterTimestamp', Date.now())
+                localStorage.setItem('firstEnterTimestamp', Date.now()+"")
                 this.step++;
             } else if (this.step === 0) {
                 antModal.confirm({
@@ -222,9 +208,6 @@ export default {
         },
         gotoImport() {
             routerManager.goto('/import')
-        },
-        temp() {
-            console.log('aaaa')
         }
     }
 }

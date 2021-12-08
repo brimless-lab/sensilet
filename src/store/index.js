@@ -89,7 +89,7 @@ export default createStore({
                     return value + parseFloat(item.usd)
                 return value
             }, 0)).toFixed(2)
-            console.log(state.totalTokenValue)
+            // console.log(state.totalTokenValue)
         }
     },
     modules: {}

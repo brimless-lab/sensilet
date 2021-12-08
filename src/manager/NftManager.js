@@ -81,7 +81,7 @@ nftManager.getNftInfo = async function (codehash, genesis, address) {
                 name: metaData.name,
                 logo: metaData.image,
             }
-            console.log(temp)
+            // console.log(temp)
             //缓存数据
             localManager.saveNftInfoCache(metaTxId,temp)
         }

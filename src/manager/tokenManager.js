@@ -113,7 +113,7 @@ tokenManager.getTokenListNet = async function () {
 
         localManager.setAllTokenTable(allTokenTable, version)
     }
-    console.log(data)
+    // console.log(data)
 
     return data
 }
@@ -121,7 +121,7 @@ tokenManager.getTokenListNet = async function () {
 tokenManager.refreshLocalTokenData =async function () {
     let localList = getLocalTokenList();
     let allTokenTable =await getAllTokenTable();
-    console.log(localList,'#2')
+    // console.log(localList,'#2')
     for (let i = 0; localList && i < localList.length; i++) {
         console.log(allTokenTable[localList[i].genesis])
         if (allTokenTable[localList[i].genesis]) {

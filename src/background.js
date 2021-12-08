@@ -16,6 +16,7 @@ window.tokenManager = tokenManager;
 
 window.passwordAesTable = {};
 
+
 const SensibleNFTObj = new sensibleSdk.SensibleNFT({
     network: "mainnet", //mainnet or testnet
     feeb: 0.5,

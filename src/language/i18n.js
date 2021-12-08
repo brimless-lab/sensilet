@@ -4,7 +4,8 @@ const language = (
     (navigator.language ? navigator.language : navigator.userLanguage) || "en"
 ).toLowerCase();
 let lang = language.split("-")[0] || "en";
-console.log(lang)
+if(lang==='ja')
+    lang = 'jp';
 if(['en','jp'].indexOf(lang)<0)
     lang = 'en';
 console.log(lang)
