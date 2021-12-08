@@ -8,11 +8,11 @@
 ### v0.1.6 (2021-12-07)
 
 - new: NFT support
-- new: searching in token list panel
-- fix: be able to select another account in unlocking screen
+- new: searching on the token list panel
+- fix: be able to change account on unlocking screen
 - asset sending steps improved
-- block visitors from specific areas 
-- internal implementation improvements
+- block visitors from specific areas
+- implementation improvements
 
 ### v0.1.5 (2021-11-24)
 
