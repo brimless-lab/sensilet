@@ -12,7 +12,7 @@
 - fix: be able to select another account in unlocking screen
 - asset sending steps improved
 - block visitors from specific areas 
-- other internal implementation improvements
+- internal implementation improvements
 
 ### v0.1.5 (2021-11-24)
 
