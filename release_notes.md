@@ -1,7 +1,11 @@
 
 # Release Notes
 
-### v0.1.6 (2021-12-08)
+### v0.1.7 (2021-12-08)
+
+- new: Japanese support!
+
+### v0.1.6 (2021-12-07)
 
 - new: NFT support
 - new: searching in token list panel
