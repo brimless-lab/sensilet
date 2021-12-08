@@ -1,6 +1,15 @@
 
 # Release Notes
 
+### v0.1.6 (2021-12-08)
+
+- new: NFT support
+- new: searching in token list panel
+- fix: be able to select another account in unlocking screen
+- asset sending steps improved
+- block visitors from specific areas 
+- other internal implementation improvements
+
 ### v0.1.5 (2021-11-24)
 
 - new: show connection status to the application website
