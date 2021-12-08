@@ -340,7 +340,9 @@ export default {
         async initAppList() {
             try {
                 let temp = localStorage.getItem('appList', data);
-                if (temp)
+                if (temp === 'can_not_show')
+                    this.canShowApp = false;
+                else
                     this.appList = JSON.parse(temp);
             } catch (e) {
                 console.error(e)
@@ -351,7 +353,7 @@ export default {
                 localStorage.setItem('appList', JSON.stringify(data));
                 this.appList = data;
             } else {
-                localStorage.setItem('appList', "");
+                localStorage.setItem('appList', "can_not_show");
                 this.appList = [];
             }
         },

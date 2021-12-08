@@ -84,6 +84,9 @@ export default createStore({
                 console.log(e);
                 return []
             })
+
+            await tokenManager.addPriceForTokenList(state.tokenList);
+
             state.totalTokenValue = (state.tokenList.reduce((value, item) => {
                 if (item.usd)
                     return value + parseFloat(item.usd)

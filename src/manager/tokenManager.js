@@ -118,9 +118,9 @@ tokenManager.getTokenListNet = async function () {
     return data
 }
 //
-tokenManager.refreshLocalTokenData =async function () {
+tokenManager.refreshLocalTokenData = async function () {
     let localList = getLocalTokenList();
-    let allTokenTable =await getAllTokenTable();
+    let allTokenTable = await getAllTokenTable();
     // console.log(localList,'#2')
     for (let i = 0; localList && i < localList.length; i++) {
         console.log(allTokenTable[localList[i].genesis])
@@ -188,7 +188,7 @@ tokenManager.addToken = function (tokenInfo) {
 tokenManager.listUserTokens = async function (showAll = false) {
 
     let onlyShowAdded = localManager.getShowTokenType() === 'added';
-    if(showAll)
+    if (showAll)
         onlyShowAdded = false;
 
     let tokenList = [];
@@ -246,8 +246,19 @@ tokenManager.listUserTokens = async function (showAll = false) {
             }
             return b.sort - a.sort
         })
+        //
 
-        // 获取一下币价
+    }
+
+    // console.log(tokenList)
+
+    return tokenList;
+};
+
+tokenManager.addPriceForTokenList = async function (tokenList) {
+    if (tokenList && tokenList.length > 0) {
+
+        // // 获取一下币价
         let priceTable = (await apiUtils.getTokenPrice()).data;
 
         tokenList.forEach(item => {
@@ -261,16 +272,12 @@ tokenManager.listUserTokens = async function (showAll = false) {
                 item.usd = "";
         })
     }
-
-    // console.log(tokenList)
-
-    return tokenList;
-};
+}
 
 tokenManager.getTokenInfoNet = async function (genesis, codehash) {
 
     // let result = await httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${codehash}/${genesis}`)
-    let result = await apiUtils.getTokenInfo(genesis,codehash)
+    let result = await apiUtils.getTokenInfo(genesis, codehash)
     if (!result || result.code !== 0)
         return null
 
