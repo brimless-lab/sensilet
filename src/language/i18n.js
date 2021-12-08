@@ -1,17 +1,20 @@
-import { createI18n } from 'vue-i18n' //引入vue-i18n组件
+import {createI18n} from 'vue-i18n' //引入vue-i18n组件
 import messages from './index'
-const language = (
-    (navigator.language ? navigator.language : navigator.userLanguage) || "en"
-).toLowerCase();
-let lang = language.split("-")[0] || "en";
-if(lang==='ja')
-    lang = 'jp';
-if(['en','jp'].indexOf(lang)<0)
+
+let lang = localStorage.getItem('lang');
+
+if (!lang) {
+    const language = (
+        (navigator.language ? navigator.language : navigator.userLanguage) || "en"
+    ).toLowerCase();
+    lang = language.split("-")[0] || "en";
+}
+if (['en', 'ja'].indexOf(lang) < 0)
     lang = 'en';
 console.log(lang)
 const i18n = createI18n({
     fallbackLocale: 'en',
-    globalInjection:true,
+    globalInjection: true,
     legacy: false, // you must specify 'legacy: false' option
     locale: lang,
     // locale: "jp",

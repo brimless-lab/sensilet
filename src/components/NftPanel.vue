@@ -71,7 +71,7 @@ export default {
             })
 
             list.forEach(item => {  //添加默认信息
-                item.genesisShow = showLongString(item.genesis, 20)
+                item.genesisShow = showLongString(item.genesis, 16)
                 item.logo = '/img/empty-token.png'
                 item.name = "loading"
             })

@@ -2,6 +2,10 @@ export default {
     app:{
         has_new_version:"New Version!"
     },
+    lang:{
+        en:"English",
+        ja:"日本語"
+    },
     wallet: {
         // this.$t('wallet.') {{$t('wallet.')}} :placeholder="$t('wallet.')"
 
