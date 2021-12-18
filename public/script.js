@@ -176,6 +176,9 @@ window.sensilet.getAddress =()=>{
 window.sensilet.getPublicKey =()=>{
     return action('getPublicKey', {})
 }
+window.sensilet.getPublicKeyAndAddress =(hdPath)=>{
+    return action('getPublicKeyAndAddress', {hdPath})
+}
 
 window.sensilet.signTransaction =(txHex,inputInfos)=>{
     return action('signTransaction', {txHex,inputInfos})

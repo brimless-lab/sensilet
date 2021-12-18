@@ -6,7 +6,7 @@ container.insertBefore(scriptTag, container.children[0]);
 container.removeChild(scriptTag);
 
 window.addEventListener('sato_injected_script_message', (event) => {
-        // console.log(event,'##content-script.js');
+        //console.log(event,'##content-script.js');
 
         let responseHandler = null
 

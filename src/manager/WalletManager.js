@@ -255,7 +255,11 @@ walletManager.getWifAndPubKey = function (path = '/0/0') {
 walletManager.getAddress = function (path = '/0/0') {
     return bsv.Address.fromPrivKey(getPrivateKeyObj(path)).toString();
 };
-
+walletManager.getPublicKeyAndAddress = function (path) {
+    let wifAndPubKey = walletManager.getWifAndPubKey(path)
+    delete wifAndPubKey.wif
+    return wifAndPubKey
+};
 
 walletManager.getBsvBalance = async function (address) {
     if (!address)
