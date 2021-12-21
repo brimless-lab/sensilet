@@ -9,7 +9,7 @@ const tokenManager = require("./manager/tokenManager");
 const connectManager = require('./manager/ConnectManager');
 
 const bsv = require('bsv');
-const { PatchFlags } = require("_@vue_shared@3.2.26@@vue/shared");
+
 window.bsv = bsv;
 window.sensibleSdk = sensibleSdk;
 window.walletManager = walletManager;
