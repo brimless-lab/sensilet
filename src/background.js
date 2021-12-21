@@ -95,7 +95,7 @@ async function handleDisconnect(message, sender, sendResponse) {
 
 async function handleListGenesis(message, sender, sendResponse) {
     if (!await checkConnect(sender)) {
-        sendResponse({
+        return sendResponse({
             result: "denied",
             id: message.data.id,
             msg: "Permission denied, connect first"
@@ -113,7 +113,7 @@ async function handleListGenesis(message, sender, sendResponse) {
 
 async function handleIsConnect(message, sender, sendResponse) {
     if (!await checkConnect(sender)) {
-        sendResponse({
+        return sendResponse({
             result: "success",
             id: message.data.id,
             data: false
@@ -128,7 +128,7 @@ async function handleIsConnect(message, sender, sendResponse) {
 
 async function handleListNft(message, sender, sendResponse) {
     if (!await checkConnect(sender)) {
-        sendResponse({
+        return sendResponse({
             result: "denied",
             id: message.data.id,
             msg: "Permission denied, connect first"
@@ -145,7 +145,7 @@ async function handleListNft(message, sender, sendResponse) {
 
 async function handleGetBsvBalance(message, sender, sendResponse) {
     if (!await checkConnect(sender)) {
-        sendResponse({
+        return sendResponse({
             result: "denied",
             id: message.data.id,
             msg: "Permission denied, connect first"
@@ -167,7 +167,7 @@ async function handleGetBsvBalance(message, sender, sendResponse) {
 
 async function handleGetTokenBalance(message, sender, sendResponse) {
     if (!await checkConnect(sender)) {
-        sendResponse({
+        return sendResponse({
             result: "denied",
             id: message.data.id,
             msg: "Permission denied, connect first"
@@ -184,7 +184,7 @@ async function handleGetTokenBalance(message, sender, sendResponse) {
 
 async function handleCheckTokenUtxo(message, sender, sendResponse) {
     if (!await checkConnect(sender)) {
-        sendResponse({
+        return sendResponse({
             result: "denied",
             id: message.data.id,
             msg: "Permission denied, connect first"
@@ -193,10 +193,10 @@ async function handleCheckTokenUtxo(message, sender, sendResponse) {
 
     let {genesis, codehash} = message.data.params;
     let utxoCount = await tokenManager.sensibleFt.getUtxoCount(genesis, codehash, walletManager.getMainAddress());
-    // console.log(utxoCount)
+
 
     let bsvUtxoCount = await walletManager.getBsvUtxoCount();
-
+    // console.log(utxoCount, bsvUtxoCount, 'utxo check')
     if (utxoCount < 20 && bsvUtxoCount <= 3) {
         sendResponse({
             id: message.data.id,
@@ -211,7 +211,7 @@ async function handleCheckTokenUtxo(message, sender, sendResponse) {
 
 async function handleGetAddress(message, sender, sendResponse) {
     if (!await checkConnect(sender)) {
-        sendResponse({
+        return sendResponse({
             result: "denied",
             id: message.data.id,
             msg: "Permission denied, connect first"
@@ -227,7 +227,7 @@ async function handleGetAddress(message, sender, sendResponse) {
 
 async function handleGetPublicKey(message, sender, sendResponse) {
     if (!await checkConnect(sender)) {
-        sendResponse({
+        return sendResponse({
             result: "denied",
             id: message.data.id,
             msg: "Permission denied, connect first"
@@ -244,13 +244,13 @@ async function handleGetPublicKey(message, sender, sendResponse) {
 
 async function handleGetPublicKeyAndAddress(message, sender, sendResponse) {
     if (!await checkConnect(sender)) {
-        sendResponse({
+        return sendResponse({
             result: "denied",
             id: message.data.id,
             msg: "Permission denied, connect first"
         });
     }
-    console.log('hdPath',message)
+    console.log('hdPath', message)
     let {hdPath} = message.data.params;
     sendResponse({
         id: message.data.id,
@@ -261,7 +261,7 @@ async function handleGetPublicKeyAndAddress(message, sender, sendResponse) {
 
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message,sender.origin, "onMessage");
+    console.log(message, sender.origin, "onMessage");
 
     if (message.channel === 'sato_contentscript_background_channel') {
         if (message.data.method === 'addEvent') {
@@ -302,7 +302,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             handleGetPublicKey(message, sender, sendResponse);
         } else if (message.data.method === 'getPublicKeyAndAddress') {
             handleGetPublicKeyAndAddress(message, sender, sendResponse);
-         } else {
+        } else {
             launchPopup(message, sender, sendResponse);
         }
         // keeps response channel open
