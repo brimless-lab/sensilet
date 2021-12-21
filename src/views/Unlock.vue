@@ -4,7 +4,7 @@
     </div>
     <div class="panel">
         <div class="title">{{$t('wallet.unlock_wallet')}}</div>
-        <a-input class="password" v-model:value="password" :placeholder="$t('wallet.input_password_2')" type="password"/>
+        <a-input class="password" v-model:value="password" :placeholder="$t('wallet.input_password_2')" type="password" @pressEnter="unlock"/>
         <a-checkbox class="keep" v-model:checked="keepUnlock">
             <span>{{$t('wallet.keep_unlock')}}</span>
         </a-checkbox>

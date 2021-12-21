@@ -112,9 +112,6 @@ import EditOutlined from '@ant-design/icons-vue/lib/icons/EditOutlined'
 import DeleteOutlined from '@ant-design/icons-vue/lib/icons/DeleteOutlined'
 import CompassOutlined from '@ant-design/icons-vue/lib/icons/CompassOutlined'
 
-
-import {h} from 'vue'
-
 export default {
     name: "Setting",
     components: {
