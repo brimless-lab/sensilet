@@ -9,6 +9,7 @@ const tokenManager = require("./manager/tokenManager");
 const connectManager = require('./manager/ConnectManager');
 
 const bsv = require('bsv');
+const { PatchFlags } = require("_@vue_shared@3.2.26@@vue/shared");
 window.bsv = bsv;
 window.sensibleSdk = sensibleSdk;
 window.walletManager = walletManager;
@@ -241,6 +242,24 @@ async function handleGetPublicKey(message, sender, sendResponse) {
     })
 }
 
+async function handleGetPublicKeyAndAddress(message, sender, sendResponse) {
+    if (!await checkConnect(sender)) {
+        sendResponse({
+            result: "denied",
+            id: message.data.id,
+            msg: "Permission denied, connect first"
+        });
+    }
+    console.log('hdPath',message)
+    let {hdPath} = message.data.params;
+    sendResponse({
+        id: message.data.id,
+        data: walletManager.getPublicKeyAndAddress(hdPath),
+        result: "success"
+    })
+}
+
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(message,sender.origin, "onMessage");
 
@@ -281,7 +300,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             handleGetAddress(message, sender, sendResponse);
         } else if (message.data.method === 'getPublicKey') {
             handleGetPublicKey(message, sender, sendResponse);
-        } else {
+        } else if (message.data.method === 'getPublicKeyAndAddress') {
+            handleGetPublicKeyAndAddress(message, sender, sendResponse);
+         } else {
             launchPopup(message, sender, sendResponse);
         }
         // keeps response channel open
