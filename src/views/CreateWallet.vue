@@ -14,7 +14,7 @@
         </div>
         <a-checkbox class="keep" v-model:checked="agreeTerm">
             <span>{{ $t('wallet.agree_term') }}</span>
-            <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank">
+            <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank" rel="noopener">
                 {{ $t('wallet.term') }}
             </a>
         </a-checkbox>

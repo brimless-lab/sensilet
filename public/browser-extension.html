@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title><%= htmlWebpackPlugin.options.title %></title>
     <style>
-        .loading-panel {
+        .sensilet-loading-panel {
             position: fixed;
             top: 0;
             left: 0;
@@ -19,7 +19,7 @@
             justify-content: center;
         }
 
-        .loading {
+        .sensilet-loading {
             width: 40px;
             height: 40px;
             position: relative;
@@ -27,7 +27,7 @@
             -webkit-animation: load-container 1.2s linear infinite;
         }
 
-        .loading span {
+        .sensilet-loading span {
             display: inline-block;
             width: 40%;
             height: 40%;
@@ -53,24 +53,24 @@
             100% { opacity: 0.3;}
         }
 
-        .loading span:nth-child(1) {
+        .sensilet-loading span:nth-child(1) {
             left: 0;
             top: 0;
         }
 
-        .loading span:nth-child(2) {
+        .sensilet-loading span:nth-child(2) {
             right: 0;
             top: 0;
             animation-delay: 0.4s;
         }
 
-        .loading span:nth-child(3) {
+        .sensilet-loading span:nth-child(3) {
             right: 0;
             bottom: 0;
             animation-delay: 0.8s;
         }
 
-        .loading span:nth-child(4) {
+        .sensilet-loading span:nth-child(4) {
             left: 0;
             bottom: 0;
             animation-delay: 1.2s;
@@ -82,7 +82,7 @@
 <body>
 <div id="app">
     <!--      loading-->
-    <div class="loading-panel">
+    <div class="sensilet-loading-panel">
         <div class="loading">
             <span></span><span></span><span></span><span></span>
         </div>

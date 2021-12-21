@@ -64,7 +64,7 @@
             <AddressInput v-else @next="onTransNext" ref="addressInput" transType="NFT"></AddressInput>
 
             <div class="action-container">
-                <a class="info" :href="`https://blockcheck.info/nft/${mNftInfo.codehash}/${mNftInfo.genesis}/${mNftInfo.tokenIndex}`" target="_blank">
+                <a class="info" :href="`https://blockcheck.info/nft/${mNftInfo.codehash}/${mNftInfo.genesis}/${mNftInfo.tokenIndex}`" target="_blank" rel="noopener">
                     View On Chain</a>
                 <a-button shape="round" @click="isTransMode = true" v-if="!isTransMode">
                     <template #icon>

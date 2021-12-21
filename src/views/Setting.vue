@@ -29,7 +29,7 @@
                 <!--                    <div class="two-line">-->
                 <!--                        <span>{{ $t("setting.register_address") }}</span>-->
                 <!--                        <div>-->
-                <!--                            <a href="https://sensilet.com/privacy-policy.html" target="_blank">Privacy</a>-->
+                <!--                            <a href="https://sensilet.com/privacy-policy.html" target="_blank" rel="noopener">Privacy</a>-->
                 <!--                            <span>{{ $store.getters.addressShow }}</span>-->
                 <!--                        </div>-->
                 <!--                    </div>-->
@@ -66,15 +66,15 @@
             </div>
             <div class="bottom">
                 <div class="version">
-                    <a href="https://github.com/sensilet/sensilet/blob/main/release_notes.md" target="_blank">
+                    <a href="https://github.com/sensilet/sensilet/blob/main/release_notes.md" target="_blank" rel="noopener">
                         Sensilet {{ version }}
                     </a>
                 </div>
                 <div class="term-container">
-                    <a href="https://sensilet.com/privacy-policy.html" class="term" target="_blank">
+                    <a href="https://sensilet.com/privacy-policy.html" class="term" target="_blank" rel="noopener">
                         {{ $t('setting.privacy') }}
                     </a>
-                    <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank">
+                    <a href="https://sensilet.com/term-of-service.html" class="term" target="_blank" rel="noopener">
                         {{ $t('setting.term') }}
                     </a>
                 </div>

@@ -94,7 +94,7 @@
                             <div class="desc ellipsis" :title="item.desc">{{ item.desc }}
                             </div>
                         </div>
-                        <a class="enter" :href="item.url" target="_blank">
+                        <a class="enter" :href="item.url" target="_blank" rel="noopener">
                             {{ $t('account.open') }}
                         </a>
                     </div>
