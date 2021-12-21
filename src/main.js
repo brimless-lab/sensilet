@@ -74,12 +74,6 @@ import i18n from './language/i18n'
 
 console.log('### init i18n')
 
-// global.antMessage = {};
-// global.antModal = {};
 createApp(App).use(i18n).use(store)
     .use(Spin).use(Pagination).use(Collapse).use(Card).use(PopConfirm).use(Radio).use(Switch).use(CheckBox).use(Button).use(Input).use(Select).use(antModal).use(Dropdown).use(Menu).use(Tooltip)
     .mount('#app');
-
-// console.log('###123');
-// console.log( walletManager.signMessage("testaaaaa"));
-

@@ -97,9 +97,9 @@
     </a-modal>
     <a-modal v-model:visible="isShowChangePassword" @ok="changePassword">
         <p>{{ $t("setting.change_password") }}</p>
-        <a-input style="margin-top: 16px" v-model:value="changePasswordData.oldPwd" :placeholder="$t('setting.input_password')"/>
-        <a-input style="margin-top: 16px" v-model:value="changePasswordData.newPwd" :placeholder="$t('setting.input_new_password')"/>
-        <a-input style="margin-top: 16px" v-model:value="changePasswordData.reNewPwd" :placeholder="$t('setting.input_new_password_again')"/>
+        <a-input type="password" style="margin-top: 16px" v-model:value="changePasswordData.oldPwd" :placeholder="$t('setting.input_password')"/>
+        <a-input type="password" style="margin-top: 16px" v-model:value="changePasswordData.newPwd" :placeholder="$t('setting.input_new_password')"/>
+        <a-input type="password" style="margin-top: 16px" v-model:value="changePasswordData.reNewPwd" :placeholder="$t('setting.input_new_password_again')"/>
     </a-modal>
 </template>
 
