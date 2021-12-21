@@ -43,7 +43,7 @@ export default {
                 transAddress: [{
                     'required': true, trigger: 'change',
                     validator: async (rule, value) => {
-                        console.log(value, '#')
+                        // console.log(value, '#')
                         if (value === '') {
                             return Promise.reject('Please input the Address');
                         } else {

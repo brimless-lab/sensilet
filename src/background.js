@@ -43,7 +43,7 @@ async function launchPopup(message, sender, sendResponse, checkConnected = true)
             msg: "Permission denied, connect first"
         });
     }
-    console.log(sender)
+    // console.log(sender)
 
 
     const searchParams = new URLSearchParams();
@@ -250,7 +250,7 @@ async function handleGetPublicKeyAndAddress(message, sender, sendResponse) {
             msg: "Permission denied, connect first"
         });
     }
-    console.log('hdPath', message)
+    // console.log('hdPath', message)
     let {hdPath} = message.data.params;
     sendResponse({
         id: message.data.id,
@@ -261,7 +261,7 @@ async function handleGetPublicKeyAndAddress(message, sender, sendResponse) {
 
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log(message, sender.origin, "onMessage");
+    // console.log(message, sender.origin, "onMessage");
 
     if (message.channel === 'sato_contentscript_background_channel') {
         if (message.data.method === 'addEvent') {

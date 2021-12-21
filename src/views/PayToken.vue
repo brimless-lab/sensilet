@@ -106,7 +106,7 @@ export default {
             let fee = await tokenManager.sensibleFt.getTransferEsitimate(tokenInfo.codehash, tokenInfo.genesis,
                 this.receivers, walletManager.getMainWif(), signers
             );
-            console.log(fee)
+            // console.log(fee)
             this.fee = fee
 
         } catch (e) {

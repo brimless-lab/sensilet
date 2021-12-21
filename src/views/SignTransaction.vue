@@ -129,7 +129,7 @@ export default {
                 this.isCreating = true;
                 await sleep(100);
                 let wif = this.hdPath ? walletManager.getWif(this.hdPath) : walletManager.getMainWif();
-                console.log(wif)
+
                 chrome.runtime.sendMessage({
                     channel: 'sato_extension_background_channel',
                     data: {

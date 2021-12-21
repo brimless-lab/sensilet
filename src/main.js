@@ -15,7 +15,7 @@ if (bg) {
 
 import {} from './utils/globalUtils'
 
-console.log('######## config');
+console.log('### load config');
 import config from './config/base'
 global.config = config;
 
@@ -72,7 +72,7 @@ global.antModal = antModal;
 
 import i18n from './language/i18n'
 
-console.log('init i18n')
+console.log('### init i18n')
 
 // global.antMessage = {};
 // global.antModal = {};

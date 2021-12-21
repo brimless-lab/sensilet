@@ -112,7 +112,7 @@ export default {
     },
     watch: {
         nftInfo(newVal) {
-            console.log('#nftInfo change',newVal)
+            // console.log('#nftInfo change',newVal)
             this.metaData = null;
             if(newVal) {
                 this.mNftInfo = newVal;
