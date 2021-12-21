@@ -29,6 +29,9 @@
                 </div>
             </div>
         </div>
+        <div class="notice" v-if="hdPath">
+            HdPath:{{hdPath}}
+        </div>
         <div class="action-container" v-if="!isCreating">
             <a-button @click="cancel">{{ $t('popup.cancel') }}</a-button>
             <a-button type="primary" @click="commit">{{ $t('popup.commit') }}</a-button>
@@ -57,6 +60,7 @@ export default {
             fee: null,
             txHex: request.params.txHex,
             inputInfos: request.params.inputInfos,
+            hdPath: request.params.hdPath,
             txDetailList: [],
             userAddress: walletManager.getMainAddress(),
             txTypeWord: txUtils.txTypeWord,
@@ -123,12 +127,15 @@ export default {
         async commit() {
             try {
                 this.isCreating = true;
+                await sleep(100);
+                let wif = this.hdPath ? walletManager.getWif(this.hdPath) : walletManager.getMainWif();
+                console.log(wif)
                 chrome.runtime.sendMessage({
                     channel: 'sato_extension_background_channel',
                     data: {
                         id: request.id,
                         result: "success",
-                        data: txUtils.signTransaction(walletManager.getMainWif(), this.txHex, this.inputInfos),
+                        data: txUtils.signTransaction(wif, this.txHex, this.inputInfos),
                     },
                 });
                 window.close();

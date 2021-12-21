@@ -64,6 +64,10 @@ const pageConfigs = {
         needCreate: true,
         needUnlock: true,
     },
+    '/signTransaction': {
+        needCreate: true,
+        needUnlock: true,
+    },
 
 };
 

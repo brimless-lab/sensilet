@@ -34,7 +34,7 @@ function getPrivateKeyObj(path = '/0/0') {
         throw new Error('Create Wallet First')
     }
     path = (lockInfo.path ? lockInfo.path : "m/44'/0'/0'") + path
-
+    // console.log(path)
     if (lockInfo.isSinglePrivateKey) {
         return bsv.PrivKey.fromWif(walletManager.getMnemonic());
     } else if (lockInfo.hasPassphrase) {
