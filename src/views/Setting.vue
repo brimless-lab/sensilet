@@ -59,6 +59,10 @@
                         <span class="value">{{ $store.getters.alias }}</span>
                     </div>
                 </div>
+                <div class="item btn" @click="openChangePassword">
+                    <EditOutlined class="item-icon"/>
+                    <span>{{ $t("setting.change_password") }}</span>
+                </div>
                 <div class="item btn warning" @click="deleteCurrentAccountConfirm">
                     <DeleteOutlined class="item-icon"/>
                     <span>{{ $t("setting.delete_current_account") }}</span>
@@ -91,6 +95,12 @@
         <p>{{ $t("setting.delete_confirm") }}</p>
         <a-input v-model:value="inputDelete" :placeholder="$t('setting.delete_confirm')"/>
     </a-modal>
+    <a-modal v-model:visible="isShowChangePassword" @ok="changePassword">
+        <p>{{ $t("setting.change_password") }}</p>
+        <a-input style="margin-top: 16px" v-model:value="changePasswordData.oldPwd" :placeholder="$t('setting.input_password')"/>
+        <a-input style="margin-top: 16px" v-model:value="changePasswordData.newPwd" :placeholder="$t('setting.input_new_password')"/>
+        <a-input style="margin-top: 16px" v-model:value="changePasswordData.reNewPwd" :placeholder="$t('setting.input_new_password_again')"/>
+    </a-modal>
 </template>
 
 <script>
@@ -119,14 +129,23 @@ export default {
             editAlias: "",
             isShowEdit: false,
             isShowDelete: false,
+            isShowChangePassword: false,
             registered: localManager.isAddressRegistered(walletManager.getMainAddress()),
             isSinglePrivateKey: walletManager.isSinglePrivateKey(),
             inputDelete: "",
+            changePasswordData: {
+                oldPwd: "",
+                newPwd: "",
+                reNewPwd: "",
+            }
         }
     },
     methods: {
         openEdit() {
             this.isShowEdit = true;
+        },
+        openChangePassword() {
+            this.isShowChangePassword = true;
         },
         handleOk() {
             if (!this.editAlias)
@@ -198,7 +217,19 @@ export default {
             eventManager.dispatchAccountChange();
             window.location.reload();
         },
+        changePassword() {
+            if (this.changePasswordData.newPwd !== this.changePasswordData.reNewPwd) {
+                return antMessage.error(this.$t('wallet.password_error'))
+            }
 
+            try {
+                walletManager.changePassword(this.changePasswordData.oldPwd || "SatoWallet#2021",this.changePasswordData.newPwd ||"SatoWallet#2021" )
+                antMessage.success(this.$t('setting.change_success'))
+                this.isShowChangePassword = false;
+            } catch (e) {
+                antMessage.error((e && e.message) || $t("setting.change_fail"))
+            }
+        }
     }
 }
 </script>
@@ -305,11 +336,13 @@ export default {
             .info-container {
                 display: flex;
                 align-items: center;
+
                 .value {
                     padding-right: 8px;
                     font-weight: normal;
                 }
-                .account-mode{
+
+                .account-mode {
                     margin-bottom: 1px;
                 }
             }

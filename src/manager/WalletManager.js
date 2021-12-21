@@ -378,4 +378,31 @@ walletManager.deleteCurrent = function () {
     walletManager.reload();
 }
 
+walletManager.changePassword = function (oldPwd,newPwd){
+    let lockInfo = localManager.getCurrentAccount();
+    if (!lockInfo) {
+        throw new Error('Create Wallet First')
+    }
+    oldPwd += 'SatoWallet';
+    oldPwd = bsv.Hash.sha256(Buffer.from(oldPwd)).toString('hex');
+    let passwordHash = bsv.Hash.sha256(Buffer.from(oldPwd + 'SatoWallet')).toString('hex');
+
+    if( passwordHash !== lockInfo.passwordHash){
+        throw new Error('wrong password')
+    }
+
+    //change locked & passwordHash
+    let mnemonic =  aesUtils.AESDecrypto(lockInfo.locked, oldPwd);
+
+    newPwd += 'SatoWallet';
+    newPwd = bsv.Hash.sha256(Buffer.from(newPwd)).toString('hex');
+
+    lockInfo['passwordHash'] = bsv.Hash.sha256(Buffer.from(newPwd + 'SatoWallet')).toString('hex');
+    lockInfo['locked'] = aesUtils.AESEncrypto(mnemonic,newPwd);
+
+    localManager.saveAccount(lockInfo);
+
+    walletManager.reload();
+}
+
 module.exports = walletManager;

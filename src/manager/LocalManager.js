@@ -72,7 +72,25 @@ localManager.saveAlias = function (accountInfo) {
     let lockInfo = localManager.getCurrentAccount();
 
     if (lockInfo && accountInfo.address === lockInfo.address) {
-        lockInfo.alias = accountInfo.alias;
+        lockInfo['alias'] = accountInfo.alias;
+        localStorage.setItem('lockInfo', JSON.stringify(lockInfo));
+    }
+};
+
+localManager.saveAccount = function (accountInfo) {
+    let lockInfoList = localManager.listAccount()
+    for (let i = 0; i < lockInfoList.length; i++) {
+        if (accountInfo.address === lockInfoList[i].address) {
+            lockInfoList[i] = accountInfo;
+            break
+        }
+    }
+    localStorage.setItem('lockInfoList', JSON.stringify(lockInfoList));
+
+    let lockInfo = localManager.getCurrentAccount();
+
+    if (lockInfo && accountInfo.address === lockInfo.address) {
+        lockInfo = accountInfo;
         localStorage.setItem('lockInfo', JSON.stringify(lockInfo));
     }
 };

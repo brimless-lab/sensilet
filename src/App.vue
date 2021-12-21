@@ -187,8 +187,8 @@ export default {
 
 
         if (routerManager.getCurrentPage() === '/') {
-            // if (config.debug)
-            //     return routerManager.gotoDebug();
+            if (config.debug)
+                return routerManager.gotoDebug();
             routerManager.goto('/account')
         }
 

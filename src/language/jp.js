@@ -147,7 +147,15 @@ export default {
 
         connected_web:"接続されたウェブサイト",
         empty:"空き",
-        copyright:"Copyright © 2021 Sensilet.com"
+        copyright:"Copyright © 2021 Sensilet.com",
+
+        view_in_explorer:"View Account on blockcheck.info",
+        change_password:"Change Password",
+        change_fail:"Change fail",
+        change_success:"Change success",
+        input_password: "input current password (if have)",
+        input_new_password: "input new password (Optional)",
+        input_new_password_again: "input new password (Optional)",
 
     },
     popup: {
