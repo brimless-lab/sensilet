@@ -15,7 +15,7 @@
                     <span style="font-size: 12px">{{ item.address }}</span>
                 </div>
                 <div class="info">
-                    <span>{{$t('popup.amount')}}</span>
+                    <span>{{$t('popup.pay_amount')}}</span>
                     <CoinShow :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
                 </div>
             </div>

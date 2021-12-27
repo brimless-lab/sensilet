@@ -4,7 +4,36 @@
         <div class="pay-info" v-if="origin">
             <div class="origin">{{ origin }}</div>
         </div>
-        <div class="tx-list">
+        <div class="tx-container">
+        <div class="type-choose-container">
+            <a-radio-group v-model:value="showPutType" button-style="solid" size="small">
+                <a-radio-button value="inputs"> Inputs</a-radio-button>
+                <a-radio-button value="outputs">Outputs</a-radio-button>
+            </a-radio-group>
+        </div>
+        <div class="tx-list" v-if="showPutType==='inputs'">
+            <div class="item" v-for="item in inputInfosShow">
+                <div class="info">
+                    <span>{{ $t('popup.tx_type') }}</span>
+                    <span>{{ item.type }}
+                    </span>
+
+                </div>
+                <div class="info">
+                    <span>{{ $t('popup.address') }}</span>
+                    <span style="font-size: 12px">{{ item.address }}
+                        <!--                        <span class="mine-tag" v-if="item.isChange">{{$t("popup.mine")}}</span>-->
+                    </span>
+                </div>
+                <div class="info">
+                    <span>
+                        {{ $t('popup.amount') }}
+                    </span>
+                    <CoinShow style="font-weight: bold;" :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
+                </div>
+            </div>
+        </div>
+        <div class="tx-list" v-else>
             <div class="item" v-for="item in txDetailList">
                 <div class="info">
                     <span>{{ $t('popup.tx_type') }}</span>
@@ -13,16 +42,16 @@
 
                 </div>
                 <div class="info">
-                    <span>{{ $t('popup.receive_address') }}</span>
+                    <span>{{ $t('popup.address') }}</span>
                     <span style="font-size: 12px">{{ item.address }}
-                        <span class="mine-tag" v-if="item.isChange">{{$t("popup.mine")}}</span>
+                        <span class="mine-tag" v-if="item.isChange">{{ $t("popup.mine") }}</span>
                     </span>
                 </div>
                 <div class="info">
-<!--                                        <span class="tag" v-if="item.isChange">{{$t("popup.change")}}:</span>-->
-<!--                                        <span v-else class="tag red">-->
-<!--                                            {{$t('popup.amount')}}-->
-<!--                                        </span>-->
+                    <!--                                        <span class="tag" v-if="item.isChange">{{$t("popup.change")}}:</span>-->
+                    <!--                                        <span v-else class="tag red">-->
+                    <!--                                            {{$t('popup.pay_amount')}}-->
+                    <!--                                        </span>-->
                     <span>
                         {{ $t('popup.amount') }}
                     </span>
@@ -30,6 +59,7 @@
                     <CoinShow style="font-weight: bold;" :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
                 </div>
             </div>
+        </div>
         </div>
         <div class="action-container" v-if="!isCreating">
             <a-button @click="cancel">{{ $t('popup.cancel') }}</a-button>
@@ -54,17 +84,55 @@ export default {
     data() {
 
         return {
+            showPutType:'outputs',
             isCreating: false,
             origin,
             fee: null,
             txHex: request.params.txHex,
             inputInfos: request.params.inputInfos,
+            inputInfosShow: null,
             txDetailList: [],
             userAddress: walletManager.getMainAddress(),
             txTypeWord: txUtils.txTypeWord,
         }
     },
     async mounted() {
+        console.log(this.inputInfos)
+        this.inputInfosShow = this.inputInfos.map(item => {
+            let temp = txUtils.getInputsInfo(item.scriptHex, item.satoshis);
+
+            if (temp.type === txUtils.txType.SENSIBLE_FT) {
+                temp.type = txUtils.txTypeWord[temp.type];
+                let data = temp.data
+
+                if (typeof data === 'string')
+                    data = JSON.parse(data)
+                if (typeof data.tokenAmount === 'string')
+                    data.tokenAmount = parseInt(data.tokenAmount);
+                temp.type += `(${data.tokenName.replaceAll('\u0000', '')})`;
+                temp.amount = data.tokenAmount;
+                temp.address = showLongString(data.tokenAddress, 10);
+                temp.symbol = data.tokenSymbol.replaceAll('\u0000', '');
+                temp.decimal = data.decimalNum
+
+                temp.isChange = data.tokenAddress === this.userAddress;
+
+
+                console.log(temp, '### temp')
+
+            } else {
+                temp.type = txUtils.txTypeWord[temp.type];
+
+                temp.isChange = temp.address === this.userAddress;
+                temp.amount = temp.satoshis;
+                temp.address = showLongString(temp.address, 10);
+                temp.symbol = "BSV";
+                temp.decimal = 8;
+            }
+
+            return temp
+        })
+
 
         let txDetail = txUtils.getTxInfo(this.txHex).outputs;
         // console.log(txDetail)
@@ -93,7 +161,7 @@ export default {
                 temp.isChange = data.tokenAddress === this.userAddress;
 
 
-                console.log(temp,'### temp')
+                console.log(temp, '### temp')
 
             } else {
                 // if(txDetail[j].address === this.userAddress){
@@ -156,6 +224,9 @@ export default {
     text-align: center;
 
 }
+.type-choose-container{
+    padding-top: 10px;
+}
 
 .title {
     font-size: 1.2em;
@@ -176,24 +247,31 @@ export default {
     display: flex;
     justify-content: space-between;
 }
-
-.tx-list {
+.tx-container{
     background-color: whitesmoke;
     border-radius: 5px;
+    margin-top: 5px;
+}
+.tx-list {
+
     padding: 8px;
 
-    &:not(:first-child) {
-        margin-top: 10px;
-    }
+    max-height: 320px;
+    overflow-y: auto;
+
 
     .item {
-        margin-top: 10px;
+
+
+        &:not(:first-child){
+            margin-top: 10px;
+        }
 
         .info {
             display: flex;
             justify-content: space-between;
 
-            .mine-tag{
+            .mine-tag {
                 border-radius: 4px;
                 background-color: green;
                 color: white;

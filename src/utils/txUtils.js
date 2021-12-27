@@ -31,6 +31,12 @@ txUtils.getTxInfo = function (rawHex) {
     return TxDecoder.decodeTx(new bsv156.Transaction(rawHex), API_NET.MAIN)
 };
 
+txUtils.getInputsInfo= function (script,satoshis){
+    return TxDecoder.decodeOutput(new bsv156.Transaction.Output({
+        satoshis,script
+    }), API_NET.MAIN)
+}
+
 txUtils.sign = (wif, {txHex, scriptHex, address, inputIndex, satoshis, sigtype,}) => {
     if (!sigtype)
         sigtype = bsv156.crypto.Signature.SIGHASH_ALL | bsv156.crypto.Signature.SIGHASH_FORKID;

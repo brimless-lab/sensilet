@@ -7,7 +7,7 @@
         <div class="receive-container">
         <div class="receive-item" v-for="item in receivers">
             <div class="notice">{{$t('popup.receive_address')}} {{ item.address }}</div>
-            <div class="notice main-word">{{$t('popup.amount')}}
+            <div class="notice main-word">{{$t('popup.pay_amount')}}
                 <CoinShow :value="item.amount" big-unit="BSV" :decimal="8" fixed="8" show-big-unit/>
             </div>
         </div>
