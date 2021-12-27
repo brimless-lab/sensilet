@@ -250,6 +250,13 @@ async function handleGetPublicKeyAndAddress(message, sender, sendResponse) {
             msg: "Permission denied, connect first"
         });
     }
+    if(walletManager.isSinglePrivateKey()){
+        return sendResponse({
+            result: "fail",
+            id: message.data.id,
+            msg: "User account is single private key mode"
+        });
+    }
     // console.log('hdPath', message)
     let {hdPath} = message.data.params;
     sendResponse({

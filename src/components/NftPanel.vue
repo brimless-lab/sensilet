@@ -27,11 +27,11 @@
                     <RightOutlined></RightOutlined>
                 </div>
             </div>
-<!--            <div class="refresh-item">-->
-<!--                <div class="refresh-icon" @click="refreshNft()">-->
-<!--                    <img src="../assets/icon-refresh.svg" alt="">-->
-<!--                </div>-->
-<!--            </div>-->
+            <!--            <div class="refresh-item">-->
+            <!--                <div class="refresh-icon" @click="refreshNft()">-->
+            <!--                    <img src="../assets/icon-refresh.svg" alt="">-->
+            <!--                </div>-->
+            <!--            </div>-->
         </div>
         <div class="list" v-else>
             <div class="empty">
@@ -63,7 +63,7 @@ export default {
             this.nftGenesisList = null;
             let startTime = Date.now();
             let list = (await nftManager.listAllNft().catch(e => {
-                console.error(e);
+                console.log(e && e.message);
                 return []
             })) || [];
             list = list.filter(item => {  //过滤掉总数为0的
@@ -77,7 +77,7 @@ export default {
             })
 
             let during = Date.now() - startTime;
-            if(during<500)
+            if (during < 500)
                 await sleep(600 - during)
 
             this.nftGenesisList = list;
@@ -86,12 +86,11 @@ export default {
             const nftInfoTable = await nftManager.getNftInfoTable()
 
 
-
             for (let i = 0; i < this.nftGenesisList.length; i++) {
                 let item = this.nftGenesisList[i]
                 let info = nftInfoTable[item.genesis]
                 if (!info)
-                    info = await nftManager.getNftInfo(item.codehash,item.genesis,this.$store.getters.address).catch(e=>{
+                    info = await nftManager.getNftInfo(item.codehash, item.genesis, this.$store.getters.address).catch(e => {
                         console.log(e);
                         return null;
                     });
@@ -99,7 +98,7 @@ export default {
                     item.name = info.name
                     if (info.logo)
                         item.logo = info.logo
-                }else
+                } else
                     item.name = "unknown"
 
             }

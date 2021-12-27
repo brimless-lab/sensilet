@@ -561,16 +561,18 @@ export default {
             let utxoCount = await tokenManager.sensibleFt.getUtxoCount(this.transInfo.genesis, this.transInfo.codehash, walletManager.getMainAddress());
             //获取bsv utxo数
             let bsvUtxoCount = await walletManager.getBsvUtxoCount();
+            // console.log(bsvUtxoCount,utxoCount,'####')
             if (bsvUtxoCount > 3 || utxoCount >= 20) {
                 antMessage.warn(this.$t('popup.merge_notice'))
                 return routerManager.goFor('/merge', '/payToken', {
                     genesis: this.transInfo.genesis,
+                    codehash: this.transInfo.codehash,
                     broadcast: true,
                     address: this.transAddress,
                     amount,
                 });
             }
-            console.log(this.transInfo)
+            // console.log(this.transInfo)
             routerManager.goto('/payToken', {
                 genesis: this.transInfo.genesis,
                 codehash: this.transInfo.codehash,

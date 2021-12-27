@@ -60,11 +60,21 @@ txUtils.sign = (wif, {txHex, scriptHex, address, inputIndex, satoshis, sigtype,}
     }
 }
 
-txUtils.signTransaction = function (wif, txHex, inputInfos) {
+txUtils.signTransaction = function (txHex, inputInfos) {
     const tx = new bsv156.Transaction(txHex);
-    let privateKey = bsv156.PrivateKey.fromWIF(wif);
 
     return inputInfos.map((v) => {
+        let privateKey = null;
+        if(v.address){
+            if(walletManager.checkBsvAddress(v.address)){
+                if(v.address!==walletManager.getMainAddress()){
+                    throw new Error("unsupported address in inputInfos")
+                }else
+                    privateKey = bsv156.PrivateKey.fromWIF(walletManager.getMainWif());
+            }else   //传了address却不是地址，则视为path去衍生
+                privateKey = bsv156.PrivateKey.fromWIF(walletManager.getWif(v.address));
+        }else
+            privateKey = bsv156.PrivateKey.fromWIF(walletManager.getMainWif());
 
         let sighash = bsv156.Transaction.Sighash.sighash(
             tx,

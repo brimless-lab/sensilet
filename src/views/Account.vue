@@ -488,6 +488,7 @@ export default {
                     let utxoCount = await tokenManager.sensibleFt.getUtxoCount(this.transInfo.genesis, this.transInfo.codehash, walletManager.getMainAddress());
                     //获取bsv utxo数
                     let bsvUtxoCount = await walletManager.getBsvUtxoCount();
+
                     if (bsvUtxoCount > 3 || utxoCount >= 20) {
                         antMessage.warn(this.$t('popup.merge_notice'))
                         return routerManager.goFor('/merge', '/payToken', {

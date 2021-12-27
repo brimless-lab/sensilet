@@ -180,8 +180,8 @@ window.sensilet.getPublicKeyAndAddress =(hdPath)=>{
     return action('getPublicKeyAndAddress', {hdPath})
 }
 
-window.sensilet.signTransaction =(txHex,inputInfos,hdPath)=>{
-    return action('signTransaction', {txHex,inputInfos,hdPath})
+window.sensilet.signTransaction =(txHex,inputInfos)=>{
+    return action('signTransaction', {txHex,inputInfos})
 }
 
 window.sensilet.signMessage =(msg)=>{

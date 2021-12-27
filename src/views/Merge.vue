@@ -109,7 +109,6 @@ export default {
                     await walletManager.mergeBsvUtxo(walletManager.getMainWif());
                 }
 
-
                 let utxoCount = await tokenManager.sensibleFt.getUtxoCount(tokenInfo.genesis, tokenInfo.codehash, walletManager.getMainAddress())
 
                 if (utxoCount >= 20)

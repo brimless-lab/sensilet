@@ -7407,7 +7407,7 @@ scroll-into-view-if-needed@^2.2.25:
   dependencies:
     compute-scroll-into-view "^1.0.17"
 
-scryptlib@^0.4.2-beta1:
+scryptlib@^0.4.6:
   version "0.4.6"
   resolved "https://registry.npmjs.org/scryptlib/-/scryptlib-0.4.6.tgz#c8b89c08e864e62b7d6b2cf862a1e682c4298db6"
   integrity sha512-iTTRijQEn90veaVpgk0k/5nGxOLo59IpVyP1FRvDOAn6GRxJoMEjUWd/PbrN3SNZgijVAtThw2IN6WRXOIndhw==
@@ -7468,15 +7468,15 @@ send@0.17.1:
     range-parser "~1.2.1"
     statuses "~1.5.0"
 
-sensible-sdk@7.3.2-beta.4:
-  version "7.3.2-beta.4"
-  resolved "https://registry.npmjs.org/sensible-sdk/-/sensible-sdk-7.3.2-beta.4.tgz#9797e23842a6ee07aac8fd147146755871e5ad3a"
-  integrity sha512-w2pSeLQLmW8m9J8KYDtIVdgYcH6ikRK5miKCZ+KAm2kna4TUKBm1JXT//+8qVnyooovlL+d6gqDW1NcMEYsCig==
+sensible-sdk@7.3.3:
+  version "7.3.3"
+  resolved "https://registry.npmjs.org/sensible-sdk/-/sensible-sdk-7.3.3.tgz#005aff35fd5ac72cf7b34029bf6d3ba6b7204a25"
+  integrity sha512-GoJcCWxniO4OXiKbHTmP3LiwsFLjSsF5fEBlLof+izsTSftoPryQZn4IwdIf34RrvuCMgkqPKH4HLUjipbdQ4w==
   dependencies:
     bsv "1.5.6"
     minimist "1.2.5"
     request "^2.88.2"
-    scryptlib "^0.4.2-beta1"
+    scryptlib "^0.4.6"
 
 serialize-javascript@^4.0.0:
   version "4.0.0"
