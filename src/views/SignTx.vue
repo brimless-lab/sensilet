@@ -85,7 +85,7 @@ export default {
                         data.tokenAmount = parseInt(data.tokenAmount);
                     temp.type += `(${data.tokenName.replaceAll('/u000','')})`;
                         temp.amount = data.decimalNum > 0 ? (data.tokenAmount / Math.pow(10, data.decimalNum)).toFixed(data.decimalNum) : data.tokenAmount;
-                    temp.address = showLongString(data.tokenAddress, 20);
+                    temp.address = showLongString(data.tokenAddress, 10);
                     temp.symbol = data.tokenSymbol.replaceAll('/u000','');
                     temp.decimal = data.decimalNum
                 } else {
@@ -93,7 +93,7 @@ export default {
                     //     temp.type += `(${$t('popup.change')})`
                     // }
                     temp.amount = txDetail[j].satoshis;
-                    temp.address = showLongString(txDetail[j].address, 20);
+                    temp.address = showLongString(txDetail[j].address, 10);
                     temp.symbol = "BSV";
                     temp.decimal = 8;
                 }

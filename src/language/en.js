@@ -208,7 +208,7 @@ export default {
         progress_notice_1:"MetaId created,preparing genesis",
         success:"Success",
         fail:"Fail",
-
+        mine:"Mine"
 
     },
 }

@@ -1,7 +1,7 @@
 const responseHandlers = new Map();
 const eventHandlers = {};
 const sensibleSdk = require("sensible-sdk");
-
+//
 require('./utils/globalUtils')
 require('./config/errorCode')
 const walletManager = require("./manager/WalletManager");

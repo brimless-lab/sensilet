@@ -14,13 +14,15 @@
                 </div>
                 <div class="info">
                     <span>{{ $t('popup.receive_address') }}</span>
-                    <span style="font-size: 12px">{{ item.address }}</span>
+                    <span style="font-size: 12px">{{ item.address }}
+                        <span class="mine-tag" v-if="item.isChange">{{$t("popup.mine")}}</span>
+                    </span>
                 </div>
                 <div class="info">
-                    <!--                    <span class="tag" v-if="item.isChange">{{$t("popup.change")}}:</span>-->
-                    <!--                    <span v-else class="tag red">-->
-                    <!--                        {{$t('popup.amount')}}-->
-                    <!--                    </span>-->
+<!--                                        <span class="tag" v-if="item.isChange">{{$t("popup.change")}}:</span>-->
+<!--                                        <span v-else class="tag red">-->
+<!--                                            {{$t('popup.amount')}}-->
+<!--                                        </span>-->
                     <span>
                         {{ $t('popup.amount') }}
                     </span>
@@ -87,12 +89,15 @@ export default {
                 if (typeof data.tokenAmount === 'string')
                     data.tokenAmount = parseInt(data.tokenAmount);
                 temp.type += `(${data.tokenName.replaceAll('\u0000', '')})`;
-                temp.amount = data.decimalNum > 0 ? (data.tokenAmount / Math.pow(10, data.decimalNum)).toFixed(data.decimalNum) : data.tokenAmount;
-                temp.address = showLongString(data.tokenAddress, 20);
+                temp.amount = data.tokenAmount;
+                temp.address = showLongString(data.tokenAddress, 10);
                 temp.symbol = data.tokenSymbol.replaceAll('\u0000', '');
                 temp.decimal = data.decimalNum
 
                 temp.isChange = data.tokenAddress === this.userAddress;
+
+
+                console.log(temp,'### temp')
 
             } else {
                 // if(txDetail[j].address === this.userAddress){
@@ -101,7 +106,7 @@ export default {
                 temp.isChange = txDetail[j].address === this.userAddress;
 
                 temp.amount = txDetail[j].satoshis;
-                temp.address = showLongString(txDetail[j].address, 20);
+                temp.address = showLongString(txDetail[j].address, 10);
                 temp.symbol = "BSV";
                 temp.decimal = 8;
             }
@@ -192,6 +197,13 @@ export default {
         .info {
             display: flex;
             justify-content: space-between;
+
+            .mine-tag{
+                border-radius: 4px;
+                background-color: green;
+                color: white;
+                padding: 1px 2px;
+            }
 
             .tag {
                 border-radius: 4px;

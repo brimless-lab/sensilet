@@ -106,11 +106,11 @@ export default {
             let fee = await tokenManager.sensibleFt.getTransferEsitimate(tokenInfo.codehash, tokenInfo.genesis,
                 this.receivers, walletManager.getMainWif(), signers
             );
-            // console.log(fee)
+            console.log(fee,'###fee')
             this.fee = fee
 
         } catch (e) {
-            console.log(e)
+            console.error(e)
             this.fee = this.$t('popup.error_balance')
         }
 
