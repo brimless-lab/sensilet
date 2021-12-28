@@ -1,25 +1,31 @@
 <template>
-    <div class="panel">
-        <div class="title">{{ $t('popup.too_many_utxo') }}</div>
-        <div v-if="tokenInfo" style="margin-top: 20px">
-            <img class="logo" :src="tokenInfo.logo" alt="">
-            <div class="notice">{{ tokenInfo.name }}</div>
-            <div class="notice">Genesis: {{ tokenInfo.genesis }}</div>
+    <div class="panel-container">
 
-            <div class="notice">
-                {{ $t('popup.merge_notice') }}
-            </div>
-            <div class="notice">{{ $t('popup.fee') }}
-                <CoinShow :value="fee" big-unit="BSV" :decimal=8 :fixed=8 show-big-unit/>
-            </div>
+        <div class="panel">
+            <div class="title">{{ $t('popup.too_many_utxo') }}</div>
+            <div v-if="tokenInfo" style="margin-top: 20px">
+                <img class="logo" :src="tokenInfo.logo" alt="">
+                <div class="notice">{{ tokenInfo.name }}</div>
+                <div class="notice">Genesis: {{ tokenInfo.genesis }}</div>
 
+                <div class="notice">
+                    {{ $t('popup.merge_notice') }}
+                </div>
+                <div class="notice">{{ $t('popup.fee') }}
+                    <CoinShow :value="fee" big-unit="BSV" :decimal=8 :fixed=8 show-big-unit/>
+                </div>
+
+
+            </div>
+            <a-spin v-else/>
+        </div>
+        <div class="action-panel">
             <div class="action-container" v-if="!isPaying">
                 <a-button @click="cancel">{{ $t('popup.cancel') }}</a-button>
                 <a-button type="primary" @click="commit">{{ $t('popup.commit') }}</a-button>
             </div>
             <a-spin v-else/>
         </div>
-        <a-spin v-else/>
     </div>
 </template>
 
@@ -60,7 +66,7 @@ export default {
     async mounted() {
         console.log(this.genesis)
 
-        tokenInfo = await tokenManager.getTokenInfo(this.genesis,this.codehash);
+        tokenInfo = await tokenManager.getTokenInfo(this.genesis, this.codehash);
 
         if (!tokenInfo) {
             antMessage.error(this.$t('popup.unknown_token'));

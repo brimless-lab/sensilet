@@ -1,20 +1,27 @@
 <template>
-    <div class="panel">
-        <div class="title" v-if="origin">{{$t('popup.sign_msg_request')}}</div>
-        <div class="pay-info" v-if="origin">
-            <div class="origin">{{ origin }}</div>
+    <div class="panel-container">
+
+        <div class="panel">
+            <div class="title" v-if="origin">{{ $t('popup.sign_msg_request') }}</div>
+            <div class="pay-info" v-if="origin">
+                <div class="origin">{{ origin }}</div>
+            </div>
+            <div class="notice">
+                {{ $t('popup.sign_notice') }}
+            </div>
+            <div class="notice">{{ $t('popup.sign_msg') }}</div>
+            <div class="msg-panel">{{ msg }}</div>
+
         </div>
-        <div class="notice">
-            {{$t('popup.sign_notice')}}
+        <div class="action-panel">
+            <div class="action-container" v-if="!isCreating">
+                <a-button @click="cancel">{{ $t('popup.cancel') }}</a-button>
+                <a-button type="primary" @click="commit">{{ $t('popup.sign') }}</a-button>
+            </div>
+            <a-spin v-else/>
         </div>
-        <div class="notice">{{$t('popup.sign_msg')}}</div>
-        <div class="msg-panel">{{msg}}</div>
-        <div class="action-container" v-if="!isCreating">
-            <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
-            <a-button type="primary" @click="commit">{{$t('popup.sign')}}</a-button>
-        </div>
-        <a-spin v-else/>
     </div>
+
 </template>
 
 <script>
@@ -59,7 +66,7 @@ export default {
                     data: {
                         id: request.id,
                         result: "success",
-                        data :walletManager.signMessage(this.msg,this.noNeedAddress),
+                        data: walletManager.signMessage(this.msg, this.noNeedAddress),
                     },
                 });
                 window.close();
@@ -100,7 +107,8 @@ export default {
     display: flex;
     justify-content: space-between;
 }
-.msg-panel{
+
+.msg-panel {
     max-height: 300px;
     overflow-y: scroll;
     margin: 16px 0;
@@ -116,8 +124,9 @@ export default {
     font-style: normal;
     font-weight: normal;
     text-align: left;
-    &::-webkit-scrollbar{
-        width:0;
+
+    &::-webkit-scrollbar {
+        width: 0;
         height: 0;
     }
 }

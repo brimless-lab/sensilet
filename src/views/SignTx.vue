@@ -1,30 +1,36 @@
 <template>
-    <div class="panel">
-        <div class="title" v-if="origin">{{$t('popup.sign_tx_request')}}</div>
-        <div class="pay-info" v-if="origin">
-            <div class="origin">{{ origin }}</div>
-        </div>
-        <div class="tx-list" v-for="txDetail in txDetailList">
-            <div class="item" v-for="item in txDetail">
-                <div class="info">
-                    <span>{{$t('popup.tx_type')}}</span>
-                    <span>{{ item.type }}</span>
-                </div>
-                <div class="info">
-                    <span>{{$t('popup.receive_address')}}</span>
-                    <span style="font-size: 12px">{{ item.address }}</span>
-                </div>
-                <div class="info">
-                    <span>{{$t('popup.pay_amount')}}</span>
-                    <CoinShow :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
+    <div class="panel-container">
+
+        <div class="panel">
+            <div class="title" v-if="origin">{{ $t('popup.sign_tx_request') }}</div>
+            <div class="pay-info" v-if="origin">
+                <div class="origin">{{ origin }}</div>
+            </div>
+            <div class="tx-list" v-for="txDetail in txDetailList">
+                <div class="item" v-for="item in txDetail">
+                    <div class="info">
+                        <span>{{ $t('popup.tx_type') }}</span>
+                        <span>{{ item.type }}</span>
+                    </div>
+                    <div class="info">
+                        <span>{{ $t('popup.receive_address') }}</span>
+                        <span style="font-size: 12px">{{ item.address }}</span>
+                    </div>
+                    <div class="info">
+                        <span>{{ $t('popup.pay_amount') }}</span>
+                        <CoinShow :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
+                    </div>
                 </div>
             </div>
+
         </div>
-        <div class="action-container" v-if="!isCreating">
-            <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
-            <a-button type="primary" @click="commit">{{$t('popup.commit')}}</a-button>
+        <div class="action-panel">
+            <div class="action-container" v-if="!isCreating">
+                <a-button @click="cancel">{{ $t('popup.cancel') }}</a-button>
+                <a-button type="primary" @click="commit">{{ $t('popup.commit') }}</a-button>
+            </div>
+            <a-spin v-else/>
         </div>
-        <a-spin v-else/>
     </div>
 </template>
 
@@ -73,7 +79,7 @@ export default {
 
             for (let j = 0; j < txDetail.length; j++) {
                 let temp = {};
-                temp.type = txUtils.txTypeWord[ txDetail[j].type];
+                temp.type = txUtils.txTypeWord[txDetail[j].type];
                 if (txDetail[j].type === txUtils.txType.SENSIBLE_FT) {
 
 
@@ -83,10 +89,10 @@ export default {
                         data = JSON.parse(data)
                     if (typeof data.tokenAmount === 'string')
                         data.tokenAmount = parseInt(data.tokenAmount);
-                    temp.type += `(${data.tokenName.replaceAll('/u000','')})`;
-                        temp.amount = data.decimalNum > 0 ? (data.tokenAmount / Math.pow(10, data.decimalNum)).toFixed(data.decimalNum) : data.tokenAmount;
+                    temp.type += `(${data.tokenName.replaceAll('/u000', '')})`;
+                    temp.amount = data.decimalNum > 0 ? (data.tokenAmount / Math.pow(10, data.decimalNum)).toFixed(data.decimalNum) : data.tokenAmount;
                     temp.address = showLongString(data.tokenAddress, 10);
-                    temp.symbol = data.tokenSymbol.replaceAll('/u000','');
+                    temp.symbol = data.tokenSymbol.replaceAll('/u000', '');
                     temp.decimal = data.decimalNum
                 } else {
                     // if(txDetail[j].address === this.userAddress){

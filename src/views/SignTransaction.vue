@@ -1,71 +1,77 @@
 <template>
-    <div class="panel">
-        <div class="title" v-if="origin">{{ $t('popup.sign_tx_request') }}</div>
-        <div class="pay-info" v-if="origin">
-            <div class="origin">{{ origin }}</div>
-        </div>
-        <div class="tx-container">
-        <div class="type-choose-container">
-            <a-radio-group v-model:value="showPutType" button-style="solid" size="small">
-                <a-radio-button value="inputs"> Inputs</a-radio-button>
-                <a-radio-button value="outputs">Outputs</a-radio-button>
-            </a-radio-group>
-        </div>
-        <div class="tx-list" v-if="showPutType==='inputs'">
-            <div class="item" v-for="item in inputInfosShow">
-                <div class="info">
-                    <span>{{ $t('popup.tx_type') }}</span>
-                    <span>{{ item.type }}
+    <div class="panel-container">
+
+        <div class="panel">
+            <div class="title" v-if="origin">{{ $t('popup.sign_tx_request') }}</div>
+            <div class="pay-info" v-if="origin">
+                <div class="origin">{{ origin }}</div>
+            </div>
+            <div class="tx-container">
+                <div class="type-choose-container">
+                    <a-radio-group v-model:value="showPutType" button-style="solid" size="small">
+                        <a-radio-button value="inputs"> Inputs</a-radio-button>
+                        <a-radio-button value="outputs">Outputs</a-radio-button>
+                    </a-radio-group>
+                </div>
+                <div class="tx-list" v-if="showPutType==='inputs'">
+                    <div class="item" v-for="item in inputInfosShow">
+                        <div class="info">
+                            <span>{{ $t('popup.tx_type') }}</span>
+                            <span>{{ item.type }}
                     </span>
 
-                </div>
-                <div class="info">
-                    <span>{{ $t('popup.address') }}</span>
-                    <span style="font-size: 12px">{{ item.address }}
-                        <!--                        <span class="mine-tag" v-if="item.isChange">{{$t("popup.mine")}}</span>-->
+                        </div>
+                        <div class="info">
+                            <span>{{ $t('popup.address') }}</span>
+                            <span style="font-size: 12px">{{ item.address }}
+                                <!--                        <span class="mine-tag" v-if="item.isChange">{{$t("popup.mine")}}</span>-->
                     </span>
-                </div>
-                <div class="info">
+                        </div>
+                        <div class="info">
                     <span>
                         {{ $t('popup.amount') }}
                     </span>
-                    <CoinShow style="font-weight: bold;" :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
+                            <CoinShow style="font-weight: bold;" :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="tx-list" v-else>
-            <div class="item" v-for="item in txDetailList">
-                <div class="info">
-                    <span>{{ $t('popup.tx_type') }}</span>
-                    <span>{{ item.type }}
+                <div class="tx-list" v-else>
+                    <div class="item" v-for="item in txDetailList">
+                        <div class="info">
+                            <span>{{ $t('popup.tx_type') }}</span>
+                            <span>{{ item.type }}
                     </span>
 
-                </div>
-                <div class="info">
-                    <span>{{ $t('popup.address') }}</span>
-                    <span style="font-size: 12px">{{ item.address }}
+                        </div>
+                        <div class="info">
+                            <span>{{ $t('popup.address') }}</span>
+                            <span style="font-size: 12px">{{ item.address }}
                         <span class="mine-tag" v-if="item.isChange">{{ $t("popup.mine") }}</span>
                     </span>
-                </div>
-                <div class="info">
-                    <!--                                        <span class="tag" v-if="item.isChange">{{$t("popup.change")}}:</span>-->
-                    <!--                                        <span v-else class="tag red">-->
-                    <!--                                            {{$t('popup.pay_amount')}}-->
-                    <!--                                        </span>-->
-                    <span>
+                        </div>
+                        <div class="info">
+                            <!--                                        <span class="tag" v-if="item.isChange">{{$t("popup.change")}}:</span>-->
+                            <!--                                        <span v-else class="tag red">-->
+                            <!--                                            {{$t('popup.pay_amount')}}-->
+                            <!--                                        </span>-->
+                            <span>
                         {{ $t('popup.amount') }}
                     </span>
 
-                    <CoinShow style="font-weight: bold;" :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
+                            <CoinShow style="font-weight: bold;" :value="item.amount" :big-unit="item.symbol" :fixed="item.decimal" :decimal="item.decimal" show-big-unit/>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
+        <div class="action-panel">
+            <div class="action-container" v-if="!isCreating">
+                <a-button @click="cancel">{{ $t('popup.cancel') }}</a-button>
+                <a-button type="primary" @click="commit">{{ $t('popup.commit') }}</a-button>
+            </div>
+            <a-spin v-else/>
         </div>
-        <div class="action-container" v-if="!isCreating">
-            <a-button @click="cancel">{{ $t('popup.cancel') }}</a-button>
-            <a-button type="primary" @click="commit">{{ $t('popup.commit') }}</a-button>
-        </div>
-        <a-spin v-else/>
     </div>
 </template>
 
@@ -84,7 +90,7 @@ export default {
     data() {
 
         return {
-            showPutType:'outputs',
+            showPutType: 'outputs',
             isCreating: false,
             origin,
             fee: null,
@@ -221,7 +227,8 @@ export default {
     text-align: center;
 
 }
-.type-choose-container{
+
+.type-choose-container {
     padding-top: 10px;
 }
 
@@ -244,11 +251,13 @@ export default {
     display: flex;
     justify-content: space-between;
 }
-.tx-container{
+
+.tx-container {
     background-color: whitesmoke;
     border-radius: 5px;
     margin-top: 5px;
 }
+
 .tx-list {
 
     padding: 8px;
@@ -260,7 +269,7 @@ export default {
     .item {
 
 
-        &:not(:first-child){
+        &:not(:first-child) {
             margin-top: 10px;
         }
 
