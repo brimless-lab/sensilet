@@ -1,6 +1,16 @@
 
 # Release Notes
 
+### v0.1.8 (2021-12-28) 
+
+- new: receipt page after sending tx
+- new: add program interface to support multiple addresses (for metaid support)
+- new: change password 
+- improved ui design of signing page
+- improved ui design of 'send' page  
+- fix: transaction constructing failed in rare case
+- automatically merge utxo as needed
+
 ### v0.1.7 (2021-12-08)
 
 - new: Japanese support!
