@@ -48,6 +48,10 @@ apiUtils.listNftByGenesis = function (codehash, genesis, address, cursor, size) 
 apiUtils.GetRawTxById = async function (metaTxId) {
     return httpUtils.get(`https://api.sensiblequery.com/rawtx/${metaTxId}?appid=sensilet`)
 }
+apiUtils.getTransitionInfo = async function (txid) {
+    return httpUtils.get(`https://api.sensiblequery.com/tx/${txid}?appid=sensilet`)
+}
+
 
 apiUtils.getRawTx = function (txid) {
     return httpUtils.get(`https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`)

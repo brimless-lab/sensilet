@@ -57,11 +57,12 @@
             <div class="receive-container">
                 <div class="info">
                     <div class="key">{{ $t('popup.fee') }}</div>
-                    <div class="value">
+                    <div class="value" v-if="fee">
                         <CoinShow :value="fee" big-unit="BSV" :decimal="8" fixed="8" show-big-unit/>
                     </div>
+                    <div class="value" v-else><a-spin size="small"></a-spin></div>
                 </div>
-                <div class="info fee-usd">
+                <div class="info fee-usd" v-if="feeUsd">
                     <div class="key"></div>
                     <div class="value" style="color: #666;margin-right: -2px">
                         {{ feeUsd }} USD
@@ -209,8 +210,14 @@ export default {
                     window.close();
                 } else {
                     antMessage.success('Success')
-                    await sleep(2000)
-                    routerManager.gotoHome();
+                    await sleep(1000)
+                    // routerManager.gotoHome();
+                    routerManager.goto('/payResult',{
+                        from:this.mineAddress,
+                        to:this.receivers,
+                        txid,
+                        bsvPrice:this.bsvPrice,
+                    })
                 }
             } catch (e) {
                 console.error(e)

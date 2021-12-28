@@ -45,6 +45,8 @@
         <SignTransaction v-else-if="currentPage==='/signTransaction'"/>
         <ConnectManagement v-else-if="currentPage==='/connectManagement'"/>
         <NftList v-else-if="currentPage==='/nftList'"/>
+        <PayResult v-else-if="currentPage==='/payResult'"/>
+        <PayTokenResult v-else-if="currentPage==='/payTokenResult'"/>
     </div>
 
 </template>
@@ -76,6 +78,8 @@ const ExportPrivate = defineAsyncComponent(() => import( "./views/ExportPrivate"
 const SignTransaction = defineAsyncComponent(() => import( "./views/SignTransaction"));
 const ConnectManagement = defineAsyncComponent(() => import( "./views/ConnectManagement"));
 const NftList = defineAsyncComponent(() => import( "./views/NftList"));
+const PayResult = defineAsyncComponent(() => import( "./views/PayResult"));
+const PayTokenResult = defineAsyncComponent(() => import( "./views/PayTokenResult"));
 
 const AccountChoose = defineAsyncComponent(() => import( "./components/AccountChoose"));
 
@@ -110,6 +114,8 @@ export default {
         ExportPrivate,
         SignTransaction,
         NftList,
+        PayResult,
+        PayTokenResult,
         ConnectManagement,
     },
     data() {
@@ -882,10 +888,17 @@ body {
     }
 
     .action-panel{
-        flex: 1;
+        max-width:375px;
+        width: calc(100vw - 32px);
+        margin: 0 auto;
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
+
+        @media (max-height: 720px) {
+            flex: 1;
+
+        }
 
         .action-container {
             margin: 16px;

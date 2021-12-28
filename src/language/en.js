@@ -211,7 +211,9 @@ export default {
         progress_notice_1:"MetaId created,preparing genesis",
         success:"Success",
         fail:"Fail",
-        mine:"Mine"
+        mine:"Mine",
+        done:"Done",
+        view_in_explorer:"view on blockcheck.info"
 
     },
 }

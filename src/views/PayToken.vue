@@ -216,7 +216,7 @@ export default {
                 } else
                     this.receivers[i].usd = "-"
             }
-            console.log(price,this.receivers)
+            // console.log(price,this.receivers)
 
 
         },
@@ -275,7 +275,14 @@ export default {
                     }
                     window.close();
                 } else {
-                    routerManager.gotoHome();
+                    // routerManager.gotoHome();
+                    routerManager.goto('/payTokenResult',{
+                        tokenInfo:this.tokenInfo,
+                        to:this.receivers,
+                        txid,
+                        bsvPrice:this.bsvPrice,
+
+                    })
                 }
             } catch (e) {
                 console.error(e)

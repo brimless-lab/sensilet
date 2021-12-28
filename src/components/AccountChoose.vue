@@ -20,7 +20,7 @@
 
         </div>
         <template #overlay>
-            <a-menu v-if="$store.state.accountList  && $store.state.accountList .length>0" style="max-height: 60vh;overflow-y: scroll">
+            <a-menu v-if="$store.state.accountList  && $store.state.accountList .length>0" style="max-height: 60vh;overflow-y: auto">
                 <a-menu-item v-for="item in $store.state.accountList" @click="choose(item)" class="account-item"
                              :class="{'selected':item.address===$store.getters.address && current!=='/create' }">
                     <div style="display: flex;align-items: center">

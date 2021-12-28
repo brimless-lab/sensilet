@@ -203,7 +203,9 @@ export default {
         progress_notice_1:"MetaIdが作成され、ジェネシスが準備されます",
         success:"成功",
         fail:"失敗",
-        mine:"Mine"
+        mine:"Mine",
+        back:"Back",
+        view_in_explorer:"View On Blockcheck"
 
     },
 }
