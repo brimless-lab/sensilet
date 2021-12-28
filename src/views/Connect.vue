@@ -1,4 +1,5 @@
 <template>
+    <div class="panel-container">
     <div class="panel">
         <div class="title">{{$t('popup.info_request')}}</div>
         <div class="link-info">
@@ -15,11 +16,15 @@
             </div>
         </div>
         <div class="notice">{{$t('popup.connect_notice')}}</div>
-        <div class="action-container" v-if="!isConnecting">
-            <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
-            <a-button type="primary" @click="connect">{{$t('popup.connect')}}</a-button>
+
+    </div>
+        <div class="action-panel">
+            <div class="action-container" v-if="!isConnecting">
+                <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
+                <a-button type="primary" @click="connect">{{$t('popup.connect')}}</a-button>
+            </div>
+            <a-spin v-else/>
         </div>
-        <a-spin v-else/>
     </div>
 </template>
 

@@ -13,8 +13,11 @@ apiUtils.getBsvPrice = function () {
 
     return httpUtils.get(`${host}/bsv_price`)
 }
-apiUtils.getTokenPrice = function () {
-    return httpUtils.get(`${host}/token_price`)
+apiUtils.getTokenPrice = function (genesis) {
+    if (genesis)
+        return httpUtils.get(`${host}/token_price/${genesis}`)
+    else
+        return httpUtils.get(`${host}/token_price`)
 }
 apiUtils.getTokenList = function () {
     return httpUtils.get(`${host}/token_list`)
@@ -38,18 +41,17 @@ apiUtils.getTokenInfo = function (genesis, codehash) {
     return httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${codehash}/${genesis}?appid=sensilet`)
 }
 
-apiUtils.listNftByGenesis = function (codehash,genesis,address,cursor,size) {
+apiUtils.listNftByGenesis = function (codehash, genesis, address, cursor, size) {
     return httpUtils.get(`https://api.sensiblequery.com/nft/utxo-data/${codehash}/${genesis}/${address}?cursor=${cursor}&size=${size}&appid=sensilet`)
 }
 
-apiUtils.GetRawTxById = async function (metaTxId){
+apiUtils.GetRawTxById = async function (metaTxId) {
     return httpUtils.get(`https://api.sensiblequery.com/rawtx/${metaTxId}?appid=sensilet`)
 }
 
 apiUtils.getRawTx = function (txid) {
     return httpUtils.get(`https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`)
 }
-
 
 
 module.exports = apiUtils;

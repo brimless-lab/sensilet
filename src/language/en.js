@@ -171,7 +171,7 @@ export default {
         connect: "Connect",
         too_many_utxo: "Too Many UTXO",
         merge_notice: "The UTXO set should be merged first to proceed.",
-        fee: "Fee：",
+        fee: "Fee",
         commit: "Commit",
         unknown_token: "Unknown Token",
 
@@ -187,6 +187,7 @@ export default {
         pay_amount: "Pay Amount:",
         amount: "Amount:",
         balance: "Balance:",
+        balance_2: "Balance",
         broadcast: "Broadcast:",
         yes: "Yes",
         no: "No",

@@ -97,7 +97,7 @@ export default {
         }
     },
     async mounted() {
-        console.log(this.inputInfos)
+        // console.log(this.inputInfos)
         this.inputInfosShow = this.inputInfos.map(item => {
             let temp = txUtils.getInputsInfo(item.scriptHex, item.satoshis);
 
@@ -116,9 +116,6 @@ export default {
                 temp.decimal = data.decimalNum
 
                 temp.isChange = data.tokenAddress === this.userAddress;
-
-
-                console.log(temp, '### temp')
 
             } else {
                 temp.type = txUtils.txTypeWord[temp.type];
@@ -161,7 +158,7 @@ export default {
                 temp.isChange = data.tokenAddress === this.userAddress;
 
 
-                console.log(temp, '### temp')
+                // console.log(temp, '### temp')
 
             } else {
                 // if(txDetail[j].address === this.userAddress){

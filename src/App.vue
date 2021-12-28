@@ -161,7 +161,7 @@ export default {
             routerManager.goto('/pay')
         }
         if (request && request.method === 'payToken') {
-            console.log('支付Token');
+            console.log('pay Token');
             routerManager.goto('/payToken')
         }
         if (request && request.method === 'transferNft') {
@@ -425,7 +425,7 @@ body {
 
 .main {
     height: calc(100vh - 48px);
-    overflow-y: scroll;
+    overflow-y: auto;
     background-color: #f5f7fa;
 
     &::-webkit-scrollbar {
@@ -846,4 +846,54 @@ body {
         img{width: 17px}
     }
 }
+
+
+.scrolled{
+    &::-webkit-scrollbar{
+        background-color: #3a3a3a;
+        width: 5px;
+        transform: translateX(10px);
+        border-radius: 2em;
+    }
+
+    &::-webkit-scrollbar-track{
+        background-color: #ddd;
+        border-radius: 2em;
+
+    }
+
+    &::-webkit-scrollbar-thumb{
+        background-color: #eee;
+        border-radius: 2em;
+    }
+}
+
+.panel-container{
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 48px);
+
+    padding-top: 20px;
+
+    .panel{
+        margin-top: 0;
+        max-height: calc(100vh - 132px);
+        overflow-y: auto;
+    }
+
+    .action-panel{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+
+        .action-container {
+            margin: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+    }
+}
+
 </style>

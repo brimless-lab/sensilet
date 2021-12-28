@@ -1,6 +1,6 @@
 <template>
     <div class="coin-type" style="display: inline-block">
-        <span v-if="showValue " :class="priceColorClass">
+        <span v-if="showValue " :class="{'bold':isBoldAmount}">
             {{showValue}}
         </span>
         <span v-if="!hideUnit && !isNaN(showValue) "  class="bsv-color" :style="'margin-left:4px;'+'color:'+ color">
@@ -22,6 +22,7 @@
             value: [String , Number],
             decimal:Number,
             fixed:{type: [Number,String],default:3},
+            isBoldAmount:Boolean,
         },
 
         computed: {
@@ -38,5 +39,7 @@
 </script>
 
 <style scoped lang="scss">
-
+.bold{
+    font-weight: bold;
+}
 </style>
