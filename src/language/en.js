@@ -176,6 +176,7 @@ export default {
         unknown_token: "Unknown Token",
 
         pay_request: "The website requests to pay {0}",
+        send_asset:"Send {0}",
         sign_tx_request: "The website requests to sign the transaction",
         tx_type:"Script Type",
         sign_msg_request: "The website requests to sign the message",

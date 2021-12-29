@@ -91,7 +91,7 @@ export default {
     },
     methods: {
         cancel() {
-            if (origin) {
+            if (origin&& request && request.method==='checkTokenUtxoCount') {
                 //外部请求
                 chrome.runtime.sendMessage({
                     channel: 'sato_extension_background_channel',
@@ -121,7 +121,7 @@ export default {
                     await tokenManager.sensibleFt.merge(walletManager.getMainWif(), walletManager.getMainWif(), tokenInfo.genesis, tokenInfo.codehash, utxoCount)
 
 
-                if (origin) {
+                if (origin && request && request.method==='checkTokenUtxoCount') {
                     //外部请求
                     chrome.runtime.sendMessage({
                         channel: 'sato_extension_background_channel',

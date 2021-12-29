@@ -3,7 +3,7 @@
         <span v-if="showValue " :class="{'bold':isBoldAmount}">
             {{showValue}}
         </span>
-        <span v-if="!hideUnit && !isNaN(showValue) "  class="bsv-color" :style="'margin-left:4px;'+'color:'+ color">
+        <span v-if="!hideUnit && !isNaN(showValue) "  class="bsv-color unit" :style="'margin-left:4px;'+'color:'+ color">
             {{unitWord}}
         </span>
     </div>
@@ -41,5 +41,8 @@
 <style scoped lang="scss">
 .bold{
     font-weight: bold;
+}
+.coin-type{
+
 }
 </style>

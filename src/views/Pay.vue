@@ -5,6 +5,9 @@
             <div class="pay-info" v-if="origin">
                 <div class="origin">{{ origin }}</div>
             </div>
+            <div class="title">
+                {{ $t('popup.send_asset', ['BSV']) }}
+            </div>
             <div class="token-info">
                 <img class="logo" src="../assets/bsv-icon.svg" alt="">
                 <div class="right">
@@ -35,8 +38,8 @@
                     </div>
                     <div class="info fee-usd">
                         <div class="key"></div>
-                        <div class="value" style="margin-right: -2px;color: #666;" v-if="item.usd">
-                            {{item.usd}} USD
+                        <div class="value" style="color: #666;" v-if="item.usd">
+                            {{item.usd}}  <span class="unit" style="margin-left: 4px">USD</span>
                         </div>
                         <div class="value" v-else>
                             <a-spin size="small"></a-spin>
@@ -64,8 +67,8 @@
                 </div>
                 <div class="info fee-usd" v-if="feeUsd">
                     <div class="key"></div>
-                    <div class="value" style="color: #666;margin-right: -2px">
-                        {{ feeUsd }} USD
+                    <div class="value" style="color: #666;">
+                        {{ feeUsd }}  <span class="unit" style="margin-left: 4px">USD</span>
                     </div>
                 </div>
             </div>

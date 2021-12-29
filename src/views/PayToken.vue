@@ -5,6 +5,9 @@
             <div class="pay-info" v-if="origin">
                 <div class="origin">{{ origin }}</div>
             </div>
+            <div class="title" v-else-if="tokenInfo">
+                {{ $t('popup.send_asset', [tokenInfo.name]) }}
+            </div>
             <div v-if="tokenInfo" style="margin-top: 20px">
                 <div class="token-info">
                     <img class="logo" :src="tokenInfo.logo||'/img/empty-token.png'" alt="">
@@ -40,8 +43,8 @@
                         </div>
                         <div class="info fee-usd">
                             <div class="key"></div>
-                            <div class="value" style="margin-right: -2px;color: #666;" v-if="item.usd">
-                                {{ item.usd }} USD
+                            <div class="value" style="color: #666;" v-if="item.usd">
+                                {{ item.usd }} <span class="unit" style="margin-left: 4px">USD</span>
                             </div>
                             <div class="value" v-else>
                                 <a-spin size="small"></a-spin>
@@ -76,8 +79,8 @@
                     </div>
                     <div class="info fee-usd" v-if="feeUsd>0">
                         <div class="key"></div>
-                        <div class="value" style="color: #666;margin-right: -2px">
-                            {{ feeUsd }} USD
+                        <div class="value" style="color: #666;">
+                            {{ feeUsd }}<span class="unit" style="margin-left: 4px">USD</span>
                         </div>
                     </div>
                 </div>
@@ -105,7 +108,7 @@
 import apiUtils from '../utils/apiUtils';
 
 const urlParams = new URLSearchParams(window.location.hash.slice(1));
-const origin = urlParams.get('origin');
+let origin = urlParams.get('origin');
 const request = JSON.parse(urlParams.get('request'));
 import CoinShow from "../components/CoinShow";
 
@@ -132,10 +135,18 @@ export default {
 
         let routerData = routerManager.data;
         if (routerData) {
-            data.receivers = [{amount: routerData.amount, address: routerData.address, addressShow: showLongString(routerData.address)}]
+            if (routerData.receivers)
+                data.receivers = routerData.receivers
+            else
+                data.receivers = [{amount: routerData.amount, address: routerData.address, addressShow: showLongString(routerData.address)}]
             data.broadcast = routerData.broadcast;
             data.genesis = routerData.genesis;
             data.codehash = routerData.codehash;
+            if (routerData.utxo)
+                data.utxo = routerData.utxo
+
+            if (routerData.origin)
+                origin = routerData.origin
         } else {
             request.params.receivers.forEach(item => {
                 item.addressShow = showLongString(item.address)
@@ -170,6 +181,7 @@ export default {
 
         this.tokenInfo = tokenInfo;
 
+
         try {
             // console.log(tokenInfo,tokenInfo.notDefaultSigners)
             if (tokenInfo.notDefaultSigners
@@ -191,12 +203,34 @@ export default {
         }
         this.getFeeUsd();
 
+        this.checkUtxo();
+
+
         //
         // let {rawHex,fee} = await walletManager.pay(this.address, this.amount, this.broadcast);
         // this.fee = fee;
         // this.rawHex = rawHex;
     },
     methods: {
+        async checkUtxo(){
+            //检查一下UTXO数
+            //获取token utxo数
+            let utxoCount = await tokenManager.sensibleFt.getUtxoCount(this.tokenInfo.genesis, this.tokenInfo.codehash, walletManager.getMainAddress());
+            //获取bsv utxo数
+            let bsvUtxoCount = await walletManager.getBsvUtxoCount();
+
+            if (bsvUtxoCount > 3 || utxoCount >= 20) {
+                antMessage.warn(this.$t('popup.merge_notice'))
+                return routerManager.goFor('/merge', '/payToken', {
+                    receivers:this.receivers,
+                    broadcast:this.broadcast,
+                    genesis:this.genesis,
+                    codehash:this.codehash,
+                    utxo:this.utxo,
+                    origin:this.origin,
+                });
+            }
+        },
         async getFeeUsd() {
             let {total} = await walletManager.getBsvBalance();
             if (isNaN(this.fee) || total < this.fee)
@@ -276,11 +310,11 @@ export default {
                     window.close();
                 } else {
                     // routerManager.gotoHome();
-                    routerManager.goto('/payTokenResult',{
-                        tokenInfo:this.tokenInfo,
-                        to:this.receivers,
+                    routerManager.goto('/payTokenResult', {
+                        tokenInfo: this.tokenInfo,
+                        to: this.receivers,
                         txid,
-                        bsvPrice:this.bsvPrice,
+                        bsvPrice: this.bsvPrice,
 
                     })
                 }

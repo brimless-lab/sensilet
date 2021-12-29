@@ -484,20 +484,20 @@ export default {
 
                     this.btnLoading = true;
 
-                    //获取token utxo数
-                    let utxoCount = await tokenManager.sensibleFt.getUtxoCount(this.transInfo.genesis, this.transInfo.codehash, walletManager.getMainAddress());
-                    //获取bsv utxo数
-                    let bsvUtxoCount = await walletManager.getBsvUtxoCount();
-
-                    if (bsvUtxoCount > 3 || utxoCount >= 20) {
-                        antMessage.warn(this.$t('popup.merge_notice'))
-                        return routerManager.goFor('/merge', '/payToken', {
-                            genesis: this.transInfo.genesis,
-                            broadcast: true,
-                            address: this.transAddress,
-                            amount,
-                        });
-                    }
+                    // //获取token utxo数
+                    // let utxoCount = await tokenManager.sensibleFt.getUtxoCount(this.transInfo.genesis, this.transInfo.codehash, walletManager.getMainAddress());
+                    // //获取bsv utxo数
+                    // let bsvUtxoCount = await walletManager.getBsvUtxoCount();
+                    //
+                    // if (bsvUtxoCount > 3 || utxoCount >= 20) {
+                    //     antMessage.warn(this.$t('popup.merge_notice'))
+                    //     return routerManager.goFor('/merge', '/payToken', {
+                    //         genesis: this.transInfo.genesis,
+                    //         broadcast: true,
+                    //         address: this.transAddress,
+                    //         amount,
+                    //     });
+                    // }
                     console.log(this.transInfo)
                     routerManager.goto('/payToken', {
                         genesis: this.transInfo.genesis,
