@@ -39,7 +39,7 @@
                     <div class="info fee-usd">
                         <div class="key"></div>
                         <div class="value" style="color: #666;" v-if="item.usd">
-                            {{item.usd}}  <span class="unit" style="margin-left: 4px">USD</span>
+                            {{ item.usd }} <span class="unit" style="margin-left: 4px">USD</span>
                         </div>
                         <div class="value" v-else>
                             <a-spin size="small"></a-spin>
@@ -63,12 +63,14 @@
                     <div class="value" v-if="fee">
                         <CoinShow :value="fee" big-unit="BSV" :decimal="8" fixed="8" show-big-unit/>
                     </div>
-                    <div class="value" v-else><a-spin size="small"></a-spin></div>
+                    <div class="value" v-else>
+                        <a-spin size="small"></a-spin>
+                    </div>
                 </div>
                 <div class="info fee-usd" v-if="feeUsd">
                     <div class="key"></div>
                     <div class="value" style="color: #666;">
-                        {{ feeUsd }}  <span class="unit" style="margin-left: 4px">USD</span>
+                        {{ feeUsd }} <span class="unit" style="margin-left: 4px">USD</span>
                     </div>
                 </div>
             </div>
@@ -215,16 +217,18 @@ export default {
                     antMessage.success('Success')
                     await sleep(1000)
                     // routerManager.gotoHome();
-                    routerManager.goto('/payResult',{
-                        from:this.mineAddress,
-                        to:this.receivers,
+                    routerManager.goto('/payResult', {
+                        from: this.mineAddress,
+                        to: this.receivers,
                         txid,
-                        bsvPrice:this.bsvPrice,
+                        bsvPrice: this.bsvPrice,
                     })
                 }
             } catch (e) {
                 console.error(e)
-                antMessage.error(e.message)
+                if (typeof e === 'string')
+                    return antMessage.error(e)
+                antMessage.error(e && e.message)
             } finally {
                 this.isCreating = false;
             }
@@ -256,6 +260,7 @@ export default {
         padding-left: 16px;
     }
 }
+
 .title {
     font-size: 1.2em;
     font-weight: bold;
@@ -304,7 +309,7 @@ export default {
     display: flex;
     justify-content: space-between;
 
-    &.fee-usd{
+    &.fee-usd {
         color: #666;
         margin-top: -10px;
     }

@@ -195,7 +195,7 @@ export default {
         change: "Change",
 
         error_balance: "Insufficient balance",
-        error_insufficient_balance: "Insufficient balance",
+        error_insufficient_balance: "Insufficient BSV balance",
         error_insufficient_token: "Insufficient {0}",
 
 

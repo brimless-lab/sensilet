@@ -136,9 +136,12 @@ export default {
                     routerManager.goNext();
                 }
             } catch (e) {
-                if (e.message.indexOf('Insufficient balance.') > -1) {
+                if (typeof e === 'string')
+                    return antMessage.error(e)
+
+                if (e && e.message && e.message.indexOf('Insufficient balance.') > -1) {
                     antMessage.error(this.$t("popup.error_insufficient_balance"))
-                } else if (e.message.indexOf('Insufficient token') > -1) {
+                } else if (e && e.message && e.message.indexOf('Insufficient token') > -1) {
                     antMessage.error(this.$t("popup.error_insufficient_token", [this.tokenInfo.name]))
                 } else
                     antMessage.error(e.message)

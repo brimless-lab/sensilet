@@ -219,6 +219,8 @@ export default {
             //获取bsv utxo数
             let bsvUtxoCount = await walletManager.getBsvUtxoCount();
 
+            console.log(utxoCount,bsvUtxoCount)
+
             if (bsvUtxoCount > 3 || utxoCount >= 20) {
                 antMessage.warn(this.$t('popup.merge_notice'))
                 return routerManager.goFor('/merge', '/payToken', {
@@ -233,7 +235,7 @@ export default {
         },
         async getFeeUsd() {
             let {total} = await walletManager.getBsvBalance();
-            if (isNaN(this.fee) || total < this.fee)
+            if (!isNaN(this.fee) && total < this.fee)
                 this.isBsvNotEnough = true;
 
             if (!isNaN(this.fee)) {
@@ -272,6 +274,7 @@ export default {
 
             try {
                 this.isPaying = true;
+
                 let {txid, txHex, routeCheckTxHex, tx} = await tokenManager.transfer(this.receivers, this.broadcast, tokenInfo, this.utxo, signers);
                 // console.log(result);
                 // antMessage.success("支付成功")
@@ -319,13 +322,16 @@ export default {
                     })
                 }
             } catch (e) {
-                console.error(e)
-                if (e.message.indexOf('Insufficient balance.') > -1) {
+                if(typeof e ==='string')
+                    return antMessage.error(e)
+                if (e&& e.message && e.message.indexOf('Insufficient balance.') > -1) {
                     antMessage.error(this.$t("popup.error_insufficient_balance"))
-                } else if (e.message.indexOf('Insufficient token') > -1) {
+                } else if (e && e.message&& e.message.indexOf('Insufficient token') > -1) {
                     antMessage.error(this.$t("popup.error_insufficient_token", [this.tokenInfo.name]))
-                } else
+                } else if(e)
                     antMessage.error(e.message)
+                else
+                    antMessage.error('unknown error')
             } finally {
                 this.isPaying = false;
             }

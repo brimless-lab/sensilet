@@ -244,9 +244,9 @@ nftManager.transfer = function (receiverAddress, genesis, codehash, tokenIndex, 
         } catch (e) {
             console.log(e)
             let msg = "transfer fail";
-            if (e.message.indexOf("Insufficient balance.") >= 0)
+            if (e&& e.message && e.message.indexOf("Insufficient balance.") >= 0)
                 msg += "：Insufficient balance.";
-            else if (e.message.indexOf("Invalid Address string provided") >= 0)
+            else if (e&& e.message &&e.message.indexOf("Invalid Address string provided") >= 0)
                 msg += "：Invalid Address string provided";
             antMessage.error(msg);
             reject(e)

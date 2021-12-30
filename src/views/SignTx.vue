@@ -157,6 +157,8 @@ export default {
 
             } catch (e) {
                 console.error(e)
+                if (typeof e === 'string')
+                    return antMessage.error(e)
                 antMessage.error(e.message)
             } finally {
                 this.isCreating = false;
