@@ -9,7 +9,7 @@
 - improved ui design of signing page
 - improved ui design of 'send' page  
 - fix: transaction constructing failed in rare case
-- automatically merge utxo as needed
+- fix: automatically merge utxo as needed
 
 ### v0.1.7 (2021-12-08)
 

@@ -1,57 +1,19 @@
 # Sensilet
 
-## install
+A Bitcoin SV wallet with support for sensible tokens.
 
-    Download Sensilet from [Chrome Extensions Store](https://chrome.google.com/webstore/detail/sensilet/aadkcfdlmiddiiibdnhfbpbmfcaoknkm)
+Wallet keys are stored in localStorage, optionally encrypted by a password.
 
+See [sensilet.com](https://sensilet.com/) or the [Sensilet Chrome Extension](https://chrome.google.com/webstore/detail/sensilet/aadkcfdlmiddiiibdnhfbpbmfcaoknkm) to install.
 
-## Usage
+See [test.sensilet.com](https://test.sensilet.com) or [sensible-web3-demo](https://github.com/sensible-contract/sensible-web3-demo) for a demo.
 
-```js
-//the sensilet is on web window object
-const bsv = window.sensilet
-// connect to sensilet
-const address = await bsv.requestAccount();
-// get user account info
-const accountInfo = await bsv.getAccount();
-// get user balance
-const bsvBalance = await bsv.getBsvBalance();
-// transfer bsv
-const transferBsvRes = await bsv.transferBsv({
-    receivers: [{address: "xxx", amount: 333}],
-    broadcast: true,
-});
-// transfer sensible ft
-const transferFtTres = await bsv.transferSensibleFt({
-    receivers: [{address: "xxx", amount: 344}],
-    codehash: "codehash",
-    genesis: "genesis",
-    broadcast: true,
-});
-//signTx
-const sigList = await bsv.signTx({
-    list:[{
-        txHex: "",
-        scriptHex:"",
-        address:"",
-        inputIndex:0,
-        satoshis:32,
-        sigtype:0
-    }]
-})
-//transferAll 
-const transferAll = await bsv.transferAll([
-    {
-        broadcast: false,
-        receivers:[{amount:1000,address:"xxx"}]
-    },{
-        broadcast: false,
-        genesis:"8e9c53e1a38ff28772db99ee34a23bb305062a1a",
-        receivers:[{amount:1000,address:"xxx"}]
-    }
-])
-```
+See the [Sensilet Docs](https://doc.sensilet.com) for more usage.
 
-## Demo
+## Building locally
 
-[Demo](https://test.sensilet.com/test.html)
+* require Node.js version 14
+* yarn 
+* yarn build 
+
+Uncompressed builds can be found in /dist, install it by Chrome in developer mode.
