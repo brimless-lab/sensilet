@@ -1,6 +1,12 @@
 
 # Release Notes
 
+### v0.1.9 (2021-12-31) 
+
+- fix: error message doesn't show up in some cases 
+- improved ui of 'send' page: better title structure
+- 'insufficient balance' being more clear  
+
 ### v0.1.8 (2021-12-28) 
 
 - new: receipt page after sending tx
