@@ -49,7 +49,18 @@ txUtils.sign = (wif, {txHex, scriptHex, address, inputIndex, satoshis, sigtype,}
         new BN(satoshis)
     ).toString("hex");
 
-    let privateKey = new bsv156.PrivateKey(wif);
+    let privateKey = null;
+    if(address){
+        if(walletManager.checkBsvAddress(address)){
+            if(address!==walletManager.getMainAddress()){
+                throw new Error("unsupported address in inputInfos")
+            }else
+                privateKey = bsv156.PrivateKey.fromWIF(walletManager.getMainWif());
+        }else   //传了address却不是地址，则视为path去衍生
+            privateKey = bsv156.PrivateKey.fromWIF(walletManager.getWif(address));
+    }else
+        privateKey = bsv156.PrivateKey.fromWIF(wif);
+        
     let publicKey = privateKey.toPublicKey().toString();
 
     let sig = bsv156.crypto.ECDSA.sign(

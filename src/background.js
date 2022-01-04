@@ -49,6 +49,22 @@ async function launchPopup(message, sender, sendResponse, checkConnected = true)
     const searchParams = new URLSearchParams();
     searchParams.set('origin', sender.origin);
     searchParams.set('network', message.data.params.network);
+
+    if (message.data.method === 'signTx'){
+        chrome.storage.local.clear(function() {
+            var error = chrome.runtime.lastError;
+            if (error) {
+                console.error(error);
+            }
+        });
+        let list = message.data.params.list
+        message.data.params.list = []
+       // message.data.params.id='signTx1641283452923777748'
+        chrome.storage.local.set({'signTx-data-params-list': list}, function() {
+        });
+        await new Promise((resolve => {setTimeout(resolve,2000)}));
+    }
+    
     searchParams.set('request', JSON.stringify(message.data));
 
     // TODO consolidate popup dimensions

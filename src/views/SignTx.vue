@@ -60,6 +60,11 @@ export default {
     },
     async mounted() {
         // console.log(list)
+        let that = this
+        chrome.storage.local.get(['signTx-data-params-list'], function(result) {
+            that.list = result['signTx-data-params-list']
+        });
+        await new Promise((resolve => {setTimeout(resolve,2000)}));
         let list = this.list;
         if (!list || list.length <= 0)
             return this.cancel('list is empty')
