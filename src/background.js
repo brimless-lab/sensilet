@@ -45,6 +45,10 @@ async function launchPopup(message, sender, sendResponse, checkConnected = true)
     }
     // console.log(sender)
 
+    if (message.data.method === 'signTx'){      //对于signTX，其参数可能过大(>10M)而不适合放在连接上，通过内存直接传递
+        window.signTxList = message.data.params.list;
+        message.data.params.list = []
+    }
 
     const searchParams = new URLSearchParams();
     searchParams.set('origin', sender.origin);
