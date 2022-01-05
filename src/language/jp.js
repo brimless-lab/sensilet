@@ -188,6 +188,7 @@ export default {
         error_balance: "残高不足です",
         error_insufficient_balance: "残高不足です",
         error_insufficient_token: "不十分 {0}",
+        error_network: "Network Error,try again later.",
 
 
         trans_nft_title:"このサイトはNFTの転送を要求します",

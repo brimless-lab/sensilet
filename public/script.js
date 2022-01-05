@@ -66,7 +66,7 @@ function action(actionName, params) {
             id: actionName + Date.now() + "" + Math.floor(Math.random() * 1000000),
         }, (result) => {
             if (result.result === 'success') {
-                console.log(result)
+                // console.log(result)
                 resolve(result.data)
             } else {
                 // console.log(result)

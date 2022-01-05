@@ -328,6 +328,8 @@ export default {
                     antMessage.error(this.$t("popup.error_insufficient_balance"))
                 } else if (e && e.message&& e.message.indexOf('Insufficient token') > -1) {
                     antMessage.error(this.$t("popup.error_insufficient_token", [this.tokenInfo.name]))
+                } else if (e && e.message&& e.message.indexOf('EC_REQ_FAILED') > -1) {
+                    antMessage.error(this.$t("popup.error_network")+e.message)
                 } else if(e)
                     antMessage.error(e.message)
                 else

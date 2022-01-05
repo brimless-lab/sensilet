@@ -197,6 +197,7 @@ export default {
         error_balance: "Insufficient balance",
         error_insufficient_balance: "Insufficient BSV balance",
         error_insufficient_token: "Insufficient {0}",
+        error_network: "Network Error,try again later.",
 
 
         trans_nft_title:"This site requests the transfer of NFT",
