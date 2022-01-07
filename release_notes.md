@@ -1,6 +1,12 @@
 
 # Release Notes
 
+### v0.1.10 (2022-01-07) 
+
+- supports large param for `signtx` (dev)
+- web3 address/pub retrieving support `hdpath` (dev)
+- add: get version of sensilet (dev)
+
 ### v0.1.9 (2021-12-31) 
 
 - fix: error message doesn't show up in some cases 
