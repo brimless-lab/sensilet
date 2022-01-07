@@ -46,7 +46,7 @@ async function launchPopup(message, sender, sendResponse, checkConnected = true)
     }
     // console.log(sender)
 
-    if (message.data.method === 'signTx'){      //对于signTX，其参数可能过大(>10M)而不适合放在连接上，通过内存直接传递
+    if (message.data.method === 'signTx') {      //对于signTX，其参数可能过大(>10M)而不适合放在连接上，通过内存直接传递
         window.signTxList = message.data.params.list;
         message.data.params.list = []
     }
@@ -100,10 +100,26 @@ async function handleDisconnect(message, sender, sendResponse) {
 
 async function handleGetVersion(message, sender, sendResponse) {
 
-    sendResponse({result: "success", data:{
-            version:config.version,
-            versionCode:config.versionCode,
-        },id: message.data.id})
+    sendResponse({
+        result: "success", data: {
+            version: config.version,
+            versionCode: config.versionCode,
+        }, id: message.data.id
+    })
+}
+
+async function handleIsHDAccount(message, sender, sendResponse) {
+
+    if (!await checkConnect(sender)) {
+        return sendResponse({
+            result: "denied",
+            id: message.data.id,
+            msg: "Permission denied, connect first"
+        });
+    }
+
+    let mode = walletManager.getAccountMode();
+    sendResponse({result: "success", data: mode === 'account.mode_HD', id: message.data.id})
 }
 
 async function handleListGenesis(message, sender, sendResponse) {
@@ -230,10 +246,11 @@ async function handleGetAddress(message, sender, sendResponse) {
             msg: "Permission denied, connect first"
         });
     }
-    let {} = message.data.params;
+
+    let {path} = message.data.params;
     sendResponse({
         id: message.data.id,
-        data: walletManager.getMainAddress(),
+        data: path ? walletManager.getAddress(path) : walletManager.getMainAddress(),
         result: "success"
     })
 }
@@ -247,10 +264,10 @@ async function handleGetPublicKey(message, sender, sendResponse) {
         });
     }
 
-    let {} = message.data.params;
+    let {path} = message.data.params;
     sendResponse({
         id: message.data.id,
-        data: walletManager.getMainPubKey(),
+        data: path? walletManager.getPubKey(path) : walletManager.getMainPubKey(),
         result: "success"
     })
 }
@@ -263,7 +280,7 @@ async function handleGetPublicKeyAndAddress(message, sender, sendResponse) {
             msg: "Permission denied, connect first"
         });
     }
-    if(walletManager.isSinglePrivateKey()){
+    if (walletManager.isSinglePrivateKey()) {
         return sendResponse({
             result: "fail",
             id: message.data.id,
@@ -324,6 +341,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             handleGetPublicKeyAndAddress(message, sender, sendResponse);
         } else if (message.data.method === 'getVersion') {
             handleGetVersion(message, sender, sendResponse);
+        } else if (message.data.method === 'isHDAccount') {
+            handleIsHDAccount(message, sender, sendResponse);
         } else {
             launchPopup(message, sender, sendResponse);
         }

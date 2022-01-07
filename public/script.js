@@ -136,53 +136,58 @@ window.sensilet.transferAll = async (params) => {
 }
 
 
-window.sensilet.payWithoutBroadcast = ({receivers}, callback) => {
+window.sensilet.payWithoutBroadcast = ({receivers}) => {
     return action('pay', {
         receivers,
         broadcast: false,
-    }, callback)
+    })
 };
 
 
-window.sensilet.getVersion = (callback)=>{
-    return action('getVersion', {}, callback)
+window.sensilet.getVersion = ()=>{
+    return action('getVersion', {})
+}
+
+window.sensilet.isHDAccount = ()=>{
+    return action('isHDAccount', {})
+}
+
+window.sensilet.getPublicKeyAndAddress =(hdPath)=>{
+    return action('getPublicKeyAndAddress', {hdPath})
 }
 
 // 以下是nft部分
-window.sensilet.genesis = (params, callback) => {
-    return action('genesis', params, callback)
+window.sensilet.genesis = (params) => {
+    return action('genesis', params)
 };
-window.sensilet.issue = (params, callback) => {
-    return action('issue', params, callback)
+window.sensilet.issue = (params) => {
+    return action('issue', params)
 };
 /**
  *
  * @param params
- * @param callback
  */
-window.sensilet.transferNft = (params, callback) => {
-    return action('transferNft', params, callback)
+window.sensilet.transferNft = (params) => {
+    return action('transferNft', params)
 };
 
-window.sensilet.listGenesis = (params, callback) => {
-    return action('listGenesis', params, callback)
+window.sensilet.listGenesis = (params) => {
+    return action('listGenesis', params)
 };
-window.sensilet.listNft = (params, callback) => {
-    return action('listNft', params, callback)
+window.sensilet.listNft = (params) => {
+    return action('listNft', params)
 };
 
 
 // 以下是web3 支持
-window.sensilet.getAddress =()=>{
-    return action('getAddress', {})
+window.sensilet.getAddress =(hdPath)=>{
+    return action('getAddress', {path:hdPath})
 
 }
-window.sensilet.getPublicKey =()=>{
-    return action('getPublicKey', {})
+window.sensilet.getPublicKey =(hdPath)=>{
+    return action('getPublicKey', {path:hdPath})
 }
-window.sensilet.getPublicKeyAndAddress =(hdPath)=>{
-    return action('getPublicKeyAndAddress', {hdPath})
-}
+
 
 window.sensilet.signTransaction =(txHex,inputInfos)=>{
     return action('signTransaction', {txHex,inputInfos})

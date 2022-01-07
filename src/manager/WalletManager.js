@@ -245,6 +245,10 @@ walletManager.getMainPubKey = function () {
     return walletManager.getWifAndPubKey("/0/0").pubKey
 };
 
+walletManager.getPubKey = function (path='/0/0') {
+    return walletManager.getWifAndPubKey(path).pubKey
+};
+
 walletManager.getWif = function (path = '/0/0') {
     return getPrivateKeyObj(path).toWif();
 };
