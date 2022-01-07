@@ -144,6 +144,10 @@ window.sensilet.payWithoutBroadcast = ({receivers}, callback) => {
 };
 
 
+window.sensilet.getVersion = (callback)=>{
+    return action('getVersion', {}, callback)
+}
+
 // 以下是nft部分
 window.sensilet.genesis = (params, callback) => {
     return action('genesis', params, callback)

@@ -4,6 +4,7 @@ const sensibleSdk = require("sensible-sdk");
 //
 require('./utils/globalUtils')
 require('./config/errorCode')
+const config = require('./config/base')
 const walletManager = require("./manager/WalletManager");
 const tokenManager = require("./manager/tokenManager");
 const connectManager = require('./manager/ConnectManager');
@@ -95,6 +96,14 @@ async function handleDisconnect(message, sender, sendResponse) {
 
     await connectManager.disconnect(address, sender.origin)
     sendResponse({result: "success", id: message.data.id})
+}
+
+async function handleGetVersion(message, sender, sendResponse) {
+
+    sendResponse({result: "success", data:{
+            version:config.version,
+            versionCode:config.versionCode,
+        },id: message.data.id})
 }
 
 async function handleListGenesis(message, sender, sendResponse) {
@@ -313,6 +322,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             handleGetPublicKey(message, sender, sendResponse);
         } else if (message.data.method === 'getPublicKeyAndAddress') {
             handleGetPublicKeyAndAddress(message, sender, sendResponse);
+        } else if (message.data.method === 'getVersion') {
+            handleGetVersion(message, sender, sendResponse);
         } else {
             launchPopup(message, sender, sendResponse);
         }
