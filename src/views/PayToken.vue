@@ -113,6 +113,7 @@ const request = JSON.parse(urlParams.get('request'));
 import CoinShow from "../components/CoinShow";
 
 let signers = null;
+let signerSelecteds = null;
 let tokenInfo = null;
 
 export default {
@@ -165,6 +166,7 @@ export default {
     async mounted() {
         console.log(this.genesis, this.codehash)
         signers = null;
+        signerSelecteds = null;
         tokenInfo = await tokenManager.getTokenInfo(this.genesis, this.codehash);
 
         if (!tokenInfo) {
@@ -188,11 +190,16 @@ export default {
                 || tokenInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
                 || tokenInfo.genesis === "8764ede9fa7bf81ba1eec5e1312cf67117d47930") {
                 signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
+                signerSelecteds = [0,1,2]
+            } else {
+                const result = await tokenManager.sensibleFt.selectSigners();
+                signers = result.signers;
+                signerSelecteds = result.signerSelecteds;
             }
             // console.log(signers)
 
             let fee = await tokenManager.sensibleFt.getTransferEsitimate(tokenInfo.codehash, tokenInfo.genesis,
-                this.receivers, walletManager.getMainWif(), signers
+                this.receivers, walletManager.getMainWif(), signers,signerSelecteds
             );
             console.log(fee, '###fee')
             this.fee = fee
@@ -212,24 +219,24 @@ export default {
         // this.rawHex = rawHex;
     },
     methods: {
-        async checkUtxo(){
+        async checkUtxo() {
             //检查一下UTXO数
             //获取token utxo数
             let utxoCount = await tokenManager.sensibleFt.getUtxoCount(this.tokenInfo.genesis, this.tokenInfo.codehash, walletManager.getMainAddress());
             //获取bsv utxo数
             let bsvUtxoCount = await walletManager.getBsvUtxoCount();
 
-            console.log(utxoCount,bsvUtxoCount)
+            console.log(utxoCount, bsvUtxoCount)
 
             if (bsvUtxoCount > 3 || utxoCount >= 20) {
                 antMessage.warn(this.$t('popup.merge_notice'))
                 return routerManager.goFor('/merge', '/payToken', {
-                    receivers:this.receivers,
-                    broadcast:this.broadcast,
-                    genesis:this.genesis,
-                    codehash:this.codehash,
-                    utxo:this.utxo,
-                    origin:this.origin,
+                    receivers: this.receivers,
+                    broadcast: this.broadcast,
+                    genesis: this.genesis,
+                    codehash: this.codehash,
+                    utxo: this.utxo,
+                    origin: this.origin,
                 });
             }
         },
@@ -275,7 +282,7 @@ export default {
             try {
                 this.isPaying = true;
 
-                let {txid, txHex, routeCheckTxHex, tx} = await tokenManager.transfer(this.receivers, this.broadcast, tokenInfo, this.utxo, signers);
+                let {txid, txHex, routeCheckTxHex, tx} = await tokenManager.transfer(this.receivers, this.broadcast, tokenInfo, this.utxo, signers,signerSelecteds);
                 // console.log(result);
                 // antMessage.success("支付成功")
 
@@ -322,15 +329,15 @@ export default {
                     })
                 }
             } catch (e) {
-                if(typeof e ==='string')
+                if (typeof e === 'string')
                     return antMessage.error(e)
-                if (e&& e.message && e.message.indexOf('Insufficient balance.') > -1) {
+                if (e && e.message && e.message.indexOf('Insufficient balance.') > -1) {
                     antMessage.error(this.$t("popup.error_insufficient_balance"))
-                } else if (e && e.message&& e.message.indexOf('Insufficient token') > -1) {
+                } else if (e && e.message && e.message.indexOf('Insufficient token') > -1) {
                     antMessage.error(this.$t("popup.error_insufficient_token", [this.tokenInfo.name]))
-                } else if (e && e.message&& e.message.indexOf('EC_REQ_FAILED') > -1) {
-                    antMessage.error(this.$t("popup.error_network")+e.message)
-                } else if(e)
+                } else if (e && e.message && e.message.indexOf('EC_REQ_FAILED') > -1) {
+                    antMessage.error(this.$t("popup.error_network") + e.message)
+                } else if (e)
                     antMessage.error(e.message)
                 else
                     antMessage.error('unknown error')

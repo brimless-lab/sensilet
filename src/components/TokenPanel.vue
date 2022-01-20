@@ -478,17 +478,23 @@ export default {
                 // console.log(amount)
 
                 let signers = null
+                let signerSelecteds = null;
                 let tokenInfo = await tokenManager.getTokenInfo(this.transInfo.genesis, this.transInfo.codehash);
                 // console.log(tokenInfo)
                 if (tokenInfo.notDefaultSigners || this.transInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
                     || this.transInfo.genesis === "8764ede9fa7bf81ba1eec5e1312cf67117d47930") {
                     signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
+                    signerSelecteds = [0,1,2]
+                }else{
+                    const result = await tokenManager.sensibleFt.selectSigners();
+                    signers = result.signers;
+                    signerSelecteds = result.signerSelecteds;
                 }
                 let fee = await tokenManager.sensibleFt.getTransferEsitimate(this.transInfo.codehash, this.transInfo.genesis,
                     [{
                         address: this.transAddress,
                         amount,
-                    }], walletManager.getMainWif(), signers
+                    }], walletManager.getMainWif(), signers,signerSelecteds
                 );
                 fee = fee / Math.pow(10, 8)
                 this.transFee = fee;

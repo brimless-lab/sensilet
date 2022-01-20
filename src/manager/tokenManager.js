@@ -320,14 +320,14 @@ tokenManager.getTokenInfo = async function (genesis, codehash) {
 };
 
 
-tokenManager.transfer = async function (receivers, broadcast, {genesis, codehash}, utxo, signers) {
+tokenManager.transfer = async function (receivers, broadcast, {genesis, codehash}, utxo, signers,signerSelecteds) {
     let wif = walletManager.getMainWif();
 
     //转账时，bsv Utxo 需小于等于3，转账前检查
     let utxoCount = await sensibleFtUtils.getUtxoCount(genesis, codehash, walletManager.getMainAddress());
 
     //转账时，token Utxo 数需小于等于20，转账报错时检查
-    return sensibleFtUtils.transfer(genesis, codehash, wif, wif, receivers, utxoCount, broadcast, utxo, signers);
+    return sensibleFtUtils.transfer(genesis, codehash, wif, wif, receivers, utxoCount, broadcast, utxo, signers,signerSelecteds);
 };
 
 tokenManager.fixPic = function () {

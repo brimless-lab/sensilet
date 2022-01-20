@@ -51,6 +51,8 @@ const ft = new SensibleFT({
     // signers,
 });
 
+utils.selectSigners = SensibleFT.selectSigners;
+
 utils.getSignersFromRabinApis = async function (signers) {
     if (!signers)
         return null;
@@ -60,12 +62,16 @@ utils.getSignersFromRabinApis = async function (signers) {
         if (notDefaultSigners[signers[i]]) {
             result.push(notDefaultSigners[signers[i]])
         } else {
-            let data = await httpUtils.get(signers[i])
-            if (data && data.code === 0) {
-                result.push({
-                    satotxApiPrefix: signers[i],
-                    satotxPubKey: data.data.pubKey,
-                })
+            try {
+                let data = await httpUtils.get(signers[i])
+                if (data && data.code === 0) {
+                    result.push({
+                        satotxApiPrefix: signers[i],
+                        satotxPubKey: data.data.pubKey,
+                    })
+                }
+            } catch (e) {
+                console.error(e && e.message)
             }
         }
     }
@@ -115,7 +121,7 @@ utils.merge = async function (senderWif, purseWif, genesis, codehash, utxoCount)
     }
 }
 
-utils.transfer = async function (genesis, codehash, senderWif, purseWif, receivers, utxoCount, broadcast = true, utxo = null, signers = null) {
+utils.transfer = async function (genesis, codehash, senderWif, purseWif, receivers, utxoCount, broadcast = true, utxo = null, signers = null, signerSelecteds = null) {
 
     let ftParams = {
         network: config.network,
@@ -126,6 +132,8 @@ utils.transfer = async function (genesis, codehash, senderWif, purseWif, receive
     }
     if (signers && signers.length > 0)
         ftParams.signers = signers;
+    if (signerSelecteds && signerSelecteds.length > 0)
+        ftParams.signerSelecteds = signerSelecteds;
 
     let ft = new SensibleFT(ftParams);
     if (utxo) {
@@ -161,13 +169,14 @@ utils.transfer = async function (genesis, codehash, senderWif, purseWif, receive
     return ft.transfer(transferParams)
 };
 
-utils.getTransferEsitimate = (codehash, genesis, receivers, senderWif, signers) => {
+utils.getTransferEsitimate = (codehash, genesis, receivers, senderWif, signers, signerSelecteds) => {
     if (signers && signers.length > 0)
         return new SensibleFT({
                 network: config.network, //mainnet or testnet
                 purse: "", //the wif of a bsv address to offer transaction fees
                 feeb: 0.5,
                 signers,
+                signerSelecteds,
             }
         ).getTransferEstimateFee({
             codehash, genesis, receivers,
