@@ -74,6 +74,8 @@ nftManager.getNftInfo = async function (codehash, genesis, address) {
     if (result.code === 0 && result.data && result.data.utxo && result.data.utxo[0]) {
         let data = result.data.utxo[0];
         let metaTxId = data.metaTxId;
+        if(metaTxId==="0000000000000000000000000000000000000000000000000000000000000000")
+            return null;
         temp = localManager.getNftInfoCache(metaTxId);
         if (!temp) {
             let metaData = await txUtils.getMetaData(metaTxId, data.metaOutputIndex);

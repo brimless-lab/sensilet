@@ -114,6 +114,8 @@ txUtils.signTransaction = function (txHex, inputInfos) {
 
 txUtils.getMetaData = async function (metaTxId, metaOutputIndex) {
     let metaData = {};
+    if(metaTxId==="0000000000000000000000000000000000000000000000000000000000000000")
+        return metaData
     try {
         let _res = await apiUtils.getRawTx(metaTxId);
         let tx = new bsv156.Transaction(_res);
