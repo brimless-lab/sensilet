@@ -108,7 +108,7 @@ export default {
 
         "disconnect":"断开链接",
         "disconnect_notice":"你确定要断开链接吗？",
-
+        current_account:"当前账户",
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

@@ -156,7 +156,7 @@ export default {
         input_password: "input current password (if have)",
         input_new_password: "input new password (Optional)",
         input_new_password_again: "input new password (Optional)",
-
+        current_account:"Current Account",
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

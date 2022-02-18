@@ -5,10 +5,10 @@
                 <img class="icon" src="../assets/icon-arrow-left.svg" alt="">
             </div>
             <div class="action-list">
-                <div class="item btn" @click="openWeb">
-                    <FullscreenOutlined class="item-icon"/>
-                    <span>{{ $t("setting.expand_view") }}</span>
-                </div>
+<!--                <div class="item btn" @click="openWeb">-->
+<!--                    <FullscreenOutlined class="item-icon"/>-->
+<!--                    <span>{{ $t("setting.expand_view") }}</span>-->
+<!--                </div>-->
 
                 <div class="divider">
                     {{ $t('setting.account_management') }}
@@ -92,6 +92,7 @@
         <a-input v-model:value="editAlias" :placeholder="$t('account.alias_input')"/>
     </a-modal>
     <a-modal v-model:visible="isShowDelete" @ok="deleteCurrentAccount">
+        <p>{{$t("setting.current_account")+": "}} <span style="font-weight: bold">{{ $store.getters.addressShow}}</span>    </p>
         <p>{{ $t("setting.delete_confirm") }}</p>
         <a-input v-model:value="inputDelete" :placeholder="$t('setting.delete_confirm')"/>
     </a-modal>
@@ -322,7 +323,7 @@ export default {
             font-size: 16px;
             font-weight: bold;
 
-            margin-top: 32px;
+            //margin-top: 32px;
             margin-bottom: 20px;
             border-bottom: 1px solid $base-color;
 

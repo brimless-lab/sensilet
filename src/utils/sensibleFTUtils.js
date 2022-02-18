@@ -116,7 +116,7 @@ utils.merge = async function (senderWif, purseWif, genesis, codehash, utxoCount)
                 genesis,
             }
         );
-        await sleep(2000);
+        await sleep(3000);
         utxoCount -= 19;
     }
 }
