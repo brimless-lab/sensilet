@@ -158,50 +158,55 @@ export default {
         },
 
         next() {
-            if (this.step === -1) {
-                localStorage.setItem('firstEnterTimestamp', Date.now()+"")
-                this.step++;
-            } else if (this.step === 0) {
-                antModal.confirm({
-                    content: _this.$t("wallet.mnemonic_saved"),
-                    onOk() {
-                        _this.step++;
+            try {
+                if (this.step === -1) {
+                    localStorage.setItem('firstEnterTimestamp', Date.now() + "")
+                    this.step++;
+                } else if (this.step === 0) {
+                    antModal.confirm({
+                        content: _this.$t("wallet.mnemonic_saved"),
+                        onOk() {
+                            _this.step++;
+                        }
+                    })
+                } else if (this.step === 1) {
+                    this.step++;
+                } else if (this.step === 2) {
+                    //如果输入了密码则检查
+                    if (this.password && this.password.length > 0) {
+                        if (this.password !== this.rePassword)
+                            return antMessage.warning(this.$t('wallet.password_error'));
                     }
-                })
-            } else if (this.step === 1) {
-                this.step++;
-            } else if (this.step === 2) {
-                //如果输入了密码则检查
-                if (this.password && this.password.length > 0) {
-                    if (this.password !== this.rePassword)
-                        return antMessage.warning(this.$t('wallet.password_error'));
-                }
-                if (!this.password) {
-                    //  没设置则使用 默认密码
-                    this.password = 'SatoWallet#2021';
-                    this.rePassword = 'SatoWallet#2021'
-                }
-
-                if (walletManager.saveMnemonic(this.mnemonic, this.password, false, this.passphrase, this.path)) {
-                    sessionStorage.removeItem('mnemonic');
-
-                    this.isGoingToNext = true;
-
-                    walletManager.reload();
-                    walletManager.refreshLockInfoList();
-                    this.$store.commit('initAccount')
-
-                    //解锁钱包，并跳转到账户页面
-                    walletManager.unlock(this.password, false);
-
-                    if (this.$store.state.accountList && this.$store.state.accountList.length > 0) {
-                        eventManager.dispatchAccountChange();
+                    if (!this.password) {
+                        //  没设置则使用 默认密码
+                        this.password = 'SatoWallet#2021';
+                        this.rePassword = 'SatoWallet#2021'
                     }
 
-                    goNextPage();
-                }
-            } else
-                antMessage.error(this.$t('wallet.save_error'))
+                    if (walletManager.saveMnemonic(this.mnemonic, this.password, false, this.passphrase, this.path)) {
+                        sessionStorage.removeItem('mnemonic');
+
+                        this.isGoingToNext = true;
+
+                        walletManager.reload();
+                        walletManager.refreshLockInfoList();
+                        this.$store.commit('initAccount')
+
+                        //解锁钱包，并跳转到账户页面
+                        walletManager.unlock(this.password, false);
+
+                        if (this.$store.state.accountList && this.$store.state.accountList.length > 0) {
+                            eventManager.dispatchAccountChange();
+                        }
+
+                        goNextPage();
+                    }
+                } else
+                    antMessage.error(this.$t('wallet.save_error'))
+            } catch (e) {
+                antMessage.error(e && e.message || e)
+                console.error(e)
+            }
         },
         pre() {
             this.step--;

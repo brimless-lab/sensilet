@@ -43,7 +43,7 @@
                 </template>
                 <img src="../assets/icon-question.png" style="width: 24px;margin-bottom: 2px" alt="">
             </a-tooltip>
-            <a-input v-model:value="inputPassphrase" />
+            <a-input v-model:value="inputPassphrase"/>
             {{ $t('wallet.der_path') }}
             <a-input v-model:value="inputPath"/>
         </div>
@@ -64,8 +64,8 @@ export default {
             passphrase: "",
             path: "m/44'/0'/0'",
             showCustom: false,
-            inputPassphrase:"",
-            inputPath:"m/44'/0'/0'",
+            inputPassphrase: "",
+            inputPath: "m/44'/0'/0'",
         }
     },
     beforeCreate() {
@@ -75,7 +75,7 @@ export default {
     created() {
     },
     methods: {
-        showCustomPanel(){
+        showCustomPanel() {
             this.inputPassphrase = this.passphrase;
             this.inputPath = this.path;
             this.showCustom = true
@@ -94,7 +94,7 @@ export default {
 
                 try {
                     //确认助记词是否可用
-                    walletManager.getSeedFromMnemonic(this.inputMnemonic)
+                    walletManager.getAddressFromMnemonic(this.inputMnemonic, this.passphrase, this.path)
                     this.step++;
                 } catch (e) {
                     antMessage.error(e.message)
@@ -113,15 +113,22 @@ export default {
                 }
                 this.isGoingToNext = true;
 
-                if (walletManager.saveMnemonic(this.inputMnemonic, this.password, false, this.passphrase, this.path)) {
-                    walletManager.refreshLockInfoList();
-                    walletManager.reload();
-                    this.$store.commit('initAccount')
-                    //解锁钱包，并跳转到账户页面
-                    walletManager.unlock(this.password, false);
-                    goNextPage();
-                } else {
-                    antMessage.error(this.$t('wallet.mnemonic_exist'))
+                try {
+
+
+                    if (walletManager.saveMnemonic(this.inputMnemonic, this.password, false, this.passphrase, this.path)) {
+                        walletManager.refreshLockInfoList();
+                        walletManager.reload();
+                        this.$store.commit('initAccount')
+                        //解锁钱包，并跳转到账户页面
+                        walletManager.unlock(this.password, false);
+                        goNextPage();
+                    } else {
+                        antMessage.error(this.$t('wallet.mnemonic_exist'))
+                    }
+                } catch (e) {
+                    antMessage.error(e && e.message || e)
+                    console.error(e)
                 }
                 this.isGoingToNext = false;
 

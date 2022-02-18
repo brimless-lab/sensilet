@@ -18,6 +18,11 @@ window.tokenManager = tokenManager;
 
 window.passwordAesTable = {};
 
+//触发一次
+try {
+    walletManager.isNeedUnlock();
+} catch (e) {
+}
 
 const SensibleNFTObj = new sensibleSdk.SensibleNFT({
     network: "mainnet", //mainnet or testnet
@@ -35,6 +40,19 @@ browser.runtime.onInstalled.addListener(details => {
         tokenManager.fixPic();
     }
 });
+
+
+async function createHandler(message, sender, sendResponse, handler) {
+    try {
+        await handler(message, sender, sendResponse);
+    } catch (e) {
+        sendResponse({
+            id: message.data.id,
+            msg: e && e.message || e,
+            result: "fail"
+        })
+    }
+}
 
 async function launchPopup(message, sender, sendResponse, checkConnected = true) {
     if (checkConnected && !await checkConnect(sender)) {
@@ -267,10 +285,12 @@ async function handleGetPublicKey(message, sender, sendResponse) {
     let {path} = message.data.params;
     sendResponse({
         id: message.data.id,
-        data: path? walletManager.getPubKey(path) : walletManager.getMainPubKey(),
+        data: path ? walletManager.getPubKey(path) : walletManager.getMainPubKey(),
         result: "success"
     })
+
 }
+
 
 async function handleGetPublicKeyAndAddress(message, sender, sendResponse) {
     if (!await checkConnect(sender)) {
@@ -318,33 +338,33 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 return false
             eventHandlers[eventName] = eventHandlers[eventName].filter(item => item.id !== message.data.id)
         } else if (message.data.method === 'connect') {
-            handleConnect(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleConnect);
         } else if (message.data.method === 'listGenesis') {
-            handleListGenesis(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleListGenesis);
         } else if (message.data.method === 'listNft') {
-            handleListNft(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleListNft);
         } else if (message.data.method === 'disConnect') {
-            handleDisconnect(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleDisconnect);
         } else if (message.data.method === 'isConnect') {
-            handleIsConnect(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleIsConnect);
         } else if (message.data.method === 'getBsvBalance') {
-            handleGetBsvBalance(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleGetBsvBalance);
         } else if (message.data.method === 'getTokenBalance') {
-            handleGetTokenBalance(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleGetTokenBalance);
         } else if (message.data.method === 'checkTokenUtxoCount') {
-            handleCheckTokenUtxo(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleCheckTokenUtxo);
         } else if (message.data.method === 'getAddress') {
-            handleGetAddress(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleGetAddress);
         } else if (message.data.method === 'getPublicKey') {
-            handleGetPublicKey(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleGetPublicKey);
         } else if (message.data.method === 'getPublicKeyAndAddress') {
-            handleGetPublicKeyAndAddress(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleGetPublicKeyAndAddress);
         } else if (message.data.method === 'getVersion') {
-            handleGetVersion(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleGetVersion);
         } else if (message.data.method === 'isHDAccount') {
-            handleIsHDAccount(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, handleIsHDAccount);
         } else {
-            launchPopup(message, sender, sendResponse);
+            createHandler(message, sender, sendResponse, launchPopup);
         }
         // keeps response channel open
         return true;

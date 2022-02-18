@@ -150,8 +150,14 @@ walletManager.getMnemonic = function () {
     }
 
     if (!mPassword) {
-        if (!bg.passwordAesTable[lockInfo.address])
+        if (!bg.passwordAesTable[lockInfo.address]) {
+            try {
+
+            }catch (e) {
+
+            }
             throw new Error('Unlock Wallet First');
+        }
 
         mPassword = aesUtils.AESDecrypto(bg.passwordAesTable[lockInfo.address], passwordAesKey)
     }
@@ -349,6 +355,7 @@ walletManager.checkBsvAddress = function (address) {
     return bsv.Address.isValid(address)
 };
 walletManager.getSeedFromMnemonic = mnemonicUtils.getSeedFromMnemonic;
+walletManager.getAddressFromMnemonic = mnemonicUtils.getAddressFromMnemonic;
 walletManager.createMnemonic = mnemonicUtils.createMnemonic;
 walletManager.saveMnemonic = mnemonicUtils.saveMnemonic;
 

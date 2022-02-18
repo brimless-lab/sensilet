@@ -203,6 +203,7 @@ export default {
 
     .pic {
         max-height: 144px;
+        max-width: 100%;
     }
 
     .bottom-info {

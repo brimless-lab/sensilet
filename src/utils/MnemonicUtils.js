@@ -69,4 +69,9 @@ utils.getSeedFromMnemonic = function (mnemonic, passphrase = '') {
     return new bsv.Bip39(mnemonic).toSeed(passphrase);
 };
 
+utils.getAddressFromMnemonic = function (mnemonic, passphrase = '',path="m/44'/0'/0'") {
+    console.log(passphrase,path)
+    return  bsv.Bip32.fromSeed(new bsv.Bip39(mnemonic).toSeed(passphrase)).derive(`${path}/0/0`).privKey;
+};
+
 module.exports = utils;
