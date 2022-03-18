@@ -91,19 +91,19 @@
                     </a-button>
                 </div>
             </div>
-<!--            <div class="refresh-item">-->
-<!--                <span>Total: ${{ $store.state.totalTokenValue }}</span>-->
-<!--                <div class="refresh-icon" @click="refreshToken()">-->
-<!--                    <img src="../assets/icon-refresh.svg" alt="">-->
-<!--                </div>-->
-<!--            </div>-->
+            <!--            <div class="refresh-item">-->
+            <!--                <span>Total: ${{ $store.state.totalTokenValue }}</span>-->
+            <!--                <div class="refresh-icon" @click="refreshToken()">-->
+            <!--                    <img src="../assets/icon-refresh.svg" alt="">-->
+            <!--                </div>-->
+            <!--            </div>-->
         </div>
         <div class="list" v-else>
             <div class="empty">
                 empty
-<!--                <div class="refresh-icon" @click="refreshToken()">-->
-<!--                    <img src="../assets/icon-refresh.svg" alt="">-->
-<!--                </div>-->
+                <!--                <div class="refresh-icon" @click="refreshToken()">-->
+                <!--                    <img src="../assets/icon-refresh.svg" alt="">-->
+                <!--                </div>-->
             </div>
         </div>
     </div>
@@ -114,7 +114,7 @@
                 Send {{ transInfo.name }}
             </div>
             <div class="small-title">
-                You are sending <span> {{transInfo.name || transInfo.unit || transInfo.symbol }}</span>
+                You are sending <span> {{ transInfo.name || transInfo.unit || transInfo.symbol }}</span>
                 <img class="coin-logo" v-if="transInfo.logo" :src="transInfo.logo" alt="">
 
             </div>
@@ -125,7 +125,7 @@
                     Address: {{ transAddress }}
                 </div>
                 <div class="input-container" :class="{'has-error':inputErrorNotice!==''}">
-                    <a-input v-model:value="transAmount" @change="transAmountChange"
+                    <a-input v-model:value="transAmount" @change="transAmountChange" ref="transAmountInputEle"
                              :placeholder="$t('account.input_amount',[transInfo.unit||transInfo.symbol])"/>
                     <div class="notice">{{ inputErrorNotice }}</div>
                 </div>
@@ -210,6 +210,7 @@ import ArrowDownOutlined from '@ant-design/icons-vue/lib/icons/ArrowDownOutlined
 import VerticalAlignTopOutlined from '@ant-design/icons-vue/lib/icons/VerticalAlignTopOutlined'
 import DownOutlined from '@ant-design/icons-vue/lib/icons/DownOutlined'
 import AddressInput from "@/components/AddressInput";
+import {nextTick} from "vue";
 
 
 export default {
@@ -251,7 +252,7 @@ export default {
             transStep: 0,
             transStepNextWord: this.$t('account.next'),
             transStepBackWord: this.$t('account.cancel'),
-            inputErrorNotice:"",
+            inputErrorNotice: "",
 
         }
     },
@@ -438,6 +439,10 @@ export default {
             this.transUnit = item.unit || item.symbol;
             this.transBalance = item.balance / Math.pow(10, item.decimal);
             this.showTransPanel = true;
+
+            await nextTick()
+            if (this.$refs.addressInput)
+                await this.$refs.addressInput.focusInput();
         },
         receive(item) {
             // this.showQr = true
@@ -459,8 +464,8 @@ export default {
         },
         transAmountChange(value) {
             // console.log(this.transAmount ,this.transAmount * Math.pow(10, this.transInfo.decimal), this.transBalance)
-            if (this.transAmount  > this.transBalance)
-                return this.inputErrorNotice=this.$t('account.balance_not_enough')
+            if (this.transAmount > this.transBalance)
+                return this.inputErrorNotice = this.$t('account.balance_not_enough')
             else
                 this.inputErrorNotice = "";
 
@@ -484,8 +489,8 @@ export default {
                 if (tokenInfo.notDefaultSigners || this.transInfo.genesis === "54256eb1b9c815a37c4af1b82791ec6bdf5b3fa3"
                     || this.transInfo.genesis === "8764ede9fa7bf81ba1eec5e1312cf67117d47930") {
                     signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
-                    signerSelecteds = [0,1,2]
-                }else{
+                    signerSelecteds = [0, 1, 2]
+                } else {
                     const result = await tokenManager.sensibleFt.selectSigners();
                     signers = result.signers;
                     signerSelecteds = result.signerSelecteds;
@@ -494,7 +499,7 @@ export default {
                     [{
                         address: this.transAddress,
                         amount,
-                    }], walletManager.getMainWif(), signers,signerSelecteds
+                    }], walletManager.getMainWif(), signers, signerSelecteds
                 );
                 fee = fee / Math.pow(10, 8)
                 this.transFee = fee;
@@ -515,12 +520,17 @@ export default {
                 this.transfer();
             }
         },
-        onTransNext(address) {
+        async onTransNext(address) {
             console.log('aaaa')
             this.transStep = 1;
             this.transAddress = address;
             this.transStepNextWord = this.$t('account.ok')
             this.transStepBackWord = this.$t('account.back')
+
+            await nextTick();
+            if (this.$refs.transAmountInputEle) {
+                await this.$refs.transAmountInputEle.focus();
+            }
 
         },
         transBack() {

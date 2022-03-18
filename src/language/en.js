@@ -162,6 +162,7 @@ export default {
         input_new_password_again: "input new password (Optional)",
 
         current_account:"Current Account",
+        current_account_name:"Account Name",
 
     },
     popup: {

@@ -1,7 +1,7 @@
 <template>
     <div class="address-input">
         <div class="input-container" :class="{'has-error':inputErrorNotice!==''}">
-            <a-input v-model:value="transAddress" @change="addressChange" :placeholder="$t('account.input_address')"/>
+            <a-input ref="addressInputEle" v-model:value="transAddress" @change="addressChange" :placeholder="$t('account.input_address')"/>
             <div class="notice">{{ inputErrorNotice }}</div>
         </div>
         <div class="address-history" v-if="list && list.length>0">
@@ -20,6 +20,7 @@
 
 <script>
 import DeleteOutlined from '@ant-design/icons-vue/lib/icons/DeleteOutlined'
+import {nextTick} from "vue";
 
 export default {
     name: "AddressInput",
@@ -27,11 +28,11 @@ export default {
         DeleteOutlined,
     },
     emits: [
-        "next","update:bindAddress"
+        "next", "update:bindAddress"
     ],
     props: {
         bindAddress: String,
-        transType:String,
+        transType: String,
     },
 
     data() {
@@ -57,13 +58,10 @@ export default {
             }
         };
     },
-    mounted() {
+    async mounted() {
         this.list = localManager.getRecentAddress().slice(0, 5)
-
     },
-    activated(){
 
-    },
     methods: {
         addressChange() {
             this.$emit('update:bindAddress', this.transAddress)
@@ -93,9 +91,13 @@ export default {
                 return antMessage.error(this.$t('account.address_error'))
             }
 
-            localManager.addRecentAddress(this.transAddress,this.transType)
+            localManager.addRecentAddress(this.transAddress, this.transType)
             this.$emit('next', this.transAddress);
 
+        },
+        async focusInput() {
+            if (this.$refs.addressInputEle)
+                this.$refs.addressInputEle.focus();
         }
     }
 }

@@ -120,7 +120,7 @@
         <Footer></Footer>
     </div>
 
-    <a-modal v-model:visible="showTransPanel" :closable=false @cancel="clearTransferInfo">
+    <a-modal v-model:visible="showTransPanel"  :closable=false @cancel="clearTransferInfo">
 
         <div class="trans-info-container">
             <div class="title">
@@ -136,7 +136,7 @@
                     Address: {{ transAddress }}
                 </div>
                 <div class="input-container" :class="{'has-error':inputErrorNotice!==''}">
-                    <a-input v-model:value="transAmount" @change="transAmountChange" type="number"
+                    <a-input v-model:value="transAmount" @change="transAmountChange" type="number" ref="transAmountInputEle"
                              :placeholder="$t('account.input_amount',[transType==='BSV'? 'BSV':(transInfo.unit||transInfo.symbol)])"/>
                     <div class="notice">{{ inputErrorNotice }}</div>
                 </div>
@@ -205,6 +205,7 @@ import TokenPanel from "@/components/TokenPanel";
 import apiUtils from '../utils/apiUtils';
 import AddressInput from "@/components/AddressInput";
 import NftPanel from "@/components/NftPanel";
+import {nextTick} from "vue";
 
 let clip = null;
 let clip2 = null;
@@ -374,13 +375,16 @@ export default {
                 this.transfer();
             }
         },
-        onTransNext(address) {
-            console.log('aaaa')
+        async onTransNext(address) {
             this.transStep = 1;
             this.transAddress = address;
             this.transStepNextWord = this.$t('account.ok')
             this.transStepBackWord = this.$t('account.back')
 
+            await nextTick();
+            if(this.$refs.transAmountInputEle) {
+                await this.$refs.transAmountInputEle.focus();
+            }
         },
         transBack() {
             this.transStepNextWord = this.$t('account.next')
@@ -411,6 +415,10 @@ export default {
             this.transUnit = "BSV";
             this.transBalance = item.balance.total / Math.pow(10, item.decimal);
             this.showTransPanel = true;
+
+            await nextTick()
+            if(this.$refs.addressInput)
+                await this.$refs.addressInput.focusInput();
         },
         async sendAll() {
             let {amount, fee} = await walletManager.getSendAllInfo(walletManager.getMainWif());

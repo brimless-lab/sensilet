@@ -5,10 +5,10 @@
                 <img class="icon" src="../assets/icon-arrow-left.svg" alt="">
             </div>
             <div class="action-list">
-<!--                <div class="item btn" @click="openWeb">-->
-<!--                    <FullscreenOutlined class="item-icon"/>-->
-<!--                    <span>{{ $t("setting.expand_view") }}</span>-->
-<!--                </div>-->
+                <!--                <div class="item btn" @click="openWeb">-->
+                <!--                    <FullscreenOutlined class="item-icon"/>-->
+                <!--                    <span>{{ $t("setting.expand_view") }}</span>-->
+                <!--                </div>-->
 
                 <div class="divider">
                     {{ $t('setting.account_management') }}
@@ -89,12 +89,13 @@
     </div>
     <a-modal v-model:visible="isShowEdit" @ok="handleOk">
         <p>{{ $t("account.alias_input") }}</p>
-        <a-input v-model:value="editAlias" :placeholder="$t('account.alias_input')"/>
+        <a-input v-model:value="editAlias" ref="editAliasInputEle" :placeholder="$t('account.alias_input')"/>
     </a-modal>
     <a-modal v-model:visible="isShowDelete" @ok="deleteCurrentAccount">
-        <p>{{$t("setting.current_account")+": "}} <span style="font-weight: bold">{{ $store.getters.addressShow}}</span>    </p>
+        <p>{{ $t("setting.current_account_name") + ": " }} <span style="font-weight: bold">{{ $store.getters.alias }}</span></p>
+        <p>{{ $t("setting.current_account") + ": " }} <span style="font-weight: bold">{{ $store.getters.addressShow }}</span></p>
         <p>{{ $t("setting.delete_confirm") }}</p>
-        <a-input v-model:value="inputDelete" :placeholder="$t('setting.delete_confirm')"/>
+        <a-input v-model:value="inputDelete" ref="deleteInputEle" :placeholder="$t('setting.delete_confirm')"/>
     </a-modal>
     <a-modal v-model:visible="isShowChangePassword" @ok="changePassword">
         <p>{{ $t("setting.change_password") }}</p>
@@ -112,6 +113,8 @@ import FullscreenOutlined from '@ant-design/icons-vue/lib/icons/FullscreenOutlin
 import EditOutlined from '@ant-design/icons-vue/lib/icons/EditOutlined'
 import DeleteOutlined from '@ant-design/icons-vue/lib/icons/DeleteOutlined'
 import CompassOutlined from '@ant-design/icons-vue/lib/icons/CompassOutlined'
+
+import {nextTick} from 'vue'
 
 export default {
     name: "Setting",
@@ -139,8 +142,12 @@ export default {
         }
     },
     methods: {
-        openEdit() {
+        async openEdit() {
             this.isShowEdit = true;
+
+            await nextTick()
+            if (this.$refs.editAliasInputEle)
+                this.$refs.editAliasInputEle.focus();
         },
         openChangePassword() {
             this.isShowChangePassword = true;
@@ -203,8 +210,11 @@ export default {
 
             })
         },
-        deleteCurrentAccountConfirm() {
+        async deleteCurrentAccountConfirm() {
             this.isShowDelete = true;
+            await nextTick()
+            if (this.$refs.deleteInputEle)
+                this.$refs.deleteInputEle.focus();
         },
         deleteCurrentAccount() {
             if (this.inputDelete.toUpperCase() !== "DELETE") {
@@ -221,7 +231,7 @@ export default {
             }
 
             try {
-                walletManager.changePassword(this.changePasswordData.oldPwd || "SatoWallet#2021",this.changePasswordData.newPwd ||"SatoWallet#2021" )
+                walletManager.changePassword(this.changePasswordData.oldPwd || "SatoWallet#2021", this.changePasswordData.newPwd || "SatoWallet#2021")
                 antMessage.success(this.$t('setting.change_success'))
                 this.isShowChangePassword = false;
             } catch (e) {
