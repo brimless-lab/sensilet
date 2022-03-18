@@ -2,6 +2,9 @@ let sensibleUtils = {};
 let bg = chrome.extension && chrome.extension.getBackgroundPage();
 if(!bg)
     window.location.reload();
+const bsv156 = bg.sensibleSdk.bsv;
+const { SensibleApi } = require("@sensible-contract/sensible-api");
+const sensibleApi = new SensibleApi("https://api.sensiblequery.com");
 const SensibleNFT = bg.sensibleSdk.SensibleNFT;
 const SensibleNFTObj = new SensibleNFT({
     network: "mainnet", //mainnet or testnet
@@ -90,8 +93,32 @@ sensibleUtils.transfer = function(feeWif,senderWif,receiverAddress,genesis,codeh
 sensibleUtils.getSummary = function(address){
     return SensibleNFTObj.getSummary(address)
 };
-sensibleUtils.getSummaryDetail = function(codehash, genesis, address){
+
+sensibleUtils.getSummaryDetail = function (codehash, genesis, address) {
     return SensibleNFTObj.getSummaryDetail(codehash, genesis, address)
 };
 
+function parseSensibleID(sensibleID) {
+    let sensibleIDBuf = Buffer.from(sensibleID, "hex");
+    let genesisTxId = sensibleIDBuf.slice(0, 32).reverse().toString("hex");
+    let genesisOutputIndex = sensibleIDBuf.readUIntLE(32, 4);
+    return {
+      genesisTxId,
+      genesisOutputIndex,
+    };
+}
+
+
+sensibleUtils.findNftSigners = async function findNftSigner(codehash, genesis, tokenIndex) {
+	let nftDetail = await sensibleApi.getNftUtxoDetail(codehash, genesis, tokenIndex);
+	if (!nftDetail) return null;
+    let { genesisTxId } = parseSensibleID(nftDetail.sensibleId);
+	let out = await sensibleApi.getTxOut(genesisTxId, 1);
+	if (!out) return null;
+    let script = new bsv156.Script(out.scriptPk);
+    if (!script.chunks[7]) return null;
+    let data = JSON.parse(script.chunks[7].buf.toString());
+    return data.signers;
+}
+  
 module.exports = sensibleUtils;

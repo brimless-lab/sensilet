@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.0.1",
+    "@sensible-contract/sensible-api": "^1.0.8",
     "ant-design-vue": "^2.1.6",
     "axios": "^0.20.0",
     "bsv": "^2.0.10",
