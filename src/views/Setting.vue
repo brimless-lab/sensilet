@@ -70,7 +70,7 @@
             </div>
             <div class="bottom">
                 <div class="version">
-                    <a href="https://github.com/sensilet/sensilet/blob/main/release_notes.md" target="_blank" rel="noopener">
+                    <a href="https://github.com/brimless-lab/sensilet/blob/main/release_notes.md" target="_blank" rel="noopener">
                         Sensilet {{ version }}
                     </a>
                 </div>
