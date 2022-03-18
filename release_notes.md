@@ -1,6 +1,13 @@
 
 # Release Notes
 
+### v0.1.12 (2022-03-18) 
+
+- 'Expand View' button is moved to the main screen
+- 'Delete Account' dialog: show account name and address being deleted 
+- NFT image size displaying fixed 
+- fix: MetaID NFT transaction failure in some cases
+
 ### v0.1.10 (2022-01-07) 
 
 - supports large param for `signtx` (dev)
