@@ -2,10 +2,14 @@ let sensibleUtils = {};
 let bg = chrome.extension && chrome.extension.getBackgroundPage();
 if(!bg)
     window.location.reload();
+const config = require('../config/base');
+
 const SensibleNFT = bg.sensibleSdk.SensibleNFT;
 const SensibleNFTObj = new SensibleNFT({
     network: "mainnet", //mainnet or testnet
     feeb: 0.5,
+    apiUrl:config.sensibleUrl
+
     // signers
 });
 /*
@@ -43,6 +47,8 @@ sensibleUtils.genesis = function(feeWif,genesisWif,totalSupply){
         network: "mainnet", //mainnet or testnet
         purse: feeWif, //the wif of a bsv address to offer transaction fees
         feeb: 0.5,
+        apiUrl:config.sensibleUrl
+
         // signers
     }).genesis({
         genesisWif,
@@ -56,6 +62,8 @@ sensibleUtils.issue = function(feeWif,genesisWif,receiverAddress,sensibleId,gene
         network: "mainnet", //mainnet or testnet
         purse: feeWif, //the wif of a bsv address to offer transaction fees
         feeb: 0.5,
+        apiUrl:config.sensibleUrl
+
         // signers
     }).issue({
         genesis,
@@ -73,6 +81,7 @@ sensibleUtils.transfer = function(feeWif,senderWif,receiverAddress,genesis,codeh
         network: "mainnet", //mainnet or testnet
         purse: feeWif, //the wif of a bsv address to offer transaction fees
         feeb: 0.5,
+        apiUrl:config.sensibleUrl
         // signers
     }
     if(signers)

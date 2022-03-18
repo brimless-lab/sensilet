@@ -1,5 +1,5 @@
 let tokenManager = {};
-const httpUtils = require('../utils/httpUtils');
+// const httpUtils = require('../utils/httpUtils');
 const apiUtils = require('../utils/apiUtils');
 
 const sensibleFtUtils = require('../utils/sensibleFTUtils');
@@ -276,7 +276,6 @@ tokenManager.addPriceForTokenList = async function (tokenList) {
 
 tokenManager.getTokenInfoNet = async function (genesis, codehash) {
 
-    // let result = await httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${codehash}/${genesis}`)
     let result = await apiUtils.getTokenInfo(genesis, codehash)
     if (!result || result.code !== 0)
         return null

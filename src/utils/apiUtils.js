@@ -4,7 +4,7 @@ const httpUtils = require('./httpUtils');
 const config = require('../config/base')
 
 // const host = config.debug?"http://127.0.0.1:30021":"https://sensilet.com/api"
-const host = "https://sensilet.com/api"
+const host = config.host
 
 apiUtils.getApplicationList = function () {
     return httpUtils.get(`${host}/application_list`)
@@ -38,18 +38,21 @@ apiUtils.getVersion = function () {
     return httpUtils.get(`${host}/version_and_notice`);
 }
 apiUtils.getTokenInfo = function (genesis, codehash) {
-    return httpUtils.get(`https://api.sensiblequery.com/ft/genesis-info/${codehash}/${genesis}?appid=sensilet`)
+    return httpUtils.get(`${config.sensibleUrl}/ft/genesis-info/${codehash}/${genesis}?appid=sensilet`)
 }
 
 apiUtils.listNftByGenesis = function (codehash, genesis, address, cursor, size) {
-    return httpUtils.get(`https://api.sensiblequery.com/nft/utxo-data/${codehash}/${genesis}/${address}?cursor=${cursor}&size=${size}&appid=sensilet`)
+    return httpUtils.get(`${config.sensibleUrl}/nft/utxo-data/${codehash}/${genesis}/${address}?cursor=${cursor}&size=${size}&appid=sensilet`)
 }
 
 apiUtils.GetRawTxById = async function (metaTxId) {
-    return httpUtils.get(`https://api.sensiblequery.com/rawtx/${metaTxId}?appid=sensilet`)
+    return httpUtils.get(`${config.sensibleUrl}/rawtx/${metaTxId}?appid=sensilet`)
 }
 apiUtils.getTransitionInfo = async function (txid) {
-    return httpUtils.get(`https://api.sensiblequery.com/tx/${txid}?appid=sensilet`)
+    return httpUtils.get(`${config.sensibleUrl}/tx/${txid}?appid=sensilet`)
+}
+apiUtils.getAllBalance = function (address, offset, limit) {
+    return httpUtils.get(`${config.sensibleUrl}/ft/summary/${address}?cursor=${offset}&size=${limit}`)
 }
 
 

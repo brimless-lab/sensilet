@@ -5,6 +5,7 @@ const SensibleFT = require('sensible-sdk').SensibleFT;
 
 const config = require('../config/base');
 const httpUtils = require('../utils/httpUtils');
+const apiUtils = require('../utils/apiUtils');
 
 
 const notDefaultSigners = {
@@ -49,6 +50,7 @@ const ft = new SensibleFT({
     purse: "", //the wif of a bsv address to offer transaction fees
     feeb: 0.5,
     // signers,
+    apiUrl:config.sensibleUrl
 });
 
 utils.selectSigners = SensibleFT.selectSigners;
@@ -89,7 +91,7 @@ utils.getBalance = function (genesis, codehash, address) {
 };
 
 utils.getAllBalance = function (address, offset, limit) {
-    return httpUtils.get(`https://api.sensiblequery.com/ft/summary/${address}?cursor=${offset}&size=${limit}`)
+    return apiUtils.getAllBalance(address,offset, limit)
 }
 
 utils.getUtxoCount = async (genesis, codehash, address) => {
@@ -106,7 +108,10 @@ utils.merge = async function (senderWif, purseWif, genesis, codehash, utxoCount)
         network: config.network,
         feeb: 0.5,
         purse: purseWif,
+        apiUrl:config.sensibleUrl
+
     });
+    // ft.sensibleApi.apiHandler.serverBase = ""
 
     for (let i = 0; i < 10 && utxoCount > 20; i++) {
         await ft.merge(
@@ -129,6 +134,7 @@ utils.transfer = async function (genesis, codehash, senderWif, purseWif, receive
         purse: purseWif,
         // signers,
         // signerSelecteds: item.signerSelecteds,
+        apiUrl:config.sensibleUrl
     }
     if (signers && signers.length > 0)
         ftParams.signers = signers;
@@ -177,6 +183,7 @@ utils.getTransferEsitimate = (codehash, genesis, receivers, senderWif, signers, 
                 feeb: 0.5,
                 signers,
                 signerSelecteds,
+                apiUrl:config.sensibleUrl
             }
         ).getTransferEstimateFee({
             codehash, genesis, receivers,
@@ -198,6 +205,8 @@ utils.getMergeEstimateFee = (codehash, genesis, senderWif, signers) => {
                 purse: "", //the wif of a bsv address to offer transaction fees
                 feeb: 0.5,
                 signers,
+                apiUrl:config.sensibleUrl
+
             }
         ).getMergeEstimateFee({
             codehash, genesis,

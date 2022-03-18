@@ -237,9 +237,7 @@ export default {
         async checkDataVersion() {
             try {
 
-
                 let {tokenDataVersion, nftDataVersion} = (await apiUtils.getDataVersion()).data
-
                 //    检查token信息
                 let version = localManager.getTokenTableVersion();
                 if (tokenDataVersion > version) {
@@ -770,6 +768,8 @@ body {
 
         img {
             max-height: 200px;
+            max-width: 100%;
+
         }
     }
 

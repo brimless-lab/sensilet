@@ -6,6 +6,7 @@ if (!bg)
     window.location.reload();
 
 const {API_NET, API_TARGET, Wallet, SensibleApi} = require('sensible-sdk');
+const config = require('../config/base');
 
 
 const localManager = require('./LocalManager');
@@ -15,7 +16,7 @@ const passwordAesKey = 'SatoWallet#2021#d7t2';
 let mPassword = "";
 let mRootKey = "";
 let mMainAddress = "";
-const sensibleApi = new SensibleApi(API_NET.MAIN, API_TARGET.SENSIBLE);
+const sensibleApi = new SensibleApi(API_NET.MAIN, API_TARGET.SENSIBLE,config.sensibleUrl);
 
 function getRootKey(fromSeed = false) {
     if (mRootKey)
@@ -42,6 +43,10 @@ function getPrivateKeyObj(path = '/0/0') {
     } else {
         return getRootKey().derive(path).privKey
     }
+}
+
+function getOneWallet(wif){
+    return new Wallet(wif, API_NET.MAIN, 0.5, API_TARGET.SENSIBLE,config.sensibleUrl)
 }
 
 
@@ -291,12 +296,12 @@ walletManager.getBsvUtxoCount = async function (address) {
 
 walletManager.mergeBsvUtxo = async function (wif) {
 
-    await new Wallet(wif, API_NET.MAIN, 0.5, API_TARGET.SENSIBLE).merge()
+    await getOneWallet(wif).merge()
 
     return await sleep(2000)
 }
 walletManager.getSendAllInfo = async function (wif) {
-    let txComposer = await new Wallet(wif, API_NET.MAIN, 0.5, API_TARGET.SENSIBLE).merge({
+    let txComposer = await getOneWallet(wif).merge({
         noBroadcast: true
     })
 
@@ -307,12 +312,7 @@ walletManager.pay = async function (to, amount, broadcast) {
     let wif = walletManager.getMainWif();
 
     //发送单人
-    let txComposer = await new Wallet(
-        wif,
-        API_NET.MAIN,
-        0.5,
-        API_TARGET.SENSIBLE
-    ).send(to, amount, {
+    let txComposer = await getOneWallet(wif).send(to, amount, {
         noBroadcast: !broadcast,
     });
 
@@ -327,12 +327,7 @@ walletManager.payArray = async function (receivers, broadcast, wif = null) {
     // console.log(receivers)
 
     //发送多人
-    let txComposer = await new Wallet(
-        wif,
-        API_NET.MAIN,
-        0.5,
-        API_TARGET.SENSIBLE
-    ).sendArray(receivers, {
+    let txComposer = await getOneWallet(wif).sendArray(receivers, {
         noBroadcast: !broadcast,
     });
 
@@ -343,12 +338,7 @@ walletManager.payArray = async function (receivers, broadcast, wif = null) {
 walletManager.sendOpReturn = function (op, wif) {
     if (!wif)
         wif = walletManager.getMainWif();
-    return new Wallet(
-        wif,
-        API_NET.MAIN,
-        0.5,
-        API_TARGET.SENSIBLE
-    ).sendOpReturn(op);
+    return getOneWallet(wif).sendOpReturn(op);
 };
 
 walletManager.checkBsvAddress = function (address) {
