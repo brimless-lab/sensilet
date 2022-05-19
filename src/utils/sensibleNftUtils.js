@@ -11,8 +11,8 @@ const sensibleApi = new SensibleApi(config.sensibleUrl);
 
 const SensibleNFT = bg.sensibleSdk.SensibleNFT;
 const SensibleNFTObj = new SensibleNFT({
-    network: "mainnet", //mainnet or testnet
-    feeb: 0.5,
+    network: config.network, //mainnet or testnet
+    feeb: config.fee,
     apiUrl:config.sensibleUrl
 
     // signers
@@ -49,9 +49,9 @@ sensibleUtils.getTransferFee = function({genesis, codehash, tokenIndex, senderWi
 sensibleUtils.genesis = function(feeWif,genesisWif,totalSupply){
     totalSupply +="";
     return new SensibleNFT({
-        network: "mainnet", //mainnet or testnet
+        network: config.network, //mainnet or testnet
         purse: feeWif, //the wif of a bsv address to offer transaction fees
-        feeb: 0.5,
+        feeb: config.fee,
         apiUrl:config.sensibleUrl
 
         // signers
@@ -64,9 +64,9 @@ sensibleUtils.genesis = function(feeWif,genesisWif,totalSupply){
 
 sensibleUtils.issue = function(feeWif,genesisWif,receiverAddress,sensibleId,genesis,codehash){
     return new SensibleNFT({
-        network: "mainnet", //mainnet or testnet
+        network: config.network, //mainnet or testnet
         purse: feeWif, //the wif of a bsv address to offer transaction fees
-        feeb: 0.5,
+        feeb: config.fee,
         apiUrl:config.sensibleUrl
 
         // signers
@@ -85,7 +85,7 @@ sensibleUtils.transfer = function(feeWif,senderWif,receiverAddress,genesis,codeh
     let params = {
         network: "mainnet", //mainnet or testnet
         purse: feeWif, //the wif of a bsv address to offer transaction fees
-        feeb: 0.5,
+        feeb: config.fee,
         apiUrl:config.sensibleUrl
         // signers
     }

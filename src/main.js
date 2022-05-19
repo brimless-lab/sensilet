@@ -59,8 +59,6 @@ global.localManager = localManager;
 
 import nftManager from './manager/NftManager'
 global.nftManager = nftManager;
-import bsvUtils from './utils/bsvUtils'
-global.bsvUtils = bsvUtils;
 import routerManager from './manager/RouterManager'
 global.routerManager = routerManager;
 import eventManager from './manager/EventManager'

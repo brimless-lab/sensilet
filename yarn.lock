@@ -7500,10 +7500,10 @@ send@0.17.1:
     range-parser "~1.2.1"
     statuses "~1.5.0"
 
-sensible-sdk@7.4.0-beta.2:
-  version "7.4.0-beta.2"
-  resolved "https://registry.npmjs.org/sensible-sdk/-/sensible-sdk-7.4.0-beta.2.tgz#19d33fd1f8f7951b1309d2d867d4d92ec145f535"
-  integrity sha512-6uJ9MpdHLUxbWRDuofbigiGzmHFjQGzRhBuoe8VE3h+8ruuBMo2W6N0uYhbao17owzWFJrHkS4xkHaJqk55a+g==
+sensible-sdk@^7.4.0:
+  version "7.4.0"
+  resolved "https://registry.npmjs.org/sensible-sdk/-/sensible-sdk-7.4.0.tgz#0c0860aefcaea0edd21170b4583da4f50d438628"
+  integrity sha512-kqO8nr5Rwt/ufBulhB1HHpyZybPfdvB7mmebEibnItmoEJacdJh+N8HsjGyJ3KBR2FlWkzAlQ5Hr2qeSXyMg5g==
   dependencies:
     bsv "1.5.6"
     minimist "1.2.5"

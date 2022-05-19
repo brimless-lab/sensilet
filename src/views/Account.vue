@@ -453,7 +453,7 @@ export default {
                 }], false)
                 if (!isInvalid) {
                     fee = fee / Math.pow(10, 8)
-                    this.transFee = fee;
+                    this.transFee = fee.toFixed(config.fixed);
                 } else {
                     this.transFee = "Invalid";
                 }

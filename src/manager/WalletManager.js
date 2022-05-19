@@ -46,7 +46,7 @@ function getPrivateKeyObj(path = '/0/0') {
 }
 
 function getOneWallet(wif){
-    return new Wallet(wif, API_NET.MAIN, 0.5, API_TARGET.SENSIBLE,config.sensibleUrl)
+    return new Wallet(wif, API_NET.MAIN, config.fee, API_TARGET.SENSIBLE,config.sensibleUrl)
 }
 
 
@@ -332,7 +332,7 @@ walletManager.payArray = async function (receivers, broadcast, wif = null) {
     });
 
     // console.log(txComposer)
-    return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId(), tx: txComposer.tx, isInvalid: txComposer.getFeeRate() < 0.5};
+    return {rawHex: txComposer.getRawHex(), fee: txComposer.getUnspentValue(), txid: txComposer.getTxId(), tx: txComposer.tx, isInvalid: txComposer.getFeeRate() < config.fee};
 };
 
 walletManager.sendOpReturn = function (op, wif) {

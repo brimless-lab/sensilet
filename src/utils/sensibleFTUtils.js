@@ -48,7 +48,7 @@ const notDefaultSigners = {
 const ft = new SensibleFT({
     network: config.network, //mainnet or testnet
     purse: "", //the wif of a bsv address to offer transaction fees
-    feeb: 0.5,
+    feeb:config.fee,
     // signers,
     apiUrl:config.sensibleUrl
 });
@@ -106,7 +106,7 @@ utils.getUtxoCount = async (genesis, codehash, address) => {
 utils.merge = async function (senderWif, purseWif, genesis, codehash, utxoCount) {
     let ft = new SensibleFT({
         network: config.network,
-        feeb: 0.5,
+        feeb: config.fee,
         purse: purseWif,
         apiUrl:config.sensibleUrl
 
@@ -130,7 +130,7 @@ utils.transfer = async function (genesis, codehash, senderWif, purseWif, receive
 
     let ftParams = {
         network: config.network,
-        feeb: 0.5,
+        feeb: config.fee,
         purse: purseWif,
         // signers,
         // signerSelecteds: item.signerSelecteds,
@@ -180,7 +180,7 @@ utils.getTransferEsitimate = (codehash, genesis, receivers, senderWif, signers, 
         return new SensibleFT({
                 network: config.network, //mainnet or testnet
                 purse: "", //the wif of a bsv address to offer transaction fees
-                feeb: 0.5,
+                feeb: config.fee,
                 signers,
                 signerSelecteds,
                 apiUrl:config.sensibleUrl
@@ -203,7 +203,7 @@ utils.getMergeEstimateFee = (codehash, genesis, senderWif, signers) => {
         return new SensibleFT({
                 network: config.network, //mainnet or testnet
                 purse: "", //the wif of a bsv address to offer transaction fees
-                feeb: 0.5,
+                feeb: config.fee,
                 signers,
                 apiUrl:config.sensibleUrl
 
