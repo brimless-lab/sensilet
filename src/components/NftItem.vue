@@ -8,7 +8,6 @@
         <QuestionCircleOutlined v-else :style="{fontSize: '24px'}"/>
         <div class="bottom-info">
             <div class="info">{{ metaData.name || 'Unknown' }}</div>
-
         </div>
     </div>
     <div class="nft-item" v-else>
@@ -33,23 +32,20 @@
             <div class="info-list">
                 <div class="info">
                     <span>Codehash:</span>
-                    <span> {{ mNftInfo.codehash }}</span>
+                    <span> {{ mNftInfo.codehashShow }}</span>
                 </div>
                 <div class="info">
                     <span>Genesis:</span>
-                    <span> {{ mNftInfo.genesis }}</span>
+                    <span> {{ mNftInfo.genesisShow }}</span>
                 </div>
                 <div class="info">
                     <span>TokenIndex:</span>
                     <span> {{ mNftInfo.tokenIndex }}</span>
                 </div>
-                <div class="info" v-if="metaData">
+                <div class="info" v-if="metaData && metaData.officialSite">
                     <span>Website:</span>
                     <span v-if="metaData.officialSite">
                         <a :href="metaData.officialSite"> {{ metaData.officialSite }} </a>
-                    </span>
-                    <span v-else>
-                        Unknown
                     </span>
                 </div>
             </div>
@@ -131,6 +127,10 @@ export default {
 
             if (this.mNftInfo) {
                 this.metaData = await txUtils.getMetaData(this.mNftInfo.metaTxId, this.mNftInfo.metaOutputIndex);
+                if(this.metaData){
+                    this.metaData.genesisShow = showLongString(this.metaData.genesis)
+                    this.metaData.codehashShow = showLongString(this.metaData.codehash)
+                }
             }
         },
         detail() {
@@ -182,41 +182,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.nft-item {
-
-    background-color: white;
-    border-radius: 16px;
-    padding: 10px;
-    position: relative;
-    //overflow: hidden;
-    border: 2px solid #ccc;
-    text-align: center;
-
-
-    .top-info {
-        //position: absolute;
-        //right: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .pic {
-        max-height: 144px;
-        max-width: 100%;
-    }
-
-    .bottom-info {
-        margin-top: 8px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .panel {
-        background-color: white;
-    }
-}
+@import '../style/nftItem.scss';
 
 </style>

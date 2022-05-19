@@ -85,15 +85,17 @@ export default {
             //    补充nft信息
             const nftInfoTable = await nftManager.getNftInfoTable()
 
-
             for (let i = 0; i < this.nftGenesisList.length; i++) {
                 let item = this.nftGenesisList[i]
                 let info = nftInfoTable[item.genesis]
-                if (!info)
-                    info = await nftManager.getNftInfo(item.codehash, item.genesis, this.$store.getters.address).catch(e => {
+                if (!info) {
+                    try {
+                        info = await nftManager.getNftInfo(item.codehash, item.genesis, this.$store.getters.address);                        console.log('#2')
+
+                    } catch (e) {
                         console.log(e);
-                        return null;
-                    });
+                    }
+                }
                 if (info) {
                     item.name = info.name
                     if (info.logo)

@@ -113,7 +113,7 @@ utils.merge = async function (senderWif, purseWif, genesis, codehash, utxoCount)
     });
     // ft.sensibleApi.apiHandler.serverBase = ""
 
-    for (let i = 0; i < 10 && utxoCount > 20; i++) {
+    for (let i = 0; i < 10 && utxoCount >= 20; i++) {
         await ft.merge(
             {
                 ownerWif: senderWif,

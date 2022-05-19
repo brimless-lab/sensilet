@@ -35,13 +35,18 @@ nftManager.getNftInfoTable = async function () {
 nftManager.getNftInfo = async function (codehash, genesis, address) {
 //    获取这个nft 集合的用户持有的第一个nft的信息
     let temp = null;
-    let result = await apiUtils.listNftByGenesis(codehash, genesis, address, 0, 1)
+    let result = null
+    try {
 
+        result = await apiUtils.listNftByGenesis(codehash, genesis, address, 0, 1)
+    } catch (e) {
+        console.error(e)
+    }
 
-    if (result.code === 0 && result.data && result.data.utxo && result.data.utxo[0]) {
+    if (result && result.code === 0 && result.data && result.data.utxo && result.data.utxo[0]) {
         let data = result.data.utxo[0];
         let metaTxId = data.metaTxId;
-        if(metaTxId==="0000000000000000000000000000000000000000000000000000000000000000")
+        if (metaTxId === "0000000000000000000000000000000000000000000000000000000000000000")
             return null;
         temp = localManager.getNftInfoCache(metaTxId);
         if (!temp) {
@@ -52,7 +57,7 @@ nftManager.getNftInfo = async function (codehash, genesis, address) {
             }
             // console.log(temp)
             //缓存数据
-            localManager.saveNftInfoCache(metaTxId,temp)
+            localManager.saveNftInfoCache(metaTxId, temp)
         }
     }
     return temp
@@ -216,9 +221,9 @@ nftManager.transfer = function (receiverAddress, genesis, codehash, tokenIndex, 
         } catch (e) {
             console.log(e)
             let msg = "transfer fail";
-            if (e&& e.message && e.message.indexOf("Insufficient balance.") >= 0)
+            if (e && e.message && e.message.indexOf("Insufficient balance.") >= 0)
                 msg += "：Insufficient balance.";
-            else if (e&& e.message &&e.message.indexOf("Invalid Address string provided") >= 0)
+            else if (e && e.message && e.message.indexOf("Invalid Address string provided") >= 0)
                 msg += "：Invalid Address string provided";
             antMessage.error(msg);
             reject(e)

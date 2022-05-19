@@ -1,7 +1,7 @@
 const responseHandlers = new Map();
 const eventHandlers = {};
 const sensibleSdk = require("sensible-sdk");
-//
+
 require('./utils/globalUtils')
 require('./config/errorCode')
 const config = require('./config/base')
@@ -9,12 +9,16 @@ const walletManager = require("./manager/WalletManager");
 const tokenManager = require("./manager/tokenManager");
 const connectManager = require('./manager/ConnectManager');
 
+const indexedDBUtils = require('./utils/IndexedDBUtils');
+indexedDBUtils.link();
+
 const bsv = require('bsv');
 
 window.bsv = bsv;
 window.sensibleSdk = sensibleSdk;
 window.walletManager = walletManager;
 window.tokenManager = tokenManager;
+window.indexedDBUtils = indexedDBUtils;
 
 window.passwordAesTable = {};
 
@@ -22,6 +26,7 @@ window.passwordAesTable = {};
 try {
     walletManager.isNeedUnlock();
 } catch (e) {
+    // console.error(e)
 }
 
 const SensibleNFTObj = new sensibleSdk.SensibleNFT({

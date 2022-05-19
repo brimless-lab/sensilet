@@ -13,7 +13,7 @@ httpUtils.get = function (url,params){
                 resolve(res.data)
             }else
                 reject(new Error(errorCode.NETWORK_ERR))
-        })
+        }).catch(reject)
     })
 }
 
@@ -28,7 +28,7 @@ httpUtils.post = function (url,params){
                 resolve(res.data)
             }else
                 reject(new Error(errorCode.NETWORK_ERR))
-        })
+        }).catch(reject)
     })
 }
 

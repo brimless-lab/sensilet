@@ -1,4 +1,5 @@
 const apiUtils = require("./apiUtils");
+const metaDataDao = require("@/dao/metaDataDao");
 const httpUtils = require("@/utils/httpUtils");
 const txUtils = {};
 
@@ -31,9 +32,9 @@ txUtils.getTxInfo = function (rawHex) {
     return TxDecoder.decodeTx(new bsv156.Transaction(rawHex), API_NET.MAIN)
 };
 
-txUtils.getInputsInfo= function (script,satoshis){
+txUtils.getInputsInfo = function (script, satoshis) {
     return TxDecoder.decodeOutput(new bsv156.Transaction.Output({
-        satoshis,script
+        satoshis, script
     }), API_NET.MAIN)
 }
 
@@ -50,15 +51,15 @@ txUtils.sign = (wif, {txHex, scriptHex, address, inputIndex, satoshis, sigtype,}
     ).toString("hex");
 
     let privateKey = null;
-    if(address){
-        if(walletManager.checkBsvAddress(address)){
-            if(address!==walletManager.getMainAddress()){
+    if (address) {
+        if (walletManager.checkBsvAddress(address)) {
+            if (address !== walletManager.getMainAddress()) {
                 throw new Error("unsupported address in inputInfos")
-            }else
+            } else
                 privateKey = bsv156.PrivateKey.fromWIF(wif);
-        }else   //传了address却不是地址，则视为path去衍生
+        } else   //传了address却不是地址，则视为path去衍生
             privateKey = bsv156.PrivateKey.fromWIF(walletManager.getWif(address));  //address :比如 /0/0
-    }else
+    } else
         privateKey = bsv156.PrivateKey.fromWIF(wif);
 
     let publicKey = privateKey.toPublicKey().toString();
@@ -82,15 +83,15 @@ txUtils.signTransaction = function (txHex, inputInfos) {
 
     return inputInfos.map((v) => {
         let privateKey = null;
-        if(v.address){
-            if(walletManager.checkBsvAddress(v.address)){
-                if(v.address!==walletManager.getMainAddress()){
+        if (v.address) {
+            if (walletManager.checkBsvAddress(v.address)) {
+                if (v.address !== walletManager.getMainAddress()) {
                     throw new Error("unsupported address in inputInfos")
-                }else
+                } else
                     privateKey = bsv156.PrivateKey.fromWIF(walletManager.getMainWif());
-            }else   //传了address却不是地址，则视为path去衍生
+            } else   //传了address却不是地址，则视为path去衍生
                 privateKey = bsv156.PrivateKey.fromWIF(walletManager.getWif(v.address));
-        }else
+        } else
             privateKey = bsv156.PrivateKey.fromWIF(walletManager.getMainWif());
 
         let sighash = bsv156.Transaction.Sighash.sighash(
@@ -113,37 +114,48 @@ txUtils.signTransaction = function (txHex, inputInfos) {
 }
 
 txUtils.getMetaData = async function (metaTxId, metaOutputIndex) {
-    let metaData = {};
-    if(metaTxId==="0000000000000000000000000000000000000000000000000000000000000000")
-        return metaData
+    let metaData = null;
+    if (metaTxId === "0000000000000000000000000000000000000000000000000000000000000000")
+        return {}
     try {
-        let _res = await apiUtils.getRawTx(metaTxId);
-        let tx = new bsv156.Transaction(_res);
-        let chunks = tx.outputs[metaOutputIndex].script.chunks;
-        let jsonData = chunks[2].buf.toString();
-        if (jsonData === 'meta') {
-            let data = chunks[7].buf.toString();
-            metaData = JSON.parse(data);
-            metaData.type = "metaid"
-            metaData.description = metaData.desc;
-            metaData.officialSite = metaData.website;
-            if (metaData.icon)
-                metaData.image = 'https://showman.showpay.io/metafile/' + metaData.icon.replace('metafile://', "")
-        } else {
-            metaData = JSON.parse(jsonData);
-            metaData.type = "standard"
+        //从DB中读取缓存数据
+        metaData = await metaDataDao.find(metaTxId)
+        if (!metaData) {    //没有则发起请求
+            let _res = await apiUtils.getRawTx(metaTxId);
+            let tx = new bsv156.Transaction(_res);
+            let chunks = tx.outputs[metaOutputIndex].script.chunks;
+            let jsonData = chunks[2].buf.toString();
+            if (jsonData === 'meta') {
+                let data = chunks[7].buf.toString();
+                metaData = JSON.parse(data);
+                metaData.type = "metaid"
+                metaData.description = metaData.desc;
+                metaData.officialSite = metaData.website;
+                if (metaData.icon)
+                    metaData.image = 'https://showman.showpay.io/metafile/' + metaData.icon.replace('metafile://', "")
+            } else {
+                metaData = JSON.parse(jsonData);
+                metaData.type = "standard"
 
-            // console.log(metaData,"metaData")
-            if (metaData && metaData.tokenUri) {
-                let result = await httpUtils.get(metaData.tokenUri)
-                if (result) {
-                    metaData.name = result.name;
-                    metaData.image = result.image;
-                    metaData.description = result.description;
-                    metaData.attributes = result.attributes;
+                // console.log(metaData,"metaData")
+                if (metaData && metaData.tokenUri) {
+                    let result = await httpUtils.get(metaData.tokenUri)
+                    if (result) {
+                        metaData.name = result.name;
+                        metaData.image = result.image;
+                        metaData.description = result.description;
+                        metaData.attributes = result.attributes;
+                        metaData.officialSite = result.external_url || result.officialSite;
+
+                    }
                 }
             }
+            if (metaData) {
+                console.log("#### metaData")
+                await metaDataDao.add(metaTxId, metaData)
+            }
         }
+
 
     } catch (e) {
         console.error('parse metadata failed', e);

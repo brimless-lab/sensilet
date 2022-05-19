@@ -81,12 +81,12 @@ export default {
             signers = await tokenManager.sensibleFt.getSignersFromRabinApis(tokenInfo.signers)
         }
 
-        console.log(await walletManager.getBsvUtxoCount(), "BSV utxo count", walletManager.getMainAddress())
+        // console.log(await walletManager.getBsvUtxoCount(), "BSV utxo count", walletManager.getMainAddress())
         //
         let fee = await tokenManager.sensibleFt.getMergeEstimateFee(tokenInfo.codehash, tokenInfo.genesis,
             walletManager.getMainWif(), signers
         );
-        console.log(fee)
+        // console.log(fee)
         this.fee = fee
     },
     methods: {
@@ -117,7 +117,7 @@ export default {
                 }
 
                 let utxoCount = await tokenManager.sensibleFt.getUtxoCount(tokenInfo.genesis, tokenInfo.codehash, walletManager.getMainAddress())
-
+                console.log(`bsv count : ${bsvUtxoCount}, token utxo :${utxoCount}`)
                 if (utxoCount >= 20)
                     await tokenManager.sensibleFt.merge(walletManager.getMainWif(), walletManager.getMainWif(), tokenInfo.genesis, tokenInfo.codehash, utxoCount)
 

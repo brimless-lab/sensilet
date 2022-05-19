@@ -3,7 +3,7 @@
     <div class="footer">
         <div class="line">
             <div style="display: flex">
-                <a href="https://t.me/sensilet" target="_blank" rel="noopener">
+                <a href="https://t.me/brimless" target="_blank" rel="noopener">
                     <img src="/img/telegram.png" alt="">
                     <!--                <span class="word">-->
                     <!--                            Telegram-->

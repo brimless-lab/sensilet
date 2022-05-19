@@ -197,4 +197,4 @@ window.sensilet.signMessage =(msg)=>{
     return action('signMsg', {msg,noNeedAddress:true})
 }
 
-console.log('script loaded #');
+console.log('# Sensilet loaded #');
