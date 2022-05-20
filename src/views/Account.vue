@@ -81,7 +81,7 @@
                 </div>
             </div>
             <TokenPanel v-model:showQr="showQr" ref="tokenPanel"></TokenPanel>
-            <NftPanel ref="nftPanel" v-if="false"></NftPanel>
+            <NftPanel ref="nftPanel"></NftPanel>
             <div class="panel">
                 <div class="panel-top">
                     <div class="title"> {{ $t('account.hot_app') }}</div>
