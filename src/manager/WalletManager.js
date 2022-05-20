@@ -1,7 +1,7 @@
 let walletManager = {};
 
 
-let bg =chrome.extension && chrome.extension.getBackgroundPage();
+let bg = chrome.extension && chrome.extension.getBackgroundPage();
 if (!bg)
     window.location.reload();
 
@@ -16,7 +16,7 @@ const passwordAesKey = 'SatoWallet#2021#d7t2';
 let mPassword = "";
 let mRootKey = "";
 let mMainAddress = "";
-const sensibleApi = new SensibleApi(API_NET.MAIN, API_TARGET.SENSIBLE,config.sensibleUrl);
+const sensibleApi = new SensibleApi(API_NET.MAIN, API_TARGET.SENSIBLE, config.sensibleUrl);
 
 function getRootKey(fromSeed = false) {
     if (mRootKey)
@@ -45,13 +45,33 @@ function getPrivateKeyObj(path = '/0/0') {
     }
 }
 
-function getOneWallet(wif){
-    return new Wallet(wif, API_NET.MAIN, config.fee, API_TARGET.SENSIBLE,config.sensibleUrl)
+function getOneWallet(wif) {
+    return new Wallet(wif, API_NET.MAIN, config.fee, API_TARGET.SENSIBLE, config.sensibleUrl)
 }
 
 
 walletManager.init = function () {
-    walletManager.getCurrentAccount = localManager.getCurrentAccount;
+    walletManager.getCurrentAccount = () => {
+        let result = localManager.getCurrentAccount();
+
+        if (result && !result['address' + config.hostFix]) {
+            const address = walletManager.getAddress();
+            result['address' + config.hostFix] = address;
+            localManager.saveAccount(result)
+
+            let list = localManager.listAccount();
+            for (let i = 0; i < list.length; i++) {
+                console.log('##', i, list[i].address, result.address)
+                if (list[i].address === result.address) {
+                    list[i]['address' + config.hostFix] = address;
+                }
+            }
+            localManager.saveAccountList(list)
+        }
+
+
+        return result;
+    };
     walletManager.listAccount = localManager.listAccount;
 
     walletManager.removeAccount = localManager.removeAccount;
@@ -158,7 +178,7 @@ walletManager.getMnemonic = function () {
         if (!bg.passwordAesTable[lockInfo.address]) {
             try {
 
-            }catch (e) {
+            } catch (e) {
 
             }
             throw new Error('Unlock Wallet First');
@@ -226,9 +246,9 @@ walletManager.getMainAddress = function () {
     if (mMainAddress !== "")
         return mMainAddress;
     let account = localManager.getCurrentAccount()
-    if (account && account.address) {
+    if (account && account['address' + config.hostFix]) {
         //通过本地储存获取
-        mMainAddress = account.address;
+        mMainAddress = account['address' + config.hostFix];
         return mMainAddress
     } else {
         //通过私钥衍生
@@ -256,7 +276,7 @@ walletManager.getMainPubKey = function () {
     return walletManager.getWifAndPubKey("/0/0").pubKey
 };
 
-walletManager.getPubKey = function (path='/0/0') {
+walletManager.getPubKey = function (path = '/0/0') {
     return walletManager.getWifAndPubKey(path).pubKey
 };
 
@@ -341,8 +361,15 @@ walletManager.sendOpReturn = function (op, wif) {
     return getOneWallet(wif).sendOpReturn(op);
 };
 
-walletManager.checkBsvAddress = function (address) {
-    return bsv.Address.isValid(address)
+walletManager.checkBsvAddress = function (addrstr) {
+    let address
+    try {
+        address = new bsv.Address().fromString(addrstr)
+    } catch (e) {
+        return false
+    }
+    return address.isValid()
+    // return bsv.Address.isValid(address)
 };
 walletManager.getSeedFromMnemonic = mnemonicUtils.getSeedFromMnemonic;
 walletManager.getAddressFromMnemonic = mnemonicUtils.getAddressFromMnemonic;
@@ -379,7 +406,7 @@ walletManager.deleteCurrent = function () {
     walletManager.reload();
 }
 
-walletManager.changePassword = function (oldPwd,newPwd){
+walletManager.changePassword = function (oldPwd, newPwd) {
     let lockInfo = localManager.getCurrentAccount();
     if (!lockInfo) {
         throw new Error('Create Wallet First')
@@ -388,18 +415,18 @@ walletManager.changePassword = function (oldPwd,newPwd){
     oldPwd = bsv.Hash.sha256(Buffer.from(oldPwd)).toString('hex');
     let passwordHash = bsv.Hash.sha256(Buffer.from(oldPwd + 'SatoWallet')).toString('hex');
 
-    if( passwordHash !== lockInfo.passwordHash){
+    if (passwordHash !== lockInfo.passwordHash) {
         throw new Error('wrong password')
     }
 
     //change locked & passwordHash
-    let mnemonic =  aesUtils.AESDecrypto(lockInfo.locked, oldPwd);
+    let mnemonic = aesUtils.AESDecrypto(lockInfo.locked, oldPwd);
 
     newPwd += 'SatoWallet';
     newPwd = bsv.Hash.sha256(Buffer.from(newPwd)).toString('hex');
 
     lockInfo['passwordHash'] = bsv.Hash.sha256(Buffer.from(newPwd + 'SatoWallet')).toString('hex');
-    lockInfo['locked'] = aesUtils.AESEncrypto(mnemonic,newPwd);
+    lockInfo['locked'] = aesUtils.AESEncrypto(mnemonic, newPwd);
 
     localManager.saveAccount(lockInfo);
 

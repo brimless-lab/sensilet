@@ -12,9 +12,22 @@ const connectManager = require('./manager/ConnectManager');
 const indexedDBUtils = require('./utils/IndexedDBUtils');
 indexedDBUtils.link();
 
-const bsv = require('bsv');
+const bsvOrigin = require('bsv');
+window.bsvOrigin = bsvOrigin;
+if(config.network==='testnet'){ //替换为测试网对象
+    const Testnet = {}
+    Object.keys(bsvOrigin).forEach(function (key) {
+        Testnet[key] = bsvOrigin[key].Testnet
+            ? bsvOrigin[key].Testnet
+            : bsvOrigin[key]
+    })
+    window.bsv = Testnet;
+}else {
+    window.bsv = bsvOrigin;
+}
+console.log(window.bsv)
 
-window.bsv = bsv;
+window.config = config;
 window.sensibleSdk = sensibleSdk;
 window.walletManager = walletManager;
 window.tokenManager = tokenManager;
@@ -30,8 +43,8 @@ try {
 }
 
 const SensibleNFTObj = new sensibleSdk.SensibleNFT({
-    network: "mainnet", //mainnet or testnet
-    feeb: 0.5,
+    network: config.network, //mainnet or testnet
+    feeb: config.fee,
     // signers
 });
 

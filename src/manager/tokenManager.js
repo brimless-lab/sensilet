@@ -48,7 +48,7 @@ const infoLimit = {
 
 function getLocalTokenList() {
 
-    let tokenList = localStorage.getItem('tokenList');
+    let tokenList = localStorage.getItem('tokenList'+config.hostFix);
     return tokenList ? JSON.parse(tokenList) : [];
 }
 
@@ -92,6 +92,9 @@ async function getAllTokenTable() {
 }
 
 tokenManager.getTokenListNet = async function () {
+    if(config.isTestnet)    //测试网没有
+        return [];
+
     let {data, version} = await apiUtils.getTokenList()
 
     let local = getLocalTokenList();

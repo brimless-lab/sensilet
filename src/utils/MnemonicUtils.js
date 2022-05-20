@@ -39,7 +39,7 @@ utils.saveMnemonic = function (mnemonic, password, isSinglePrivateKey = false, p
 
     //检查是否已经存在
     for (let i = 0; i < lockInfoList.length; i++) {
-        if (lockInfoList[i].address === address) {
+        if (lockInfoList[i]['address'+config.hostFix] === address) {
             return false;
         }
     }
@@ -47,10 +47,10 @@ utils.saveMnemonic = function (mnemonic, password, isSinglePrivateKey = false, p
     let saveInfo = {
         passwordHash,
         locked,
-        address,
         alias: `Account ${lockInfoList.length + 1}`,
         isSinglePrivateKey, path,
     };
+    saveInfo['address'+config.hostFix] = address;
     if (passphrase !== "") {
         saveInfo.seedLocked = aesUtils.AESEncrypto(seed.toString('hex'), password);
         saveInfo.hasPassphrase = true;

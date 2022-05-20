@@ -14,8 +14,6 @@ const SensibleNFTObj = new SensibleNFT({
     network: config.network, //mainnet or testnet
     feeb: config.fee,
     apiUrl:config.sensibleUrl
-
-    // signers
 });
 /*
 //以下代码需插入到 sensible-sdk/disk/index.js
@@ -83,7 +81,7 @@ sensibleUtils.issue = function(feeWif,genesisWif,receiverAddress,sensibleId,gene
 
 sensibleUtils.transfer = function(feeWif,senderWif,receiverAddress,genesis,codehash,tokenIndex,signers){
     let params = {
-        network: "mainnet", //mainnet or testnet
+        network: config.network, //mainnet or testnet
         purse: feeWif, //the wif of a bsv address to offer transaction fees
         feeb: config.fee,
         apiUrl:config.sensibleUrl

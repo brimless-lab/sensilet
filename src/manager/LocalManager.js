@@ -7,8 +7,6 @@ localManager.refreshLockInfoList = function () {
 }
 
 // localManager.refreshLockInfoList();
-
-
 function getIndex() {
     let localInfo = localManager.getCurrentAccount();
     let lockInfoList = localManager.listAccount();
@@ -106,7 +104,12 @@ localManager.listGenesis = function () {
 localManager.saveGenesis = function (info) {
     let lockInfo = localManager.getCurrentAccount();
 
-    lockInfo.genesisList ? lockInfo.genesisList.push(info) : lockInfo.genesisList = [info];
+    if (lockInfo.genesisList) {
+        lockInfo.genesisList.push(info)
+    } else {
+        lockInfo['genesisList'] = [info]
+    }
+
     setItem('lockInfo', lockInfo);
     let lockInfoList = localManager.listAccount()
     lockInfoList[getIndex()] = lockInfo;
@@ -187,7 +190,7 @@ localManager.getNftInfoTable = function () {
 }
 
 localManager.getRecentAddress = function () {
-    let temp = localStorage.getItem('recentAddress')
+    let temp = localStorage.getItem('recentAddress'+config.hostFix)
     return temp ? JSON.parse(temp) : [];
 }
 localManager.addRecentAddress = function (address, tag, alias = "") {
@@ -212,7 +215,7 @@ localManager.addRecentAddress = function (address, tag, alias = "") {
             tags: [tag]
         })
     }
-    localStorage.setItem('recentAddress', JSON.stringify(temp))
+    localStorage.setItem('recentAddress'+config.hostFix, JSON.stringify(temp))
 
 }
 localManager.clearRecentAddress = function () {

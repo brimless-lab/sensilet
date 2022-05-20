@@ -12,15 +12,15 @@ export default createStore({
         version: {},
         versionChecked: 0,
         isSettingChecked: true,
-        activeTab:{},
-        isConnected:false,
+        activeTab: {},
+        isConnected: false,
     },
     getters: {
         address(state) {
-            return state.account ? state.account.address : ""
+            return state.account ? state.account['address'+config.hostFix] : ""
         },
         addressShow(state) {
-            return state.account ? showLongString(state.account.address) : ""
+            return state.account ? showLongString(state.account['address'+config.hostFix]) : ""
         },
         alias(state) {
             return state.account ? state.account.alias : ""
@@ -37,16 +37,18 @@ export default createStore({
     },
     mutations: {
         initAccount(state) {
-            let account = walletManager.listAccount();
-            if (account) {
-                state.accountList = account.map(item => {
-                    item.addressShow = showLongString(item.address, 10);
+            state.account = walletManager.getCurrentAccount();
+            if (state.account)
+                state.account.addressShow = showLongString(state.account['address'+config.hostFix])
+
+            let accountList = walletManager.listAccount();
+            if (accountList) {
+                state.accountList = accountList.map(item => {
+                    item.addressShow = showLongString(item['address'+config.hostFix], 10);
                     item.accountMode = walletManager.getAccountMode(item)
+                    item.isCurrent = state.account && state.account['address'+config.hostFix] === item['address'+config.hostFix]
                     return item
                 });
-                state.account = walletManager.getCurrentAccount();
-                if (state.account)
-                    state.account.addressShow = showLongString(state.account.address)
             }
         },
         editAlias(state, alias) {
@@ -64,19 +66,33 @@ export default createStore({
         initSettingChecked(state) {
             state.isSettingChecked = localManager.isSettingChecked();
         },
+        changeNetwork(state) {
+            const switchTo = localStorage.getItem('network') === 'testnet' ? "mainnet" : "testnet";
+            //保存结果
+            localStorage.setItem('network',switchTo)
+            //改变配置
+            config.configNetwork();
+            //发出事件通知
+            // window.dispatchEvent(new CustomEvent('on_network_changed'));
+
+        //    重启页面
+            bg.location.reload();
+            window.location.reload();
+        },
 
     },
     actions: {
-        async initActiveTab({commit,state}){
-            state.activeTab =await extensionUtils.queryCurrentActiveTab();
-            if(state.account) {
-                state.isConnected =await connectManager.isConnected(state.account.address, state.activeTab.origin)
+        async initActiveTab({commit, state}) {
+            state.activeTab = await extensionUtils.queryCurrentActiveTab();
+            if (state.account) {
+                state.isConnected = await connectManager.isConnected(state.account.address, state.activeTab.origin)
             }
         },
         async refreshAsset({commit, state}) {
 
         },
         async refreshAllToken({commit, state}) {
+
             state.tokenList = null;
             state.totalTokenValue = 0;
             await sleep(200);

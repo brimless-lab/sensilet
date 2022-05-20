@@ -164,6 +164,9 @@ export default {
         current_account:"Current Account",
         current_account_name:"Account Name",
 
+        change_network:"Change Network",
+        change_network_notice:"Are you sure to switch to {0}",
+
     },
     popup: {
         // this.$t('popup.') {{$t('popup.')}} :placeholder="$t('popup.')"

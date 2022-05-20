@@ -228,8 +228,9 @@ export default {
             console.log('active tab ' + origin)
         });
 
-        //    检查已保存的数据版本 //不等同步
-        this.checkDataVersion();
+        //    检查已保存的数据版本 //不等同步 //仅主网检查
+        if (!config.isTestnet)
+            this.checkDataVersion();
 
 
     },
@@ -743,7 +744,6 @@ body {
 }
 
 
-
 .ant-btn-round {
     color: #7a7a7a;
     //border-color: #d2f1e5;
@@ -759,14 +759,13 @@ body {
     &.ant-btn-primary {
         color: white;
 
-        &:hover{
+        &:hover {
             color: #eee;
         }
     }
 
 
-
-    &:hover{
+    &:hover {
         color: #333;
     }
 
@@ -780,49 +779,51 @@ body {
         margin-right: 2px;
     }
 
-    @media (max-width:400px) {
+    @media (max-width: 400px) {
         width: 92px;
 
-        img{width: 17px}
+        img {
+            width: 17px
+        }
     }
 }
 
 
-.scrolled{
-    &::-webkit-scrollbar{
+.scrolled {
+    &::-webkit-scrollbar {
         background-color: #3a3a3a;
         width: 5px;
         transform: translateX(10px);
         border-radius: 2em;
     }
 
-    &::-webkit-scrollbar-track{
+    &::-webkit-scrollbar-track {
         background-color: #ddd;
         border-radius: 2em;
 
     }
 
-    &::-webkit-scrollbar-thumb{
+    &::-webkit-scrollbar-thumb {
         background-color: #eee;
         border-radius: 2em;
     }
 }
 
-.panel-container{
+.panel-container {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 48px);
 
     padding-top: 20px;
 
-    .panel{
+    .panel {
         margin-top: 0;
         max-height: calc(100vh - 132px);
         overflow-y: auto;
     }
 
-    .action-panel{
-        max-width:375px;
+    .action-panel {
+        max-width: 375px;
         width: calc(100vw - 32px);
         margin: 0 auto;
         display: flex;
@@ -843,8 +844,8 @@ body {
     }
 }
 
-.unit{
-    font-family:Menlo, Monaco,Euclid, Roboto, Helvetica, Arial, sans-serif;
+.unit {
+    font-family: Menlo, Monaco, Euclid, Roboto, Helvetica, Arial, sans-serif;
 
 }
 

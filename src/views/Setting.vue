@@ -40,6 +40,10 @@
                 <!--                    <img src="../assets/icon-import.svg" alt="">-->
                 <!--                    <span>{{ $t("setting.import_mnemonic") }}</span>-->
                 <!--                </div>-->
+                <div class="item btn" @click="changeNetworkConfirm">
+                    <GlobalOutlined class="item-icon"/>
+                    <span>{{ $t("setting.change_network") }}</span>
+                </div>
                 <div class="item btn" v-if="!isSinglePrivateKey" @click="gotoExport">
                     <KeyOutlined class="item-icon"/>
                     <span>{{ $t("setting.export_mnemonic") }}</span>
@@ -113,6 +117,7 @@ import FullscreenOutlined from '@ant-design/icons-vue/lib/icons/FullscreenOutlin
 import EditOutlined from '@ant-design/icons-vue/lib/icons/EditOutlined'
 import DeleteOutlined from '@ant-design/icons-vue/lib/icons/DeleteOutlined'
 import CompassOutlined from '@ant-design/icons-vue/lib/icons/CompassOutlined'
+import GlobalOutlined from '@ant-design/icons-vue/lib/icons/GlobalOutlined'
 
 import {nextTick} from 'vue'
 
@@ -121,7 +126,7 @@ export default {
     components: {
         Footer,
         KeyOutlined,
-        FullscreenOutlined, EditOutlined, DeleteOutlined, CompassOutlined
+        FullscreenOutlined, EditOutlined, DeleteOutlined, CompassOutlined,GlobalOutlined
     },
     data() {
         return {
@@ -210,6 +215,19 @@ export default {
 
             })
         },
+        changeNetworkConfirm() {
+            let _this = this;
+            antModal.confirm({
+                title: this.$t('setting.change_network'),
+                content: this.$t('setting.change_network_notice',[
+                    this.$store.state.network==='testnet'?"Mainnet":"Testnet"
+                ]),
+                onOk() {
+                    _this.$store.commit("changeNetwork")
+                }
+
+            })
+        },
         async deleteCurrentAccountConfirm() {
             this.isShowDelete = true;
             await nextTick()
@@ -237,7 +255,8 @@ export default {
             } catch (e) {
                 antMessage.error((e && e.message) || $t("setting.change_fail"))
             }
-        }
+        },
+
     }
 }
 </script>

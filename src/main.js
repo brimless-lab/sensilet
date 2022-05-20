@@ -5,20 +5,17 @@ if (bg) {
 
     //从background中获取bsv对象
     global.bsv = bg.bsv;
+    global.bsvOrigin = bg.bsvOrigin;
     global.sensibleSdk = bg.sensibleSdk;
     global.walletManager = bg.walletManager.init();
     global.tokenManager = bg.tokenManager;
+    global.config = bg.config;
     // console.log(bg.sensibleSdk,"#####")
 
 } else
     window.location.reload();
 
 import {} from './utils/globalUtils'
-
-console.log('### load config');
-import config from './config/base'
-global.config = config;
-
 
 import {createApp} from 'vue'
 
