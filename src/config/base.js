@@ -23,6 +23,7 @@ config.configNetwork = function () {
         config.sensibleUrl = "https://api.sensiblequery.com/test"
         config.hostFix = '_testnet'
         config.isTestnet = true;
+        config.fee = 0.5;
     } else {
         //主网
         config.network = "mainnet";

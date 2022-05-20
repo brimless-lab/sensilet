@@ -57,7 +57,7 @@ apiUtils.getAllBalance = function (address, offset, limit) {
 
 
 apiUtils.getRawTx = function (txid) {
-    return httpUtils.get(`https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`)
+    return httpUtils.get(config.isTestnet?`https://api.whatsonchain.com/v1/bsv/test/tx/${txid}/hex`: `https://api.whatsonchain.com/v1/bsv/main/tx/${txid}/hex`)
 }
 
 

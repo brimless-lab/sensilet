@@ -29,13 +29,13 @@ txUtils.txType = {
 }
 
 txUtils.getTxInfo = function (rawHex) {
-    return TxDecoder.decodeTx(new bsv156.Transaction(rawHex), API_NET.MAIN)
+    return TxDecoder.decodeTx(new bsv156.Transaction(rawHex), config.network)
 };
 
 txUtils.getInputsInfo = function (script, satoshis) {
     return TxDecoder.decodeOutput(new bsv156.Transaction.Output({
         satoshis, script
-    }), API_NET.MAIN)
+    }), config.network)
 }
 
 txUtils.sign = (wif, {txHex, scriptHex, address, inputIndex, satoshis, sigtype,}) => {

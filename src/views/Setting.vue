@@ -167,7 +167,7 @@ export default {
 
 
             walletManager.saveAlias({
-                address: this.$store.getters.address,
+                locked: this.$store.state.account.locked,
                 alias: this.editAlias
             });
 

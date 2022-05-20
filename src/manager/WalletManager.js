@@ -16,7 +16,7 @@ const passwordAesKey = 'SatoWallet#2021#d7t2';
 let mPassword = "";
 let mRootKey = "";
 let mMainAddress = "";
-const sensibleApi = new SensibleApi(API_NET.MAIN, API_TARGET.SENSIBLE, config.sensibleUrl);
+const sensibleApi = new SensibleApi(config.network, API_TARGET.SENSIBLE, config.sensibleUrl);
 
 function getRootKey(fromSeed = false) {
     if (mRootKey)
@@ -29,15 +29,18 @@ function getRootKey(fromSeed = false) {
 }
 
 function getPrivateKeyObj(path = '/0/0') {
-
     let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
     if (!lockInfo) {
         throw new Error('Create Wallet First')
     }
     path = (lockInfo.path ? lockInfo.path : "m/44'/0'/0'") + path
-    // console.log(path)
     if (lockInfo.isSinglePrivateKey) {
-        return bsv.PrivKey.fromWif(walletManager.getMnemonic());
+        try {
+            return bsv.PrivKey.fromWif(walletManager.getMnemonic());
+        }catch (e) {
+            return bsv.PrivKey.fromWif(bsv.changePrivateKeyNetwork(walletManager.getMnemonic()));
+        }
+
     } else if (lockInfo.hasPassphrase) {
         return getRootKey(true).derive(path).privKey
     } else {
@@ -46,7 +49,7 @@ function getPrivateKeyObj(path = '/0/0') {
 }
 
 function getOneWallet(wif) {
-    return new Wallet(wif, API_NET.MAIN, config.fee, API_TARGET.SENSIBLE, config.sensibleUrl)
+    return new Wallet(wif, config.network, config.fee, API_TARGET.SENSIBLE, config.sensibleUrl)
 }
 
 
@@ -54,19 +57,24 @@ walletManager.init = function () {
     walletManager.getCurrentAccount = () => {
         let result = localManager.getCurrentAccount();
 
+        console.log('####',config.hostFix)
         if (result && !result['address' + config.hostFix]) {
+            console.log('#### no',config.hostFix)
             const address = walletManager.getAddress();
             result['address' + config.hostFix] = address;
             localManager.saveAccount(result)
 
             let list = localManager.listAccount();
             for (let i = 0; i < list.length; i++) {
-                console.log('##', i, list[i].address, result.address)
-                if (list[i].address === result.address) {
+                // console.log('##', i, list[i].address, result.address)
+                if (list[i].locked === result.locked) {
                     list[i]['address' + config.hostFix] = address;
                 }
             }
             localManager.saveAccountList(list)
+        }
+        if(result && !result.address){
+
         }
 
 
@@ -382,7 +390,15 @@ walletManager.saveMnemonic = mnemonicUtils.saveMnemonic;
  * 以下是对单私钥模式的支持
  */
 walletManager.getAddressFromWif = function (wif) {
-    return bsv.Address.fromPrivKey(bsv.PrivKey.fromWif(wif)).toString()
+    try {
+        return bsv.Address.fromPrivKey(bsv.PrivKey.fromWif(wif)).toString()
+    } catch (e) {
+        if (config.isTestnet) {   //尝试使用主网导入一下
+            return bsvOrigin.Address.fromPrivKey(bsvOrigin.PrivKey.fromWif(wif)).toString()
+        } else
+            throw e
+    }
+
 }
 
 walletManager.deleteCurrent = function () {

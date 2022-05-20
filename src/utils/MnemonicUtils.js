@@ -28,9 +28,17 @@ utils.saveMnemonic = function (mnemonic, password, isSinglePrivateKey = false, p
     let seed = isSinglePrivateKey ? "" : utils.getSeedFromMnemonic(mnemonic, passphrase);
 
 
-    let privateKey = isSinglePrivateKey
-        ? bsv.PrivKey.fromWif(mnemonic)
-        : bsv.Bip32.fromSeed(seed).derive(`${path}/0/0`).privKey;
+    let privateKey;
+    if(isSinglePrivateKey){
+        try {
+            privateKey = bsv.PrivKey.fromWif(mnemonic)
+        } catch (e) {
+            privateKey =  bsv.PrivKey.fromWif(bsv.changePrivateKeyNetwork(mnemonic))
+        }
+    }else {
+        privateKey = bsv.Bip32.fromSeed(seed).derive(`${path}/0/0`).privKey;
+    }
+
     let address = bsv.Address.fromPrivKey(privateKey).toString();
 
 
@@ -39,7 +47,7 @@ utils.saveMnemonic = function (mnemonic, password, isSinglePrivateKey = false, p
 
     //检查是否已经存在
     for (let i = 0; i < lockInfoList.length; i++) {
-        if (lockInfoList[i]['address'+config.hostFix] === address) {
+        if (lockInfoList[i]['address' + config.hostFix] === address) {
             return false;
         }
     }
@@ -50,7 +58,8 @@ utils.saveMnemonic = function (mnemonic, password, isSinglePrivateKey = false, p
         alias: `Account ${lockInfoList.length + 1}`,
         isSinglePrivateKey, path,
     };
-    saveInfo['address'+config.hostFix] = address;
+    saveInfo['address' + config.hostFix] = address;
+
     if (passphrase !== "") {
         saveInfo.seedLocked = aesUtils.AESEncrypto(seed.toString('hex'), password);
         saveInfo.hasPassphrase = true;
@@ -69,9 +78,9 @@ utils.getSeedFromMnemonic = function (mnemonic, passphrase = '') {
     return new bsv.Bip39(mnemonic).toSeed(passphrase);
 };
 
-utils.getAddressFromMnemonic = function (mnemonic, passphrase = '',path="m/44'/0'/0'") {
-    console.log(passphrase,path)
-    return  bsv.Bip32.fromSeed(new bsv.Bip39(mnemonic).toSeed(passphrase)).derive(`${path}/0/0`).privKey;
+utils.getAddressFromMnemonic = function (mnemonic, passphrase = '', path = "m/44'/0'/0'") {
+    console.log(passphrase, path)
+    return bsv.Bip32.fromSeed(new bsv.Bip39(mnemonic).toSeed(passphrase)).derive(`${path}/0/0`).privKey;
 };
 
 module.exports = utils;

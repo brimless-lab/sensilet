@@ -7,6 +7,9 @@
                 <!--                <img src="./assets/logo_h_white.png" alt="logo">-->
                 <img style="width: 128px" src="./assets/logo_h.svg" alt="logo">
             </div>
+            <div v-if="isTestnet" class="testnet">
+                Testnet
+            </div>
         </div>
         <div class="right" v-if="showSetting">
             <div @click="gotoSetting()">
@@ -131,6 +134,7 @@ export default {
             version: config.version,
             debug: config.debug,
             // showSetting: true
+            isTestnet:config.isTestnet,
         }
     },
     computed: {
@@ -348,6 +352,18 @@ body {
         //cursor: pointer;
         position: absolute;
         left: 0;
+
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+
+        .testnet{
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            background-color: #EE4F2F;
+            padding: 2px 4px;
+        }
 
         img {
             //height: 45px;

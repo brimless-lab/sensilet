@@ -11,7 +11,7 @@ function getIndex() {
     let localInfo = localManager.getCurrentAccount();
     let lockInfoList = localManager.listAccount();
     for (let i = 0; i < lockInfoList.length; i++) {
-        if (localInfo.address === lockInfoList[i].address)
+        if (localInfo.locked === lockInfoList[i].locked)
             return i;
     }
     return -1;
@@ -60,7 +60,7 @@ localManager.chooseAccount = function (accountInfo) {
 localManager.saveAlias = function (accountInfo) {
     let lockInfoList = localManager.listAccount()
     for (let i = 0; i < lockInfoList.length; i++) {
-        if (accountInfo.address === lockInfoList[i].address) {
+        if (accountInfo.locked === lockInfoList[i].locked) {
             lockInfoList[i].alias = accountInfo.alias;
             break
         }
@@ -69,7 +69,7 @@ localManager.saveAlias = function (accountInfo) {
 
     let lockInfo = localManager.getCurrentAccount();
 
-    if (lockInfo && accountInfo.address === lockInfo.address) {
+    if (lockInfo && accountInfo.locked === lockInfo.locked) {
         lockInfo['alias'] = accountInfo.alias;
         localStorage.setItem('lockInfo', JSON.stringify(lockInfo));
     }
@@ -78,7 +78,7 @@ localManager.saveAlias = function (accountInfo) {
 localManager.saveAccount = function (accountInfo) {
     let lockInfoList = localManager.listAccount()
     for (let i = 0; i < lockInfoList.length; i++) {
-        if (accountInfo.address === lockInfoList[i].address) {
+        if (accountInfo.locked === lockInfoList[i].locked) {
             lockInfoList[i] = accountInfo;
             break
         }
@@ -87,7 +87,7 @@ localManager.saveAccount = function (accountInfo) {
 
     let lockInfo = localManager.getCurrentAccount();
 
-    if (lockInfo && accountInfo.address === lockInfo.address) {
+    if (lockInfo && accountInfo.locked === lockInfo.locked) {
         lockInfo = accountInfo;
         localStorage.setItem('lockInfo', JSON.stringify(lockInfo));
     }

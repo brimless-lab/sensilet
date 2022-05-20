@@ -14,18 +14,36 @@ indexedDBUtils.link();
 
 const bsvOrigin = require('bsv');
 window.bsvOrigin = bsvOrigin;
-if(config.network==='testnet'){ //替换为测试网对象
-    const Testnet = {}
-    Object.keys(bsvOrigin).forEach(function (key) {
-        Testnet[key] = bsvOrigin[key].Testnet
-            ? bsvOrigin[key].Testnet
-            : bsvOrigin[key]
-    })
+const Testnet = {}
+Object.keys(bsvOrigin).forEach(function (key) {
+    Testnet[key] = bsvOrigin[key].Testnet
+        ? bsvOrigin[key].Testnet
+        : bsvOrigin[key]
+})
+
+if (config.network === 'testnet') { //替换为测试网对象
     window.bsv = Testnet;
-}else {
+
+    window.bsv.changePrivateKeyNetwork = (mainnetWif) => {
+        const br = bsvOrigin.PrivKey.fromWif(mainnetWif).toBuffer()
+        br[0] = 0xef;
+        return bsv.PrivKey.fromBuffer(
+            br
+        ).toWif();
+    }
+} else {
     window.bsv = bsvOrigin;
+    window.bsvOrigin = Testnet;
+
+    window.bsv.changePrivateKeyNetwork = (mainnetWif) => {
+        const br = bsvOrigin.PrivKey.fromWif(mainnetWif).toBuffer()
+        br[0] = 0x80;
+        return bsv.PrivKey.fromBuffer(
+            br
+        ).toWif();
+    }
 }
-console.log(window.bsv)
+// console.log(window.bsv)
 
 window.config = config;
 window.sensibleSdk = sensibleSdk;

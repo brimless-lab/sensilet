@@ -68,11 +68,10 @@
             </div>
         </div>
         <div class="action-panel">
-            <div class="action-container" v-if="!isCreating">
+            <div class="action-container">
                 <div></div>
                 <a-button type="primary" @click="commit">{{ $t('popup.done') }}</a-button>
             </div>
-            <a-spin v-else/>
         </div>
     </div>
 </template>

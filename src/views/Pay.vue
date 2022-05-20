@@ -111,6 +111,7 @@ export default {
             isCreating: false,
             origin,
             fee: null,
+            feeUsd:0,
             balance: -1,
             mineAddress: showLongString(walletManager.getMainAddress()),
             rest: 0,
