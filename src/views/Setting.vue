@@ -220,7 +220,7 @@ export default {
             antModal.confirm({
                 title: this.$t('setting.change_network'),
                 content: this.$t('setting.change_network_notice',[
-                    this.$store.state.network==='testnet'?"Mainnet":"Testnet"
+                    config.isTestnet?"Mainnet":"Testnet"
                 ]),
                 onOk() {
                     _this.$store.commit("changeNetwork")

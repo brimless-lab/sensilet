@@ -44,6 +44,7 @@ export default {
     },
     methods: {
         next() {
+
             if (this.step === 0) {
                 //去掉两边空格后 以空格分割
                 let temp = this.inputMnemonic.replace(/(^\s*)|(\s*$)/g, "");
@@ -51,9 +52,9 @@ export default {
                 try {
                     //确认助记词是否可用
                     let address= walletManager.getAddressFromWif(this.inputMnemonic)
-                    console.log(address)
                     this.step++;
                 } catch (e) {
+                    console.log(e)
                     antMessage.error(e.message)
                 }
 
@@ -70,7 +71,6 @@ export default {
                     this.rePassword = 'SatoWallet#2021'
                 }
                 this.isGoingToNext = true;
-
                 if (walletManager.saveMnemonic(this.inputMnemonic, this.password,true)) {
                     walletManager.refreshLockInfoList();
                     walletManager.reload();

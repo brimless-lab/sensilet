@@ -90,7 +90,8 @@ export default {
                 let info = nftInfoTable[item.genesis]
                 if (!info) {
                     try {
-                        info = await nftManager.getNftInfo(item.codehash, item.genesis, this.$store.getters.address);                        console.log('#2')
+                        info = await nftManager.getNftInfo(item.codehash, item.genesis, this.$store.getters.address);
+                        // console.log('#2')
 
                     } catch (e) {
                         console.log(e);

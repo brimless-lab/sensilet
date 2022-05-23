@@ -37,7 +37,7 @@ function getPrivateKeyObj(path = '/0/0') {
     if (lockInfo.isSinglePrivateKey) {
         try {
             return bsv.PrivKey.fromWif(walletManager.getMnemonic());
-        }catch (e) {
+        } catch (e) {
             return bsv.PrivKey.fromWif(bsv.changePrivateKeyNetwork(walletManager.getMnemonic()));
         }
 
@@ -57,9 +57,7 @@ walletManager.init = function () {
     walletManager.getCurrentAccount = () => {
         let result = localManager.getCurrentAccount();
 
-        console.log('####',config.hostFix)
         if (result && !result['address' + config.hostFix]) {
-            console.log('#### no',config.hostFix)
             const address = walletManager.getAddress();
             result['address' + config.hostFix] = address;
             localManager.saveAccount(result)
@@ -73,7 +71,7 @@ walletManager.init = function () {
             }
             localManager.saveAccountList(list)
         }
-        if(result && !result.address){
+        if (result && !result.address) {
 
         }
 
@@ -393,12 +391,9 @@ walletManager.getAddressFromWif = function (wif) {
     try {
         return bsv.Address.fromPrivKey(bsv.PrivKey.fromWif(wif)).toString()
     } catch (e) {
-        if (config.isTestnet) {   //尝试使用主网导入一下
-            return bsvOrigin.Address.fromPrivKey(bsvOrigin.PrivKey.fromWif(wif)).toString()
-        } else
-            throw e
-    }
 
+        return bsvOrigin.Address.fromPrivKey(bsvOrigin.PrivKey.fromWif(wif)).toString()
+    }
 }
 
 walletManager.deleteCurrent = function () {

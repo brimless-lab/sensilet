@@ -36,7 +36,7 @@ if (config.network === 'testnet') { //替换为测试网对象
     window.bsvOrigin = Testnet;
 
     window.bsv.changePrivateKeyNetwork = (mainnetWif) => {
-        const br = bsvOrigin.PrivKey.fromWif(mainnetWif).toBuffer()
+        const br = Testnet.PrivKey.fromWif(mainnetWif).toBuffer()
         br[0] = 0x80;
         return bsv.PrivKey.fromBuffer(
             br
