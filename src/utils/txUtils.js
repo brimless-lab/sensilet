@@ -143,6 +143,7 @@ txUtils.getMetaData = async function (metaTxId, metaOutputIndex) {
                     if (result) {
                         metaData.name = result.name;
                         metaData.image = result.image;
+                        metaData.animation_url = result.animation_url;
                         metaData.description = result.description;
                         metaData.attributes = result.attributes;
                         metaData.officialSite = result.external_url || result.officialSite;

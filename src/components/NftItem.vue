@@ -6,6 +6,7 @@
         </div>
         <img class="pic" v-if="metaData.image" :src='metaData.image ' alt="">
         <QuestionCircleOutlined v-else :style="{fontSize: '24px'}"/>
+
         <div class="bottom-info">
             <div class="info">{{ metaData.name || 'Unknown' }}</div>
         </div>
@@ -21,7 +22,10 @@
                 <div class="name" v-if="metaData">{{ metaData.name }}</div>
                 <div class="right">#{{ mNftInfo.tokenIndex }}</div>
             </div>
-            <div class="img-container">
+            <div class="iframe-container" v-if="metaData && metaData.animation_url">
+                <iframe :src="metaData.animation_url"></iframe>
+            </div>
+            <div class="img-container" v-else>
                 <!--                <img class="pic" v-if="metaData" :src='metaData.image' alt="">-->
                 <img class="pic" v-if="metaData && metaData.image" :src='metaData.image ' alt="">
                 <QuestionCircleOutlined v-else :style="{fontSize: '24px'}"/>
