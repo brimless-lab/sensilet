@@ -74,6 +74,8 @@ export default createStore({
             config.configNetwork();
             //发出事件通知
             // window.dispatchEvent(new CustomEvent('on_network_changed'));
+            //    通知网站
+            eventManager.dispatchNetworkChange({network:switchTo});
 
         //    重启页面
             bg.location.reload();

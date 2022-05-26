@@ -1,13 +1,19 @@
 let connectManager = {};
-const key = "connectedWallets_v2"
+
+
+// const key =
+
+function getKey(){
+    return config.isTestnet?"connectedWallets_testnet" :"connectedWallets_v2";
+}
 
 connectManager.connect = function (address,origin) {
     return new Promise((resolve, reject) => {
         try {
             // let {address, sig} = walletManager.signMessage(msg);
             //保存链接记录
-            chrome.storage.local.get(key, (result) => {
-                let connectedWallets = result[key] || {};
+            chrome.storage.local.get(getKey(), (result) => {
+                let connectedWallets = result[getKey()] || {};
 
                 if (!connectedWallets[address])
                     connectedWallets[address] = {};
@@ -18,7 +24,7 @@ connectManager.connect = function (address,origin) {
                     autoApprove: true,
                 };
                 let setData = {};
-                setData[key] = connectedWallets;
+                setData[getKey()] = connectedWallets;
                 chrome.storage.local.set(setData);
 
                 resolve(address)
@@ -30,9 +36,9 @@ connectManager.connect = function (address,origin) {
 };
 connectManager.isConnected = function(address,origin){
     return new Promise(resolve => {
-        chrome.storage.local.get(key, (result) => {
+        chrome.storage.local.get(getKey(), (result) => {
 
-            let connectedWallet = ((result[key] || {})[address] || {})[origin];
+            let connectedWallet = ((result[getKey()] || {})[address] || {})[origin];
             // console.log(connectedWallet,address,origin,'###')
             resolve(connectedWallet !== undefined && connectedWallet != null)
         });
@@ -43,15 +49,15 @@ connectManager.isConnected = function(address,origin){
 connectManager.disconnect = function (address,origin,notify=false) {
     return new Promise(resolve => {
 
-        chrome.storage.local.get(key, (result) => {
-            let connectedWallets = result[key] || {};
+        chrome.storage.local.get(getKey(), (result) => {
+            let connectedWallets = result[getKey()] || {};
 
             if (connectedWallets[address]) {
 
                 delete connectedWallets[address][origin];
 
                 let setData = {};
-                setData[key] = connectedWallets;
+                setData[getKey()] = connectedWallets;
                 chrome.storage.local.set(setData);
             }
             if(notify)
@@ -63,8 +69,10 @@ connectManager.disconnect = function (address,origin,notify=false) {
 connectManager.list = function (address) {
     return new Promise(resolve => {
 
-        chrome.storage.local.get(key, (result) => {
-            let connectedWallets = result[key] || {}
+        chrome.storage.local.get(getKey(), (result) => {
+
+            let connectedWallets = result[getKey()] || {}
+            console.log(result,connectedWallets,address)
             if (address)
                 resolve(connectedWallets[address] || {});
             else

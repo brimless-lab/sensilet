@@ -106,7 +106,7 @@ export default {
             let origin = this.$store.state.activeTab.origin;
 
             this.list = null;
-            let temp = await connectManager.list(this.account.address);
+            let temp = await connectManager.list(this.$store.getters.address);
             let list = [];
             if (temp && Object.keys(temp).length > 0) {
                 for (let key in temp) {
@@ -139,7 +139,7 @@ export default {
                 title: this.$t('setting.disconnect') + " " + origin,
                 content: this.$t('setting.disconnect_notice'),
                 async onOk() {
-                    await connectManager.disconnect(_this.account.address, origin, true);
+                    await connectManager.disconnect(_this.$store.getters.address, origin, true);
                     //这个不等同步
                     _this.refreshConnected();
                 }

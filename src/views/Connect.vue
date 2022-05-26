@@ -19,6 +19,7 @@
 
     </div>
         <div class="action-panel">
+            <div class="warning" v-if="isTestnet">WARNING: You are in the Testnet</div>
             <div class="action-container" v-if="!isConnecting">
                 <a-button @click="cancel">{{$t('popup.cancel')}}</a-button>
                 <a-button type="primary" @click="connect">{{$t('popup.connect')}}</a-button>
@@ -43,7 +44,8 @@ export default {
         return {
             origin: origin,
             isConnecting: false,
-            address: walletManager.getMainAddress()
+            address: walletManager.getMainAddress(),
+            isTestnet:config.isTestnet
         }
     },
     methods: {
@@ -120,6 +122,11 @@ export default {
 
 .notice {
     margin: 10px;
+}
+.warning{
+    text-align: center;
+    color: red;
+    font-weight: bold;
 }
 
 .action-container {

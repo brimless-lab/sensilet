@@ -16,4 +16,12 @@ eventManager.dispatchDisconnect = function (data){
     });
 }
 
+eventManager.dispatchNetworkChange = function (data){
+    chrome.runtime.sendMessage({
+        channel: 'sato_extension_background_event_channel',
+        eventName:"network_change",
+        data,
+    });
+}
+
 module.exports = eventManager;
