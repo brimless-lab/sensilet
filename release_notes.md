@@ -1,6 +1,13 @@
 
 # Release Notes
 
+### v0.1.13 (2022-05-26) 
+
+- transaction fee rate reduced to 0.05 sat/byte
+- testnet supported
+- NFT loading optimized 
+- minor issues fixed
+
 ### v0.1.12 (2022-03-18) 
 
 - 'Expand View' button is moved to the main screen
