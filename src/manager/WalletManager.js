@@ -57,24 +57,7 @@ walletManager.init = function () {
     walletManager.getCurrentAccount = () => {
         let result = localManager.getCurrentAccount();
 
-        if (result && !result['address' + config.hostFix]) {
-            const address = walletManager.getAddress();
-            result['address' + config.hostFix] = address;
-            localManager.saveAccount(result)
-
-            let list = localManager.listAccount();
-            for (let i = 0; i < list.length; i++) {
-                // console.log('##', i, list[i].address, result.address)
-                if (list[i].locked === result.locked) {
-                    list[i]['address' + config.hostFix] = address;
-                }
-            }
-            localManager.saveAccountList(list)
-        }
-        if (result && !result.address) {
-
-        }
-
+        walletManager.checkNetworkAddress(result);
 
         return result;
     };
@@ -94,6 +77,26 @@ walletManager.reload = function () {
     mMainAddress = "";
     mPassword = "";
 }
+
+//切换网络后，补上地址
+walletManager.checkNetworkAddress = function (lockInfo){
+    if (lockInfo && !lockInfo['address' + config.hostFix] && !walletManager.isNeedUnlock()) {
+        //如果未解锁，这里获取地址会抛异常
+        const address = walletManager.getAddress();
+        lockInfo['address' + config.hostFix] = address;
+        localManager.saveAccount(lockInfo)
+
+        let list = localManager.listAccount();
+        for (let i = 0; i < list.length; i++) {
+            // console.log('##', i, list[i].address, lockInfo.address)
+            if (list[i].locked === lockInfo.locked) {
+                list[i]['address' + config.hostFix] = address;
+            }
+        }
+        localManager.saveAccountList(list)
+    }
+}
+
 walletManager.isSinglePrivateKey = function () {
     let lockInfo = JSON.parse(localStorage.getItem('lockInfo'));
     if (!lockInfo) {
@@ -167,8 +170,11 @@ walletManager.unlock = function (password, keep) {
     if (passwordHash === lockInfo.passwordHash) {
         //加密保存密码到内存中
         mPassword = password;
+
+        walletManager.checkNetworkAddress(lockInfo);
+
         if (keep)
-            bg.passwordAesTable[lockInfo.address] = aesUtils.AESEncrypto(password, passwordAesKey);
+            bg.passwordAesTable[lockInfo['address'+config.hostFix]] = aesUtils.AESEncrypto(password, passwordAesKey);
 
         return true;
     }
@@ -439,7 +445,7 @@ walletManager.changePassword = function (oldPwd, newPwd) {
     lockInfo['passwordHash'] = bsv.Hash.sha256(Buffer.from(newPwd + 'SatoWallet')).toString('hex');
     lockInfo['locked'] = aesUtils.AESEncrypto(mnemonic, newPwd);
 
-    localManager.saveAccount(lockInfo);
+    localManager.saveAccountByAddress(lockInfo);
 
     walletManager.reload();
 }

@@ -94,6 +94,25 @@ localManager.saveAccount = function (accountInfo) {
 };
 
 
+localManager.saveAccountByAddress = function (accountInfo) {
+    let lockInfoList = localManager.listAccount()
+    for (let i = 0; i < lockInfoList.length; i++) {
+        if (accountInfo['address'+config.hostFix] === lockInfoList[i]['address'+config.hostFix]) {
+            lockInfoList[i] = accountInfo;
+            break
+        }
+    }
+    localStorage.setItem('lockInfoList', JSON.stringify(lockInfoList));
+
+    let lockInfo = localManager.getCurrentAccount();
+
+    if (lockInfo && accountInfo['address'+config.hostFix] === lockInfo['address'+config.hostFix]) {
+        lockInfo = accountInfo;
+        localStorage.setItem('lockInfo', JSON.stringify(lockInfo));
+    }
+};
+
+
 localManager.listGenesis = function () {
     let lockInfo = localManager.getCurrentAccount();
 

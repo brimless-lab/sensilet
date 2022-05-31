@@ -44,6 +44,7 @@
                 this.isGoingToNext = true;
                 setTimeout(()=>{
                     if (walletManager.unlock(this.password, this.keepUnlock)) {
+                        this.$store.commit('initAccount')
                         goNextPage()
                     } else {
                         antMessage.error(this.$t('wallet.password_error_2'))
