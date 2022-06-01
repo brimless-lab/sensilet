@@ -164,7 +164,7 @@ export default {
         return data;
     },
     async mounted() {
-        console.log(this.genesis, this.codehash)
+        // console.log(this.genesis, this.codehash)
         signers = null;
         signerSelecteds = null;
         tokenInfo = await tokenManager.getTokenInfo(this.genesis, this.codehash);
@@ -228,7 +228,7 @@ export default {
 
             console.log(utxoCount, bsvUtxoCount)
 
-            if (bsvUtxoCount > 3 || utxoCount >= 20) {
+            if (bsvUtxoCount > 3 || utxoCount >= config.needMerge) {
                 antMessage.warn(this.$t('popup.merge_notice'))
                 return routerManager.goFor('/merge', '/payToken', {
                     receivers: this.receivers,

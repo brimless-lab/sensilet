@@ -48,9 +48,9 @@ const notDefaultSigners = {
 const ft = new SensibleFT({
     network: config.network, //mainnet or testnet
     purse: "", //the wif of a bsv address to offer transaction fees
-    feeb:config.fee,
+    feeb: config.fee,
     // signers,
-    apiUrl:config.sensibleUrl
+    apiUrl: config.sensibleUrl
 });
 
 utils.selectSigners = SensibleFT.selectSigners;
@@ -91,7 +91,7 @@ utils.getBalance = function (genesis, codehash, address) {
 };
 
 utils.getAllBalance = function (address, offset, limit) {
-    return apiUtils.getAllBalance(address,offset, limit)
+    return apiUtils.getAllBalance(address, offset, limit)
 }
 
 utils.getUtxoCount = async (genesis, codehash, address) => {
@@ -103,17 +103,22 @@ utils.getUtxoCount = async (genesis, codehash, address) => {
     return utxoCount
 };
 
-utils.merge = async function (senderWif, purseWif, genesis, codehash, utxoCount) {
-    let ft = new SensibleFT({
+utils.merge = async function (senderWif, purseWif, genesis, codehash, utxoCount, signers) {
+
+    const param = {
         network: config.network,
         feeb: config.fee,
         purse: purseWif,
-        apiUrl:config.sensibleUrl
+        apiUrl: config.sensibleUrl,
+    };
+    if (signers && signers.length > 0)
+        param.signers = signers;
 
-    });
+
+    let ft = new SensibleFT(param);
     // ft.sensibleApi.apiHandler.serverBase = ""
 
-    for (let i = 0; i < 10 && utxoCount >= 20; i++) {
+    for (let i = 0; i < 10 && utxoCount >= config.needMerge; i++) {
         await ft.merge(
             {
                 ownerWif: senderWif,
@@ -122,7 +127,7 @@ utils.merge = async function (senderWif, purseWif, genesis, codehash, utxoCount)
             }
         );
         await sleep(3000);
-        utxoCount -= 19;
+        utxoCount -= (config.needMerge - 1);
     }
 }
 
@@ -134,7 +139,7 @@ utils.transfer = async function (genesis, codehash, senderWif, purseWif, receive
         purse: purseWif,
         // signers,
         // signerSelecteds: item.signerSelecteds,
-        apiUrl:config.sensibleUrl
+        apiUrl: config.sensibleUrl
     }
     if (signers && signers.length > 0)
         ftParams.signers = signers;
@@ -147,7 +152,7 @@ utils.transfer = async function (genesis, codehash, senderWif, purseWif, receive
         utxo.wif = walletManager.getMainWif();
     }
 
-    for (let i = 0; i < 10 && utxoCount > 20; i++) {
+    for (let i = 0; i < 10 && utxoCount >= 20; i++) {
         await ft.merge(
             {
                 ownerWif: senderWif,
@@ -183,7 +188,7 @@ utils.getTransferEsitimate = (codehash, genesis, receivers, senderWif, signers, 
                 feeb: config.fee,
                 signers,
                 signerSelecteds,
-                apiUrl:config.sensibleUrl
+                apiUrl: config.sensibleUrl
             }
         ).getTransferEstimateFee({
             codehash, genesis, receivers,
@@ -205,7 +210,7 @@ utils.getMergeEstimateFee = (codehash, genesis, senderWif, signers) => {
                 purse: "", //the wif of a bsv address to offer transaction fees
                 feeb: config.fee,
                 signers,
-                apiUrl:config.sensibleUrl
+                apiUrl: config.sensibleUrl
 
             }
         ).getMergeEstimateFee({

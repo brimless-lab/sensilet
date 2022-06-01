@@ -521,7 +521,6 @@ export default {
             }
         },
         async onTransNext(address) {
-            console.log('aaaa')
             this.transStep = 1;
             this.transAddress = address;
             this.transStepNextWord = this.$t('account.ok')
@@ -561,7 +560,7 @@ export default {
             }
 
             let amount = this.transAmount;
-            if (isNaN(amount))
+            if (!amount || isNaN(amount))
                 return antMessage.error(this.$t('account.amount_error'))
 
 
@@ -578,7 +577,7 @@ export default {
             //获取bsv utxo数
             let bsvUtxoCount = await walletManager.getBsvUtxoCount();
             // console.log(bsvUtxoCount,utxoCount,'####')
-            if (bsvUtxoCount > 3 || utxoCount >= 20) {
+            if (bsvUtxoCount > 3 || utxoCount >= config.needMerge) {
                 antMessage.warn(this.$t('popup.merge_notice'))
                 return routerManager.goFor('/merge', '/payToken', {
                     genesis: this.transInfo.genesis,

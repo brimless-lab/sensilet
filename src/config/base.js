@@ -11,10 +11,8 @@ let config = {
     host: "https://sensilet.com/api",
     sensibleUrl: "https://api.sensiblequery.com",
     // sensibleUrl:"https://api.sensiblequery.com/test",
+    needMerge:20,
 };
-console.log('init config');
-
-
 
 config.configNetwork = function () {
     if (localStorage.getItem('network') === 'testnet') {
@@ -33,6 +31,9 @@ config.configNetwork = function () {
 }
 
 config.configNetwork();
+
+console.log('init config');
+
 
 //脚本执行顺序有点问题，这里先加上global
 global.config = config;

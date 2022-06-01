@@ -118,8 +118,8 @@ export default {
 
                 let utxoCount = await tokenManager.sensibleFt.getUtxoCount(tokenInfo.genesis, tokenInfo.codehash, walletManager.getMainAddress())
                 console.log(`bsv count : ${bsvUtxoCount}, token utxo :${utxoCount}`)
-                if (utxoCount >= 20)
-                    await tokenManager.sensibleFt.merge(walletManager.getMainWif(), walletManager.getMainWif(), tokenInfo.genesis, tokenInfo.codehash, utxoCount)
+                if (utxoCount >= config.needMerge)
+                    await tokenManager.sensibleFt.merge(walletManager.getMainWif(), walletManager.getMainWif(), tokenInfo.genesis, tokenInfo.codehash, utxoCount,signers)
 
 
                 if (origin && request && request.method==='checkTokenUtxoCount') {
