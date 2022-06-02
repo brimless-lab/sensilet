@@ -1,6 +1,13 @@
 
 # Release Notes
 
+### v0.1.14 (2022-06-02)
+
+- add: new API to query network type (mainnet/testnet)
+- fix: password updating failed
+- fix: testnet doesn't work in some cases
+- fix: failed to merge utxo in some cases
+
 ### v0.1.13 (2022-05-26) 
 
 - transaction fee rate reduced to 0.05 sat/byte
