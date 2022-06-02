@@ -148,6 +148,10 @@ window.sensilet.getVersion = ()=>{
     return action('getVersion', {})
 }
 
+window.sensilet.getNetwork = ()=>{
+    return action('getNetwork', {})
+}
+
 window.sensilet.isHDAccount = ()=>{
     return action('isHDAccount', {})
 }

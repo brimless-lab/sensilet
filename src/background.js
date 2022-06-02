@@ -152,6 +152,10 @@ async function handleDisconnect(message, sender, sendResponse) {
     sendResponse({result: "success", id: message.data.id})
 }
 
+async function handleGetNetwork(message, sender, sendResponse) {
+    sendResponse({result: "success", id: message.data.id,data:config.network})
+}
+
 async function handleGetVersion(message, sender, sendResponse) {
 
     sendResponse({
@@ -397,6 +401,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             createHandler(message, sender, sendResponse, handleGetPublicKeyAndAddress);
         } else if (message.data.method === 'getVersion') {
             createHandler(message, sender, sendResponse, handleGetVersion);
+        } else if (message.data.method === 'getNetwork') {
+            createHandler(message, sender, sendResponse, handleGetNetwork);
         } else if (message.data.method === 'isHDAccount') {
             createHandler(message, sender, sendResponse, handleIsHDAccount);
         } else {
