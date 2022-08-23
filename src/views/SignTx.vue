@@ -76,36 +76,48 @@ export default {
 
             txHexMap[list[i].txHex] = true;
 
-            let txDetail = txUtils.getTxInfo(list[i].txHex).outputs;
-            // console.log(txDetail)
-
             let arr = [];
 
-            for (let j = 0; j < txDetail.length; j++) {
-                let temp = {};
-                temp.type = txUtils.txTypeWord[txDetail[j].type];
-                if (txDetail[j].type === txUtils.txType.SENSIBLE_FT) {
-                    let data = txDetail[j].data
+            // 2MB以下的交易才进行分析
+            if (list[i].txHex.length < 4 * 1024 * 1024) {
+                let txDetail = txUtils.getTxInfo(list[i].txHex).outputs;
+                for (let j = 0; j < txDetail.length; j++) {
+                    let temp = {};
+                    temp.type = txUtils.txTypeWord[txDetail[j].type];
+                    if (txDetail[j].type === txUtils.txType.SENSIBLE_FT) {
+                        let data = txDetail[j].data
 
-                    if (typeof data === 'string')
-                        data = JSON.parse(data)
-                    if (typeof data.tokenAmount === 'string')
-                        data.tokenAmount = parseInt(data.tokenAmount);
-                    temp.type += `(${data.tokenName.replaceAll('/u000', '')})`;
-                    temp.amount = data.decimalNum > 0 ? (data.tokenAmount / Math.pow(10, data.decimalNum)).toFixed(data.decimalNum) : data.tokenAmount;
-                    temp.address = showLongString(data.tokenAddress, 10);
-                    temp.symbol = data.tokenSymbol.replaceAll('/u000', '');
-                    temp.decimal = data.decimalNum
-                } else {
+                        if (typeof data === 'string')
+                            data = JSON.parse(data)
+                        if (typeof data.tokenAmount === 'string')
+                            data.tokenAmount = parseInt(data.tokenAmount);
+                        temp.type += `(${data.tokenName.replaceAll('/u000', '')})`;
+                        temp.amount = data.decimalNum > 0 ? (data.tokenAmount / Math.pow(10, data.decimalNum)).toFixed(data.decimalNum) : data.tokenAmount;
+                        temp.address = showLongString(data.tokenAddress, 10);
+                        temp.symbol = data.tokenSymbol.replaceAll('/u000', '');
+                        temp.decimal = data.decimalNum
+                    } else {
 
-                    temp.amount = txDetail[j].satoshis;
-                    temp.address = showLongString(txDetail[j].address, 10);
-                    temp.symbol = "BSV";
-                    temp.decimal = 8;
+                        temp.amount = txDetail[j].satoshis;
+                        temp.address = showLongString(txDetail[j].address, 10);
+                        temp.symbol = "BSV";
+                        temp.decimal = 8;
+                    }
+                    arr.push(temp)
                 }
-                arr.push(temp)
+            }else{
+                let tx = txUtils.getTx(list[i].txHex);
+                tx.outputs.forEach((v) => {
+                  let temp = {
+                    type: txUtils.txTypeWord[4], //UNKNOWN,
+                    amount: v.satoshis,
+                    symbol: "BSV",
+                    decimal: 8,
+                  };
+                  arr.push(temp);
+                });
             }
-
+            
             this.txDetailList.push(arr)
         }
     },

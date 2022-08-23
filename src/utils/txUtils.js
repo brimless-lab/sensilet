@@ -28,6 +28,10 @@ txUtils.txType = {
     "UNKNOWN": 4,
 }
 
+txUtils.getTx = function(rawHex) {
+  return new bsv156.Transaction(rawHex);
+};
+
 txUtils.getTxInfo = function (rawHex) {
     return TxDecoder.decodeTx(new bsv156.Transaction(rawHex), config.network)
 };
