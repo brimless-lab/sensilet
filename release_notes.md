@@ -1,6 +1,9 @@
 
 # Release Notes
 
+### v0.1.15 (2022-08-27)
+- Optimize signature processing for large scripts
+
 ### v0.1.14 (2022-06-02)
 
 - add: new API to query network type (mainnet/testnet)
