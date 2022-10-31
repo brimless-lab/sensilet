@@ -1,6 +1,12 @@
 
 # Release Notes
 
+### v0.2.1 (2022-10-31)
+- fix issue #7 
+
+### v0.2.0 (2022-09-29)
+- Upgrade to SensibleAPI-V2
+
 ### v0.1.15 (2022-08-27)
 - Optimize signature processing for large scripts
 
